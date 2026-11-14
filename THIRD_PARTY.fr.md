@@ -25,3 +25,29 @@ Pour fabriquer des cartes, le programme propose de télécharger, avec vérifica
 - `v650sync/mapdata/tags_polar.json` : liste de correspondance des étiquettes OpenStreetMap, établie d'après l'observation d'une carte du compteur.
 
 L'API interne de Komoot est non documentée : elle peut changer ou être restreinte sans préavis. N'utilisez que votre propre compte.
+
+## Licence de kompy (MIT)
+
+La logique d'accès à Komoot de `v650sync/komoot.py` est reprise de [kompy](https://github.com/Tsadoq/kompy). Son texte de licence, reproduit comme l'exige la licence MIT (texte original en anglais) :
+
+```text
+Copyright (c) 2023-2026 Matteo Villosio
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+```

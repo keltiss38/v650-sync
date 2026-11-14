@@ -18,9 +18,9 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from v650sync import mapgen, mapinfo, mapservice, pftp, service, uploads  # noqa: E402
 
 H = lambda s: bytes.fromhex(s.replace(" ", ""))
-# trois états réels de MAPINFO.BPB relevés sur le compteur (carte installée, zone demandée, carte installée après FlowSync)
-MAPINFO_AVANT = H("0a 12 09 43 11 fc d0 ad 21 47 40 11 9f c9 f5 c9 62 ad 12 40 12 16 0a 07 08 ea 0f 10 07 18 0c 12 09 08 0a 10 28 18 24 20 d8 04 18 01 18 01")
-MAPINFO_DEMANDE = H("0a 12 09 c0 d9 a3 7f 66 0a 47 40 11 81 c9 f5 49 e2 35 12 40 12 16 0a 07 08 ea 0f 10 07 18 0c 12 09 08 0a 10 28 18 24 20 d8 04 18 01 18 00")
+# états de MAPINFO.BPB au format relevé sur le compteur (carte installée, zone demandée), avec des coordonnées fictives
+MAPINFO_AVANT = H("0a 12 09 66 66 66 66 66 e6 46 40 11 cd cc cc cc cc cc 18 40 12 16 0a 07 08 ea 0f 10 07 18 0c 12 09 08 0a 10 28 18 24 20 d8 04 18 01 18 01")
+MAPINFO_DEMANDE = H("0a 12 09 cd cc cc cc cc ec 46 40 11 9a 99 99 99 99 99 18 40 12 16 0a 07 08 ea 0f 10 07 18 0c 12 09 08 0a 10 28 18 24 20 d8 04 18 01 18 00")
 
 
 def fake_map(payload=b"x" * 40000, bbox=(45.0, 5.0, 46.0, 6.0)):
@@ -45,10 +45,10 @@ class MapInfoTests(unittest.TestCase):
         self.assertFalse(mapinfo.decode(MAPINFO_AVANT)["pending"])
         self.assertTrue(mapinfo.decode(MAPINFO_DEMANDE)["pending"])
 
-    def test_grille_de_polar(self):  # emprises relevées dans l'en-tête des cartes de Polar
-        self.assertEqual(mapinfo.polar_pack_bbox(46.081253, 4.552621), (44.55, 2.04, 48.60, 8.16))
-        self.assertEqual(mapinfo.polar_pack_bbox(45.065933, 1.197322), (43.20, -1.99, 47.25, 3.98))
-        self.assertEqual(mapinfo.polar_pack_bbox(45.729887, 4.935712), (43.20, 1.99, 47.25, 7.96))
+    def test_grille_de_polar(self):  # emprises relevées dans l'en-tête des cartes de Polar (points fictifs dans les mêmes cellules)
+        self.assertEqual(mapinfo.polar_pack_bbox(46.5, 5.0), (44.55, 2.04, 48.60, 8.16))
+        self.assertEqual(mapinfo.polar_pack_bbox(45.2, 1.0), (43.20, -1.99, 47.25, 3.98))
+        self.assertEqual(mapinfo.polar_pack_bbox(45.3, 5.0), (43.20, 1.99, 47.25, 7.96))
 
 
 class GeometryTests(unittest.TestCase):
