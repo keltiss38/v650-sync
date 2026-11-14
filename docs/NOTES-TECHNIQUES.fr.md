@@ -60,7 +60,6 @@ Légende : ✅ validé sur le **vrai compteur** ou le **vrai service** · 🧪 t
 | Journal détaillé, rapport de bug | ✅ | |
 | Exécutable `V650Sync.exe` (~14 Mo, sans console, non signé) | ✅ | Windows 11 ; **Windows 10 non testé** |
 | Courbes de niveau sur les cartes générées | 🧪 | option aucune / principales / complètes (altitudes SRTM, §6.4) ; **affichage sur le compteur non vérifié**, désactivées par défaut |
-| Modification du profil du compteur (prénom, nom, poids, taille, FC, VO2max, FTP) | 🧪 | copie préalable des deux fichiers, écriture, relecture, retour arrière automatique et restauration : testés avec un faux compteur ; **écriture non testée sur le vrai compteur** (le compteur peut refuser le fichier ou réécrire ses valeurs). L'e-mail et l'identifiant Polar ne sont pas modifiables |
 | Interface en français et en anglais ; unités (km / miles) selon le réglage du compteur | 🧪 | traduction à l'exécution (§3.6) ; vérifiée par balayage automatique de la page, pas par un relecteur anglophone |
 | Avis de mise à jour (GitHub, une fois par jour, désactivable) | 🧪 | testé avec un faux serveur ; **ne fonctionne qu'une fois une version publiée** sur le dépôt public (§7) |
 | Export des intervalles RR, température, `device_info` dans le FIT | ❌ | absents du FIT |
@@ -226,11 +225,9 @@ Serveur sur `127.0.0.1` ; les requêtes `POST` exigent le jeton de la page.
 | GET | `/api/komoot/tours`, `/api/services` | liste Komoot ; configuration publique (sans secret) |
 | GET | `/api/map/status` | état de la carte installée, cartes locales |
 | GET | `/api/journal`, `/api/data-dir`, `/api/ping`, `/api/focus` | journal (version, chemins), dossier de données, signe de vie, premier plan |
-| GET | `/api/profile/backups` | sauvegardes de profil disponibles |
 | GET | `/api/update` | état enregistré de la vérification des mises à jour (sans réseau) |
 | POST | `/api/connect`, `/api/sync` | connexion + lecture (tâche), lecture seule |
 | POST | `/api/set-time` | **écrit** l'heure |
-| POST | `/api/profile/edit`, `/api/profile/restore` | **écrit** le profil (`PHYSDATA.BPB`, `USERID.BPB`) après copie dans `sauvegarde-profil/` ; remet une sauvegarde |
 | POST | `/api/preview`, `/api/put-route`, `/api/update-route`, `/api/remove-route` | aperçu ; **écrit / met à jour / supprime** un parcours |
 | POST | `/api/library/komoot-refresh`, `/api/library/komoot-gpx`, `/api/library/detail` | liste Komoot, GPX, détail d'un parcours |
 | POST | `/api/komoot/login`, `/logout`, `/fetch` | compte Komoot |
@@ -246,7 +243,7 @@ Ligne de commande (`python -m v650sync …`) : `info`, `ls`, `backup`, `export`,
 ## 9. Journal, tests et construction
 
 - **Journal** (`journal.py`, stdlib `logging`, rotation 4 × 1 Mo) : en-tête (versions, système, dossier de données, WebView2), appels de la page, tâches, sessions du compteur, chaque écriture PFTP (chemin, taille, durée, refus), Komoot, Intervals.icu (statut HTTP, serveur, extrait de réponse), téléchargements, Osmosis, état des réglages au démarrage (« Intervals.icu enregistré / Komoot connecté », sans valeur), exceptions. Niveau détaillé avec `V650SYNC_DEBUG=1`. **Masquage** : adresses e-mail, `token/password/authorization/api key = valeur`, `Basic/Bearer …`, dossier personnel → `~` ; jamais de coordonnées ni de contenu de fichiers du compteur. **Rapport de bug** : zip local (`rapports/`) avec versions, journaux et les trois derniers `osmosis.log` ; rien n'est envoyé ; il peut contenir des noms de parcours et des chemins.
-- **Tests** : `python -m unittest discover -s tests` (77 tests : décodeurs, FIT, parcours, faux compteur PFTP, faux Komoot (lecture et envoi), Intervals et GitHub, découpage de zone, courbes de niveau, écriture de carte avec faux compteur, journal et masquage, serveur réel, réglages, cohérence du dictionnaire de traduction).
+- **Tests** : `python -m unittest discover -s tests` (70 tests : décodeurs, FIT, parcours, faux compteur PFTP, faux Komoot (lecture et envoi), Intervals et GitHub, découpage de zone, courbes de niveau, écriture de carte avec faux compteur, journal et masquage, serveur réel, réglages, cohérence du dictionnaire de traduction).
 - **Construction** : `pip install -r requirements-dev.txt` puis `pyinstaller v650sync.spec` → `dist/V650Sync.exe`.
 - **Variables d'environnement** : `V650SYNC_DATA` (dossier de données), `V650SYNC_DEBUG=1` (journal détaillé), `V650SYNC_KOMOOT_URL` (tests : remplace l'API Komoot par un serveur local).
 
@@ -275,6 +272,7 @@ Ligne de commande (`python -m v650sync …`) : `info`, `ls`, `backup`, `export`,
 | Routes absentes aux petits zooms (comparé à Polar) | niveaux d'apparition par défaut d'Osmosis, plus tardifs que ceux de Polar | niveaux relevés dans la carte de Polar et appliqués (`zoom_polar.json`) |
 | Quadrillage de lignes droites sur les cartes avec courbes | une courbe fermée est prise pour une surface | balise `force-polygon-line` sur les courbes |
 | Courbes absentes par blocs rectangulaires | le filtre `--bounding-polygon` d'Osmosis supprimait des lignes aux identifiants très élevés | filtre retiré sur le flux des courbes (le calcul est déjà limité à la zone) |
+| Modification du poids sans effet sur le compteur | `PHYSDATA.BPB` écrit (PUT accepté) et relu à l'identique, mais le compteur affiche toujours l'ancien poids, même après redémarrage | le compteur n'utilise pas ce fichier comme source de vérité (ou le réécrit depuis une autre donnée) : fonction d'édition du profil **retirée**, l'affichage du titulaire et du profil reste en lecture seule |
 | Images de comparaison : bouts de lignes manquants | le lecteur de cartes ne dessinait que le premier tronçon d'une ligne coupée par les tuiles | tous les tronçons sont dessinés (aucun défaut dans les fichiers de carte) |
 
 ## 12. Limites connues et pistes
@@ -283,4 +281,4 @@ Ligne de commande (`python -m v650sync …`) : `info`, `ls`, `backup`, `export`,
 
 **Pistes** : valider les courbes de niveau sur le compteur (puis les activer par défaut), noms de villes plus nombreux sur l'éditeur, signature de code et installeur, FIT complet (RR, température), multi-appareils, relecture de l'anglais par un anglophone, autres langues.
 
-**Ne sera pas fait** : modification du firmware ; API Strava ; analyse d'entraînement.
+**Ne sera pas fait** : modification du firmware ; API Strava ; analyse d'entraînement ; modification du profil (poids, taille…) : essayée sur le vrai compteur, sans effet visible (§11).

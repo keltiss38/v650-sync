@@ -416,30 +416,6 @@
 "Heure": "Time",
 "Mes cartes": "My maps",
 "Compteur de": "Device of",
-"Modifier le profil": "Edit profile",
-"Enregistrer sur le compteur": "Save to the device",
-"Prénom": "First name",
-"Nom de famille": "Last name",
-"FC max (bpm)": "Max HR (bpm)",
-"FC repos (bpm)": "Resting HR (bpm)",
-"Rien n'a changé.": "Nothing has changed.",
-"Écriture…": "Writing…",
-"Écrire ces changements dans le compteur ?": "Write these changes to the device?",
-"Une copie du profil actuel est d'abord enregistrée sur ce PC (dossier « sauvegarde-profil »), puis le compteur est relu pour vérifier. Éteignez puis rallumez le compteur pour voir le changement.": "A copy of the current profile is first saved on this PC (“sauvegarde-profil” folder), then the device is read back to check. Turn the device off and on again to see the change.",
-"Le compteur est relu pour vérifier. Éteignez puis rallumez le compteur pour voir le changement.": "The device is read back to check. Turn the device off and on again to see the change.",
-"L'e-mail et l'identifiant Polar ne sont pas modifiables. Une copie du profil actuel est d'abord enregistrée sur ce PC.": "The Polar e-mail and ID cannot be edited. A copy of the current profile is first saved on this PC.",
-"Remet sur le compteur le profil tel qu'il était avant la dernière modification": "Puts the profile back on the device as it was before the last change",
-"Remettre sur le compteur le profil de la dernière sauvegarde ?": "Put the profile from the last backup back on the device?",
-"Profil modifié et vérifié. Éteignez puis rallumez le compteur pour voir le changement.": "Profile changed and checked. Turn the device off and on again to see the change.",
-"Profil remis comme dans la sauvegarde. Éteignez puis rallumez le compteur pour voir le changement.": "Profile restored from the backup. Turn the device off and on again to see the change.",
-"Éteignez puis rallumez le compteur pour voir le changement.": "Turn the device off and on again to see the change.",
-"Rien à modifier : les valeurs sont déjà celles du compteur.": "Nothing to change: the values are already the device's.",
-"poids": "weight",
-"taille": "height",
-"prénom": "first name",
-"nom": "last name",
-"Aucune sauvegarde de profil trouvée.": "No profile backup found.",
-"Sauvegarde de profil introuvable.": "Profile backup not found.",
 "E-mail Polar": "Polar e-mail",
 "Identifiant Polar": "Polar ID",
 "Principales": "Main",
@@ -1088,46 +1064,6 @@
 [
 "Télécharger les GPX manquants ({0})",
 "Download the missing GPX files ({0})"
-],
-[
-"Poids ({0})",
-"Weight ({0})"
-],
-[
-"Taille ({0})",
-"Height ({0})"
-],
-[
-"Revenir à la sauvegarde du {0}",
-"Restore the backup of {0}"
-],
-[
-"{0}: valeur invalide",
-"{0}: invalid value"
-],
-[
-"{0}: entre {1} et {2}",
-"{0}: between {1} and {2}"
-],
-[
-"{0}: 1 à {1} caractères, sans caractère de contrôle",
-"{0}: 1 to {1} characters, no control characters"
-],
-[
-"{0}: champ absent du profil du compteur",
-"{0}: field missing from the device's profile"
-],
-[
-"{0}: champ absent du compte du compteur",
-"{0}: field missing from the device's account"
-],
-[
-"champ non modifiable: {0}",
-"field cannot be edited: {0}"
-],
-[
-"la relecture de {0} ne correspond pas à ce qui a été écrit",
-"reading {0} back does not match what was written"
 ],
 [
 "Version {0} disponible.",

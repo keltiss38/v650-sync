@@ -1,4 +1,4 @@
-﻿"""Page web locale (127.0.0.1) pour piloter le V650: synchroniser, télécharger les séances en GPX, ajouter des itinéraires.
+"""Page web locale (127.0.0.1) pour piloter le V650: synchroniser, télécharger les séances en GPX, ajouter des itinéraires.
 
 Sécurité: le serveur n'écoute que sur 127.0.0.1, vérifie l'en-tête Host, et exige un jeton aléatoire (en-tête X-Token) pour
 toute action qui modifie quelque chose. Une page web quelconque ne peut donc pas écrire sur le compteur à votre insu.
@@ -218,8 +218,6 @@ def make_handler(dirs, token, port):
                     self._json({"error": str(e)}, 500)
             elif path == "/api/journal":
                 self._json(_journal_info(dirs))
-            elif path == "/api/profile/backups":
-                self._json({"backups": service.profile_backups(dirs)})
             elif path == "/api/update":  # état enregistré (sans réseau)
                 self._json(updates.state())
             elif path == "/api/job":
@@ -485,13 +483,6 @@ def make_handler(dirs, token, port):
                         return self._json({"error": str(e)}, 400)
                 if path == "/api/set-time":
                     return self._json(service.set_clock())
-                if path == "/api/profile/edit":  # ÉCRIT le profil du compteur (copie préalable + relecture dans service.edit_profile)
-                    try:
-                        return self._json(service.edit_profile(dirs, body.get("changes") or {}))
-                    except ValueError as e:
-                        return self._json({"error": str(e)}, 400)
-                if path == "/api/profile/restore":  # ÉCRIT: remet le profil de la dernière sauvegarde
-                    return self._json(service.restore_profile(dirs, body.get("stamp")))
                 if path == "/api/remove-route":
                     res = service.remove_route(int(body["slot"]))
                     _refresh_local(dirs)

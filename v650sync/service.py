@@ -5,7 +5,6 @@ proprement (sinon il faut rebrancher le câble). `LOCK` sérialise les opératio
 """
 import os
 import random
-import re
 import struct
 import threading
 import time
@@ -210,96 +209,6 @@ def set_clock():
         c.query(3, _clock_params(local_now.replace(tzinfo=None), tz_hours))  # heure locale + décalage
     return {"set_to_local": local_now.strftime("%Y-%m-%d %H:%M:%S"), "utc_offset_hours": tz_hours,
             "device": read_profile()["local_time"]}
-
-
-PHYS_PATH = "/U/0/S/PHYSDATA.BPB"
-USER_PATH = "/U/0/USERID.BPB"
-_STAMP = re.compile(r"^\d{4}-\d{2}-\d{2}_\d{2}-\d{2}-\d{2}$")
-
-
-def _profile_backup_root(dirs):
-    return os.path.join(dirs.root, "sauvegarde-profil")
-
-
-def profile_backups(dirs):
-    """Sauvegardes de profil disponibles (la plus récente d'abord): [{'stamp', 'files'}]."""
-    root = _profile_backup_root(dirs)
-    out = []
-    for name in sorted(os.listdir(root), reverse=True) if os.path.isdir(root) else []:
-        d = os.path.join(root, name)
-        if _STAMP.match(name) and os.path.isfile(os.path.join(d, "PHYSDATA.BPB")) and os.path.isfile(os.path.join(d, "USERID.BPB")):
-            out.append({"stamp": name, "files": ["PHYSDATA.BPB", "USERID.BPB"]})
-    return out
-
-
-def _put_checked(c, items):
-    """ÉCRIT [(chemin, ancien, nouveau)] sur le compteur, relit et compare. Si une écriture échoue ou si la relecture diffère,
-    remet les fichiers déjà écrits comme avant. Renvoie la liste des fichiers écrits (chemins)."""
-    written = []
-    try:
-        for path, old, new in items:
-            if new != old:
-                c.put(path, new)
-                written.append((path, old))
-        time.sleep(1.0)
-        for path, old, new in items:
-            if new != old and c.get_file(path) != new:
-                raise PftpError(f"la relecture de {path} ne correspond pas à ce qui a été écrit")
-    except Exception:
-        for path, old in written:  # au mieux: on remet l'ancien contenu
-            try:
-                c.put(path, old)
-                LOG.warning("Profil: %s remis dans son état d'avant", path)
-            except Exception as e:  # noqa: BLE001
-                LOG.error("Profil: impossible de remettre %s: %s: %s", path, type(e).__name__, e)
-        raise
-    return [p for p, _ in written]
-
-
-def edit_profile(dirs, changes):
-    """MODIFIE le profil du compteur (PHYSDATA.BPB et/ou USERID.BPB) après une copie des deux fichiers actuels dans
-    `sauvegarde-profil/<date>/`, puis relit pour vérifier. `changes`: voir profileedit.clean. ÉCRIT SUR LE COMPTEUR."""
-    from . import profileedit
-
-    changes = profileedit.clean(changes)
-    with device() as (dev, c):
-        phys, user = c.get_file(PHYS_PATH), c.get_file(USER_PATH)
-        new_phys, new_user, changed = profileedit.apply(phys, user, changes)
-        if not changed:
-            return {"changed": [], "note": "Rien à modifier : les valeurs sont déjà celles du compteur."}
-        stamp = time.strftime("%Y-%m-%d_%H-%M-%S")
-        d = os.path.join(_profile_backup_root(dirs), stamp)
-        os.makedirs(d, exist_ok=True)
-        for name, data in (("PHYSDATA.BPB", phys), ("USERID.BPB", user)):
-            with open(os.path.join(d, name), "wb") as f:
-                f.write(data)
-        LOG.info("Profil du compteur: modification de %s (copie préalable dans sauvegarde-profil/%s)", ", ".join(changed), stamp)
-        written = _put_checked(c, [(PHYS_PATH, phys, new_phys), (USER_PATH, user, new_user)])
-        LOG.info("Profil du compteur modifié et relu: %s", ", ".join(written))
-        return {"changed": changed, "backup": stamp, "verified": True,
-                "note": "Éteignez puis rallumez le compteur pour voir le changement."}
-
-
-def restore_profile(dirs, stamp=None):
-    """REMET le profil d'une sauvegarde (la plus récente par défaut) sur le compteur, puis relit. ÉCRIT SUR LE COMPTEUR."""
-    backups = profile_backups(dirs)
-    if stamp is None:
-        if not backups:
-            raise PftpError("Aucune sauvegarde de profil trouvée.")
-        stamp = backups[0]["stamp"]
-    if not _STAMP.match(stamp) or stamp not in [b["stamp"] for b in backups]:
-        raise PftpError("Sauvegarde de profil introuvable.")
-    d = os.path.join(_profile_backup_root(dirs), stamp)
-    with open(os.path.join(d, "PHYSDATA.BPB"), "rb") as f:
-        old_phys = f.read()
-    with open(os.path.join(d, "USERID.BPB"), "rb") as f:
-        old_user = f.read()
-    with device() as (dev, c):
-        phys, user = c.get_file(PHYS_PATH), c.get_file(USER_PATH)
-        LOG.info("Profil du compteur: retour à la sauvegarde %s", stamp)
-        written = _put_checked(c, [(PHYS_PATH, phys, old_phys), (USER_PATH, user, old_user)])
-        return {"restored": stamp, "files": written, "verified": True,
-                "note": "Éteignez puis rallumez le compteur pour voir le changement."}
 
 
 def sync(dirs, log=print, progress=None):

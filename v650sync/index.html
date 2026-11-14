@@ -577,41 +577,12 @@ $("ddir_set").onclick=async()=>{const r=await api("/api/data-dir",{method:"POST"
 async function loadProfile(){loadDataDir();if(PROFILE)return renderProfile(PROFILE);
  if(syncing){$("profile").innerHTML='<span class="mut">Lecture en cours…</span>';return}
  const p=await api("/api/profile");if(p.error){$("profile").innerHTML=`<span class="err">${esc(p.error)}</span>`;return}PROFILE=p;renderProfile(p)}
-let PEDIT=false,PBK=[];
-async function loadPBackups(){try{PBK=(await api("/api/profile/backups")).backups||[]}catch(e){PBK=[]}}
-function profileForm(p){const o=p.owner||{},w=IMP?Math.round(p.weight_kg*22.0462)/10:p.weight_kg,h=IMP?Math.round(p.height_cm/0.254)/10:p.height_cm;
- const r=(id,l,v,ty,ex,wd)=>`<tr><td class="mut">${l}</td><td><input id="${id}" type="${ty}" value="${esc(String(v))}" ${ex||""} style="width:${wd||120}px"></td></tr>`;
- return `<table>${r("pe_first","Prénom",o.first||"","text",'maxlength="30"',220)}${r("pe_last","Nom de famille",o.last||"","text",'maxlength="30"',220)}${r("pe_w","Poids ("+(IMP?"lb":"kg")+")",w,"number",'step="0.1" min="20" max="660"')}${r("pe_h","Taille ("+(IMP?"in":"cm")+")",h,"number",'step="0.1"')}${r("pe_hrmax","FC max (bpm)",p.hr_max,"number",'step="1" min="100" max="240"')}${r("pe_hrrest","FC repos (bpm)",p.hr_rest,"number",'step="1" min="25" max="120"')}${r("pe_vo2","VO2max",p.vo2max,"number",'step="1" min="10" max="100"')}${r("pe_ftp","FTP (W)",p.ftp,"number",'step="1" min="60" max="600"')}</table>`}
-async function saveProfile(){
- const f={first:["pe_first","Prénom"],last:["pe_last","Nom de famille"],weight_kg:["pe_w","Poids"],height_cm:["pe_h","Taille"],hr_max:["pe_hrmax","FC max"],hr_rest:["pe_hrrest","FC repos"],vo2max:["pe_vo2","VO2max"],ftp:["pe_ftp","FTP"]};
- const ch={},lines=[];
- for(const [key,[id,lab]] of Object.entries(f)){const e=$(id);if(!e||e.value===e.defaultValue)continue;let v=e.value;
-  if(key==="weight_kg"&&IMP)v=String(+v/2.20462);if(key==="height_cm"&&IMP)v=String(+v*2.54);
-  ch[key]=v;lines.push(`• ${tr(lab)} : ${e.defaultValue} → ${e.value}`)}
- if(!lines.length){$("pstate").textContent=tr("Rien n'a changé.");return}
- if(!confirm([tr("Écrire ces changements dans le compteur ?"),"",...lines,"",tr("Une copie du profil actuel est d'abord enregistrée sur ce PC (dossier « sauvegarde-profil »), puis le compteur est relu pour vérifier. Éteignez puis rallumez le compteur pour voir le changement.")].join("\n")))return;
- $("psave").disabled=true;$("pstate").textContent=tr("Écriture…");
- try{const r=await api("/api/profile/edit",{method:"POST",body:JSON.stringify({changes:ch})});
-  if(r.error){$("pstate").textContent=r.error;$("psave").disabled=false;return}
-  PEDIT=false;await loadPBackups();await loadProfile();$("pstate").textContent=r.changed.length?tr("Profil modifié et vérifié. Éteignez puis rallumez le compteur pour voir le changement."):tr(r.note)}
- catch(e){$("pstate").textContent=String(e.message||e);if($("psave"))$("psave").disabled=false}}
-async function restoreProfile(){const b=PBK[0];if(!b)return;
- if(!confirm(tr("Remettre sur le compteur le profil de la dernière sauvegarde ?")+"\n\n"+tr("Le compteur est relu pour vérifier. Éteignez puis rallumez le compteur pour voir le changement.")))return;
- $("pstate").textContent=tr("Écriture…");
- try{const r=await api("/api/profile/restore",{method:"POST",body:JSON.stringify({stamp:b.stamp})});
-  if(r.error){$("pstate").textContent=r.error;return}
-  await loadProfile();$("pstate").textContent=tr("Profil remis comme dans la sauvegarde. Éteignez puis rallumez le compteur pour voir le changement.")}
- catch(e){$("pstate").textContent=String(e.message||e)}}
-loadPBackups().then(()=>{if(PROFILE&&!PEDIT&&!$("t_device").classList.contains("hid"))renderProfile(PROFILE)});
 function renderProfile(p){unitsSeen(p);
  const k=(l,v)=>`<tr><td class="mut">${l}</td><td class="num" style="font-size:19px">${v}</td></tr>`;
  const o=p.owner,nm=o?[o.first,o.last].filter(Boolean).join(" "):"";
  const who=o&&(nm||o.email||o.polar_id)?`${nm?`<div style="margin:0 0 6px"><span class="mut">Compteur de</span> <b class="num" style="font-size:21px">${esc(nm)}</b></div>`:""}<table style="margin-bottom:10px">${o.email?k("E-mail Polar",`<span style="word-break:break-all;font-size:16px">${esc(o.email)}</span>`):""}${o.polar_id!=null?k("Identifiant Polar",esc(String(o.polar_id))):""}</table>`:"";
  const view=`<table>${k("Poids",IMP?Math.round(p.weight_kg*2.20462)+" lb":p.weight_kg+" kg")}${k("Taille",IMP?Math.floor(p.height_cm/2.54/12)+" ft "+Math.round(p.height_cm/2.54%12)+" in":p.height_cm+" cm")}${k("FC max",p.hr_max+" bpm")}${k("FC repos",p.hr_rest+" bpm")}${k("VO2max",p.vo2max)}${k("FTP",p.ftp+" W")}</table><p class="mut" style="font-size:13px;margin:8px 0 0">${esc(p.language)} · ${p.metric?"unités métriques":"unités impériales"} · ${p.clock_24h?"24 h":"12 h"}</p>`;
- const bk=PBK[0],bkd=bk?`${bk.stamp.slice(8,10)}/${bk.stamp.slice(5,7)}/${bk.stamp.slice(0,4)} ${bk.stamp.slice(11,13)}:${bk.stamp.slice(14,16)}`:"";
- const acts=PEDIT?`<div class="row" style="margin-top:12px"><button class="pri" id="psave">Enregistrer sur le compteur</button><button id="pcancel">Annuler</button><span id="pstate" class="mut"></span></div><p class="mut" style="font-size:12.5px;margin:8px 0 0;max-width:60ch">L'e-mail et l'identifiant Polar ne sont pas modifiables. Une copie du profil actuel est d'abord enregistrée sur ce PC.</p>`:`<div class="row" style="margin-top:12px"><button id="pedit">Modifier le profil</button>${bk?`<button id="prestore" title="Remet sur le compteur le profil tel qu'il était avant la dernière modification">Revenir à la sauvegarde du ${bkd}</button>`:""}<span id="pstate" class="mut"></span></div>`;
- $("profile").innerHTML=`${PEDIT?profileForm(p):who+view}${acts}`;
- if(PEDIT){$("psave").onclick=saveProfile;$("pcancel").onclick=()=>{PEDIT=false;renderProfile(PROFILE)}}else{$("pedit").onclick=()=>{PEDIT=true;renderProfile(PROFILE)};if(bk)$("prestore").onclick=restoreProfile}
+ $("profile").innerHTML=`${who}${view}`;
  renderMap(p.map);
  $("clock").innerHTML=`<div class="num" style="font-size:34px;color:var(--trace)">${esc(p.local_time.slice(11))}</div><div>${esc(p.local_time.slice(0,10))} · UTC ${esc(p.system_time_utc.slice(11))}<br>Écart avec ce PC : <b>${p.drift_s} s</b></div>`}
 function renderMap(m){

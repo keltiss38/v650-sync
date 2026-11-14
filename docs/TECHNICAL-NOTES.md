@@ -60,7 +60,6 @@ Legend: ✅ validated on the **real device** or the **real service** · 🧪 tes
 | Detailed log, bug report | ✅ | |
 | `V650Sync.exe` executable (~14 MB, no console, unsigned) | ✅ | Windows 11; **Windows 10 untested** |
 | Contour lines on generated maps | 🧪 | none / main / full option (SRTM elevations, §6.4); **display on the device not verified**, off by default |
-| Editing the device profile (first name, last name, weight, height, HR, VO2max, FTP) | 🧪 | prior copy of both files, write, read-back, automatic rollback and restore: tested with a fake device; **writing not yet tested on the real device** (the device may refuse the file or rewrite its values). The Polar e-mail and ID cannot be edited |
 | English and French interface; units (km / miles) following the device's setting | 🧪 | runtime translation (§3.6); checked by an automated sweep of the page, not by a native English reader |
 | Update notice (GitHub, once a day, can be turned off) | 🧪 | tested with a fake server; **only works once a release is published** on the public repository (§7) |
 | Export of RR intervals, temperature, `device_info` in the FIT | ❌ | absent from the FIT |
@@ -226,11 +225,9 @@ Server on `127.0.0.1`; `POST` requests require the page's token.
 | GET | `/api/komoot/tours`, `/api/services` | Komoot list; public configuration (no secret) |
 | GET | `/api/map/status` | installed map status, local maps |
 | GET | `/api/journal`, `/api/data-dir`, `/api/ping`, `/api/focus` | log (version, paths), data folder, heartbeat, bring to front |
-| GET | `/api/profile/backups` | available profile backups |
 | GET | `/api/update` | stored state of the update check (no network) |
 | POST | `/api/connect`, `/api/sync` | connection + read (task), read only |
 | POST | `/api/set-time` | **writes** the clock |
-| POST | `/api/profile/edit`, `/api/profile/restore` | **writes** the profile (`PHYSDATA.BPB`, `USERID.BPB`) after a copy in `sauvegarde-profil/`; puts a backup back |
 | POST | `/api/preview`, `/api/put-route`, `/api/update-route`, `/api/remove-route` | preview; **writes / updates / deletes** a route |
 | POST | `/api/library/komoot-refresh`, `/api/library/komoot-gpx`, `/api/library/detail` | Komoot list, GPX, route detail |
 | POST | `/api/komoot/login`, `/logout`, `/fetch` | Komoot account |
@@ -246,7 +243,7 @@ Command line (`python -m v650sync …`): `info`, `ls`, `backup`, `export`, `rout
 ## 9. Log, tests and build
 
 - **Log** (`journal.py`, stdlib `logging`, rotation 4 × 1 MB): header (versions, system, data folder, WebView2), page calls, tasks, device sessions, every PFTP write (path, size, duration, refusal), Komoot, Intervals.icu (HTTP status, server, response excerpt), downloads, Osmosis, state of the settings at startup ("Intervals.icu saved / Komoot connected", without value), exceptions. Detailed level with `V650SYNC_DEBUG=1`. **Masking**: e-mail addresses, `token/password/authorization/api key = value`, `Basic/Bearer …`, home folder → `~`; never coordinates or contents of device files. **Bug report**: local zip (`rapports/`) with versions, logs and the last three `osmosis.log`; nothing is sent; it may contain route names and paths.
-- **Tests**: `python -m unittest discover -s tests` (77 tests: decoders, FIT, routes, fake PFTP device, fake Komoot (read and upload), Intervals and GitHub, area clipping, contour lines, map writing with a fake device, log and masking, real server, settings, consistency of the translation dictionary).
+- **Tests**: `python -m unittest discover -s tests` (70 tests: decoders, FIT, routes, fake PFTP device, fake Komoot (read and upload), Intervals and GitHub, area clipping, contour lines, map writing with a fake device, log and masking, real server, settings, consistency of the translation dictionary).
 - **Build**: `pip install -r requirements-dev.txt` then `pyinstaller v650sync.spec` → `dist/V650Sync.exe`.
 - **Environment variables**: `V650SYNC_DATA` (data folder), `V650SYNC_DEBUG=1` (detailed log), `V650SYNC_KOMOOT_URL` (tests: replaces the Komoot API with a local server).
 
@@ -275,6 +272,7 @@ Command line (`python -m v650sync …`): `info`, `ls`, `backup`, `export`, `rout
 | Roads missing at low zoom (compared with Polar) | Osmosis's default appearance levels, later than Polar's | levels read from Polar's map and applied (`zoom_polar.json`) |
 | Grid of straight lines on maps with contour lines | a closed contour is taken for a surface | `force-polygon-line` tag on contours |
 | Contour lines missing in rectangular blocks | Osmosis's `--bounding-polygon` filter removed lines with very high ids | filter removed on the contour stream (the computation is already limited to the area) |
+| Weight change has no effect on the device | `PHYSDATA.BPB` written (PUT accepted) and read back identical, but the device still shows the old weight, even after a restart | the device does not use this file as its source of truth (or rewrites it from other data): the profile-editing feature was **removed**, the owner and profile display stays read-only |
 | Comparison images: missing line pieces | the map reader only drew the first piece of a line cut by tiles | all pieces are drawn (no defect in the map files) |
 
 ## 12. Known limitations and ideas
@@ -283,4 +281,4 @@ Command line (`python -m v650sync …`): `info`, `ls`, `backup`, `export`, `rout
 
 **Ideas**: validate contour lines on the device (then turn them on by default), more city names in the editor, code signing and an installer, full FIT (RR, temperature), multi-device, a review of the English by a native speaker, other languages.
 
-**Will not be done**: firmware modification; Strava API; training analysis.
+**Will not be done**: firmware modification; Strava API; training analysis; editing the profile (weight, height…): tried on the real device, no visible effect (§11).
