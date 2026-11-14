@@ -1,0 +1,1149 @@
+{
+"ex": {
+"Lecture interrompue à la demande de l'utilisateur.": "Reading stopped at your request.",
+"aucune tuile d'altitude": "no elevation tile",
+"tuiles de définitions différentes": "elevation tiles with different resolutions",
+"Débranchez puis rebranchez le câble USB et réessayez.": "Unplug and replug the USB cable, then try again.",
+"impossible de se connecter au V650.": "cannot connect to the V650.",
+"Aucun V650 trouvé. Vérifiez le câble USB et que le compteur est allumé.": "No V650 found. Check the USB cable and that the device is on.",
+"Envoi automatique à Intervals.icu activé mais Intervals.icu n'est pas configuré: ignoré": "Automatic upload to Intervals.icu is on but Intervals.icu is not set up: ignored",
+"Envoi automatique à Komoot activé mais Komoot n'est pas connecté: ignoré": "Automatic upload to Komoot is on but Komoot is not connected: ignored",
+"Komoot n'est pas connecté.": "Komoot is not connected.",
+"Séance introuvable: lancez d'abord la lecture du compteur.": "Session not found: read the device first.",
+"(déjà présente sur Komoot)": "(already on Komoot)",
+"(fichier illisible ou vide)": "(unreadable or empty file)",
+"décalage horaire non entier en heures: non géré": "time zone offset is not a whole number of hours: not supported",
+"refusé": "refused",
+"Éteignez puis rallumez le compteur pour voir l'itinéraire.": "Turn the device off and on again to see the route.",
+"Éteignez puis rallumez le compteur pour voir la nouvelle trace.": "Turn the device off and on again to see the new track.",
+"Komoot a refusé la connexion (identifiants ou jeton invalides).": "Komoot refused the connection (invalid credentials or token).",
+"Komoot a refusé la connexion (jeton invalide ou expiré). Reconnectez-vous dans l'onglet Connexions.": "Komoot refused the connection (invalid or expired token). Sign in again in the Connections tab.",
+"Komoot limite le nombre de requêtes: réessayez dans quelques minutes.": "Komoot is limiting requests: try again in a few minutes.",
+"Komoot n'a pas renvoyé un fichier GPX valide.": "Komoot did not return a valid GPX file.",
+"Komoot n'a pas répondu.": "Komoot did not answer.",
+"Réponse inattendue de Komoot: l'API a peut-être changé.": "Unexpected answer from Komoot: the API may have changed.",
+"Réponse inattendue de Komoot: l'API a peut-être changé. Vérifiez sur komoot.com si la séance est arrivée.": "Unexpected answer from Komoot: the API may have changed. Check on komoot.com whether the session arrived.",
+"Saisissez l'adresse e-mail et le mot de passe de votre compte Komoot.": "Enter the e-mail address and password of your Komoot account.",
+"fichier vide ou trop volumineux pour Komoot": "file is empty or too large for Komoot",
+"format de fichier inconnu": "unknown file format",
+"réponse de Komoot trop volumineuse": "Komoot's answer is too large",
+"Élément introuvable sur Komoot.": "Item not found on Komoot.",
+"Téléchargement de la liste des régions Geofabrik (3,8 Mo)": "Downloading the Geofabrik region list (3.8 MB)",
+"ce n'est pas un fichier Mapsforge": "this is not a Mapsforge file",
+"en-tête illisible": "unreadable header",
+"fabrication annulée": "build cancelled",
+"installation des outils incomplète (Osmosis 0.48.3 attendu avec lib/default)": "tool installation incomplete (Osmosis 0.48.3 expected with lib/default)",
+"mémoire insuffisante pour cette zone: choisissez une zone plus petite": "not enough memory for this area: choose a smaller area",
+"niveau de détail inconnu": "unknown level of detail",
+"outils de carte non installés": "map tools not installed",
+"sous-fichiers incohérents (fichier incomplet)": "inconsistent sub-files (incomplete file)",
+"· aucun message pour l'instant (lecture des données)": "· no message yet (reading the data)",
+"Calculer les courbes de niveau": "Compute the contour lines",
+"Carte du compteur avant remplacement": "Device map before replacement",
+"Contrôler et enregistrer la carte": "Check and save the map",
+"Copie locale de la carte actuelle déjà présente": "Local copy of the current map already present",
+"Copie locale enregistrée": "Local copy saved",
+"Demande de zone (drapeau de MAPINFO à 0)": "Area request (MAPINFO flag set to 0)",
+"Demander la zone au compteur": "Ask the device for the area",
+"Le compteur n'a pas de carte: rien à sauvegarder": "The device has no map: nothing to back up",
+"Relecture complète pour vérifier": "Full read-back to verify",
+"Relire la carte pour la vérifier": "Read the map back to verify it",
+"Sauvegarder la carte actuelle du compteur sur ce PC": "Back up the device's current map to this PC",
+"Terminé. Éteignez puis rallumez le compteur pour qu'il prenne la carte en compte.": "Done. Turn the device off and on again so it picks up the map.",
+"Vérifier le compteur (batterie, place disponible)": "Check the device (battery, free space)",
+"aucune zone à couvrir": "no area to cover",
+"carte introuvable": "map not found",
+"carte de Polar (zone déduite du centre)": "Polar map (area deduced from the centre)",
+"cette carte est installée sur le compteur: elle sert de copie": "this map is installed on the device: it is the backup copy",
+"la relecture de la carte ne correspond pas: ne pas utiliser le compteur avec cette carte, relancer l'écriture": "the map read back does not match: do not use the device with this map, restart the write",
+"le fichier de la carte a changé depuis sa fabrication: écriture refusée": "the map file changed since it was built: write refused",
+"option de courbes de niveau inconnue": "unknown contour-lines option",
+"pas assez de place sur le compteur pour cette carte": "not enough free space on the device for this map",
+"taille de carte impossible à écrire (multiple exact de 16 383): changez légèrement la marge et refabriquez": "map size cannot be written (exact multiple of 16,383): change the margin slightly and rebuild",
+"Éteignez puis rallumez le compteur.": "Turn the device off and on again.",
+"bannière inattendue": "unexpected banner",
+"connexion fermée": "connection closed",
+"connexion fermée avant la bannière": "connection closed before the banner",
+"dossier déjà existant": "folder already exists",
+"erreur inconnue": "unknown error",
+"fichier déjà existant": "file already exists",
+"fichier ou dossier introuvable": "file or folder not found",
+"opération non permise": "operation not permitted",
+"paramètre invalide": "invalid parameter",
+"taille d'écriture non gérée (multiple exact de 16 383 octets avec l'en-tête)": "write size not supported (exact multiple of 16,383 bytes with the header)",
+"le GPX contient moins de 2 points": "the GPX contains fewer than 2 points",
+"copie locale du parcours absente: lisez le compteur d'abord": "local copy of the route missing: read the device first",
+"parcours introuvable": "route not found",
+"Intervals.icu (via Cloudflare) a bloqué la requête du programme (code 1010), ce n'est pas un problème de clé. Réessayez; si cela continue, créez un rapport de bug depuis l'onglet Compteur.": "Intervals.icu (via Cloudflare) blocked the app's request (code 1010); this is not a key problem. Try again; if it continues, create a bug report from the Device tab.",
+"Intervals.icu n'est pas configuré.": "Intervals.icu is not set up.",
+"connecté": "connected",
+"erreur": "error",
+"Arrêt demandé: fin de la lecture et fermeture de la session du compteur...": "Stop requested: finishing the read and closing the device session…",
+"Fabrication de la carte": "Building the map",
+"Installation des outils de carte": "Installing the map tools",
+"Lecture du compteur": "Reading the device",
+"Téléchargement des GPX depuis Komoot": "Downloading GPX files from Komoot",
+"Écriture de la carte sur le compteur": "Writing the map to the device",
+"Une opération est en cours: réessayez dans un instant.": "An operation is in progress: try again in a moment.",
+"aucun fichier GPX reçu": "no GPX file received",
+"fichier trop gros": "file too large",
+"hôte refusé": "host refused",
+"jeton ou hôte invalide": "invalid token or host",
+"plan expiré: recalculez la zone": "plan expired: recalculate the area",
+"séance introuvable": "session not found",
+"thème inconnu": "unknown theme",
+". Il peut contenir des noms de parcours et des chemins de fichiers : relisez-le avant de le transmettre.": ". It may contain route names and file paths: read it before passing it on.",
+". Il écrit dans la mémoire du compteur (parcours, cartes, heure) et les auteurs déclinent toute responsabilité en cas de dommage, y compris un compteur qui ne fonctionnerait plus. Développé avec l'aide de Claude (Anthropic).": ". It writes to the device's memory (routes, maps, time) and the authors accept no liability for any damage, including a device that no longer works. Developed with the help of Claude (Anthropic).",
+"Afficher aussi les parcours non retenus": "Also show routes that are left out",
+"Ajouter un fichier GPX (Komoot, etc.)": "Add a GPX file (Komoot, etc.)",
+"Athlète (0)": "Athlete (0)",
+"Aucun": "None",
+"Aucune séance pour l'instant. Branchez le compteur : les nouvelles séances sont lues automatiquement.": "No sessions yet. Plug in the device: new sessions are read automatically.",
+"Carte": "Map",
+"Carte hors ligne": "Offline map",
+"Cartes : données © contributeurs OpenStreetMap (licence ODbL). Courbes de niveau : altitudes SRTM (NASA / USGS, domaine public) via les « Terrain Tiles » d'AWS.": "Maps: data © OpenStreetMap contributors (ODbL licence). Contour lines: SRTM elevation (NASA / USGS, public domain) via AWS “Terrain Tiles”.",
+"Choisissez un parcours pour voir son tracé et ses chiffres clés. Cochez ceux à écrire sur le compteur : les parcours Komoot et les fichiers GPX qui n'y sont pas encore.": "Choose a route to see its track and key figures. Tick those to write to the device: Komoot routes and GPX files that are not on it yet.",
+"Choisissez une séance pour voir son tracé, ses chiffres clés et ses courbes.": "Choose a session to see its track, key figures and charts.",
+"Clé d'API": "API key",
+"Compteur": "Device",
+"Compteur seul": "Device only",
+"Créer un rapport de bug": "Create a bug report",
+"Dossier de données": "Data folder",
+"Enregistrer en GPX dans le dossier « export » du dossier de données": "Save as GPX in the “export” folder of the data folder",
+"Enregistrer et tester": "Save and test",
+"Envoi automatique des nouvelles séances": "Automatic upload of new sessions",
+"Envoyer à Intervals": "Send to Intervals",
+"Envoyer à Intervals.icu (FIT)": "Send to Intervals.icu (FIT)",
+"Envoyer à Komoot": "Send to Komoot",
+"Envoyer à Komoot (FIT)": "Send to Komoot (FIT)",
+"Exporter en ZIP": "Export as ZIP",
+"Filtrer par nom…": "Filter by name…",
+"Fourni sans aucune garantie : utilisation sous votre responsabilité": "Provided without any warranty: use at your own risk",
+"Glissez un fichier .gpx ici": "Drop a .gpx file here",
+"Journal de lecture": "Reading log",
+"Journal et rapport de bug": "Log and bug report",
+"Le compteur garde 20 favoris au plus. Un parcours ajouté n'apparaît qu'après un redémarrage du compteur, et FlowSync l'effacerait à sa prochaine synchro.": "The device keeps at most 20 favourites. A route you add only shows up after the device is restarted, and FlowSync would erase it at its next sync.",
+"Le programme tient un journal détaillé (appels, tâches, échanges avec le compteur, Komoot, fabrication des cartes, erreurs avec leur trace). Les mots de passe, jetons et adresses e-mail n'y sont jamais écrits. En cas de bug, créez un rapport : c'est un fichier ZIP enregistré sur votre PC,": "The app keeps a detailed log (calls, tasks, exchanges with the device, Komoot, map building, errors with their trace). Passwords, tokens and e-mail addresses are never written to it. If something breaks, create a report: it is a ZIP file saved on your PC,",
+"Lecture…": "Reading…",
+"Les copies du compteur (séances, parcours), les exports et la configuration seront enregistrés dans ce dossier. Rien n'est créé avant votre choix, et vous pourrez le changer plus tard dans l'onglet Compteur.": "Copies of the device (sessions, routes), exports and settings will be stored in this folder. Nothing is created before you choose, and you can change it later in the Device tab.",
+"Les copies du compteur, les exports et la configuration sont rangés ici. Par défaut : « V650 Sync » dans votre dossier personnel.": "Copies of the device, exports and settings are kept here. By default: “V650 Sync” in your personal folder.",
+"Les séances sont envoyées à Intervals.icu au format FIT.": "Sessions are sent to Intervals.icu in FIT format.",
+"Logiciel libre et indépendant (ni affilié à Polar, Komoot, Strava ni Intervals.icu). Issu d'une rétro-ingénierie non officielle, testé sur un seul Polar V650 sous Windows 11.": "Free and independent software (not affiliated with Polar, Komoot, Strava or Intervals.icu). Based on unofficial reverse engineering, tested on a single Polar V650 under Windows 11.",
+"Ouvrir le dossier": "Open folder",
+"Ouvrir le dossier du journal": "Open the log folder",
+"Où ranger vos données ?": "Where should your data go?",
+"Parcours": "Routes",
+"Parcours dans la zone": "Routes in the area",
+"Profil enregistré dans le compteur": "Profile stored in the device",
+"Recherche du compteur…": "Looking for the device…",
+"Referme proprement la session du compteur et arrête le programme": "Cleanly closes the device session and stops the app",
+"Réglages Intervals.icu": "Intervals.icu settings",
+"Régler sur l'heure du PC": "Set to the PC's time",
+"Sans compte Intervals.icu, ne remplissez rien : aucun bouton d'envoi n'apparaît. Sinon, sur intervals.icu : Réglages, Développeur, générez une clé d'API et collez-la ici. Elle reste sur ce PC. L'identifiant d'athlète peut rester à 0.": "Without an Intervals.icu account, leave this empty: no upload button appears. Otherwise, on intervals.icu: Settings, Developer, generate an API key and paste it here. It stays on this PC. The athlete id can stay at 0.",
+"Services facultatifs où envoyer vos séances. Rien n'est contacté tant que vous ne vous y connectez pas, et rien n'est envoyé sans votre clic (ou sans l'option d'envoi automatique ci-dessous).": "Optional services to send your sessions to. Nothing is contacted until you sign in, and nothing is sent without your click (or without the automatic upload option below).",
+"Séances": "Sessions",
+"Thème": "Theme",
+"Tous": "All",
+"Utiliser ce dossier": "Use this folder",
+"Votre compte Komoot": "Your Komoot account",
+"ne transmet pas": "does not forward",
+"plus récentes que celles déjà copiées sur ce PC au moment de l'activation": "newer than those already copied to this PC when you turned this on",
+"rien n'est envoyé": "nothing is sent anywhere",
+"sont envoyées d'elles-mêmes. L'historique n'est jamais envoyé en masse. Une séance n'est comptée envoyée qu'après un envoi réussi : en cas d'échec (pas d'internet), elle est retentée à la lecture suivante.": "are sent automatically. Your history is never sent in bulk. A session only counts as sent after a successful upload: if it fails (no internet), it is retried at the next read.",
+"vos activités à Strava : il sait en importer depuis Strava (et resynchroniser le titre et la description d'activités déjà liées), mais pas en envoyer. L'API de Strava, elle, est payante pour ce programme. Pour mettre une séance sur Strava : dans l'onglet Séances, le bouton « Strava » télécharge le FIT puis ouvre la page d'envoi de Strava, où vous déposez le fichier.": "your activities to Strava: it can import from Strava (and resync the title and description of activities already linked), but not send to it. Strava's API, for its part, is paid for this app. To put a session on Strava: in the Sessions tab, the “Strava” button downloads the FIT and then opens Strava's upload page, where you drop the file.",
+"À chaque lecture du compteur (branchement, ou bouton de relecture) avec le programme ouvert, les séances": "Each time the device is read (when plugged in, or with the refresh button) while the app is open, the sessions",
+"À propos": "About",
+"(connectez-vous d'abord à Komoot ci-dessus)": "(sign in to Komoot above first)",
+"(configurez d'abord Intervals.icu ci-dessus)": "(set up Intervals.icu above first)",
+"(la carte à écrire n'existe plus)": "(the map to write no longer exists)",
+"(outils et données OpenStreetMap, une seule fois).": "(tools and OpenStreetMap data, only once).",
+"(outils, données OpenStreetMap": "(tools, OpenStreetMap data",
+"(relecture différente pour certains)": "(read-back differs for some)",
+"(une seule fois, gardé sur ce PC)": "(only once, kept on this PC)",
+"(zone de la carte de Polar déduite)": "(Polar map area deduced)",
+"+ compteur": "+ device",
+", courbes de niveau «": ", contour lines “",
+", une seule fois).": ", only once).",
+": le GPX Komoot n'est pas téléchargé, la trace n'a pas été comparée.": ": the Komoot GPX is not downloaded, the track was not compared.",
+"Activé : les séances enregistrées à partir de maintenant seront traitées à la prochaine lecture du compteur.": "On: sessions recorded from now on will be processed at the next device read.",
+"Analyse du fichier…": "Analysing the file…",
+"Annuler la fabrication": "Cancel the build",
+"Aucun autre parcours.": "No other route.",
+"Aucun parcours.": "No routes.",
+"Aucune": "None",
+"Aucune carte fabriquée pour l'instant.": "No map built yet.",
+"Aucune carte hors ligne lue sur le compteur.": "No offline map read from the device.",
+"Batterie du compteur": "Device battery",
+"Calcul de la zone…": "Computing the area…",
+"Calcul de la zone… (la liste des régions est téléchargée la première fois)": "Computing the area… (the region list is downloaded the first time)",
+"Carré autour du centre": "Square around the centre",
+"Carte actuelle du compteur": "Device's current map",
+"Carte actuelle du compteur : inconnue (compteur non lu).": "Device's current map: unknown (device not read).",
+"Carte fabriquée": "Map built",
+"Carte à jour : aucune nouvelle zone n'est demandée.": "Map up to date: no new area is requested.",
+"Carte écrite et vérifiée": "Map written and verified",
+"Ce fichier ne contient pas d'altitudes : le compteur affichera un parcours plat.": "This file has no elevation: the device will show a flat route.",
+"Ce parcours": "This route",
+"Ce programme utilise l'interface interne de Komoot (la même que ses applications), non documentée : elle peut cesser de fonctionner sans préavis, et son usage reste à vos risques. Il n'est ni affilié à Komoot ni approuvé par Komoot : n'utilisez que votre propre compte. Si Komoot refuse un envoi, exportez le FIT depuis l'onglet Séances et importez-le à la main sur komoot.com.": "This app uses Komoot's internal interface (the same as its apps), which is undocumented: it can stop working without notice, and using it is at your own risk. It is not affiliated with or approved by Komoot: only use your own account. If Komoot refuses an upload, export the FIT from the Sessions tab and import it by hand on komoot.com.",
+"Ce programme utilise l'interface interne de Komoot (la même que ses applications), non documentée : elle peut cesser de fonctionner sans préavis. Il n'est ni affilié à Komoot ni approuvé par Komoot. N'utilisez que votre propre compte. Si vous vous connectez à Komoot avec Google ou Apple, il se peut que vous n'ayez pas de mot de passe Komoot : dans ce cas, déposez plutôt le fichier GPX exporté depuis Komoot.": "This app uses Komoot's internal interface (the same as its apps), which is undocumented: it can stop working without notice. It is not affiliated with or approved by Komoot. Only use your own account. If you sign in to Komoot with Google or Apple, you may not have a Komoot password: in that case, drop the GPX file exported from Komoot instead.",
+"Cercle : glissez du centre vers le bord (ou deux clics)": "Circle: drag from the centre to the edge (or two clicks)",
+"Cliquez chaque sommet ; double-clic pour terminer. Échap annule.": "Click each vertex; double-click to finish. Esc cancels.",
+"Cliquez sur la carte pour placer le centre.": "Click the map to place the centre.",
+"Cochez au moins une source.": "Tick at least one source.",
+"Cochez des parcours ou dessinez une zone.": "Tick routes or draw an area.",
+"Collez d'abord votre clé d'API Intervals.icu.": "First paste your Intervals.icu API key.",
+"Comme Komoot : dernière modification en haut (sans Komoot : date du parcours sur le compteur ou du fichier GPX)": "Like Komoot: last modified on top (without Komoot: the route's date on the device or of the GPX file)",
+"Comme sur les cartes de Polar : une courbe tous les 25 m. Environ 15 % de taille en plus.": "Like Polar's maps: a line every 25 m. About 15 % bigger.",
+"Complètes": "Full",
+"Compteur non détecté": "Device not detected",
+"Compteur non détecté. Branchez-le au PC avec le câble USB et vérifiez qu'il est allumé. S'il est branché mais ne répond pas : débranchez puis rebranchez le câble. Nouvelle recherche automatique toutes les 10 secondes.": "Device not detected. Plug it into the PC with the USB cable and check it is on. If it is plugged in but does not answer: unplug and replug the cable. New automatic search every 10 seconds.",
+"Compteur seul : aucun numéro Komoot dans ce parcours (il a été ajouté autrement).": "Device only: no Komoot number in this route (it was added another way).",
+"Configurez d'abord Intervals.icu (clé d'API) pour l'envoi automatique.": "First set up Intervals.icu (API key) for automatic upload.",
+"Connectez-vous d'abord à Komoot pour l'envoi automatique.": "First sign in to Komoot for automatic upload.",
+"Connecté en tant que": "Signed in as",
+"Connexion à Komoot…": "Signing in to Komoot…",
+"Crayon : tracez à main levée, la zone suit le trait avec la marge": "Pencil: draw freehand, the area follows the stroke with the margin",
+"Création…": "Creating…",
+"Créé le": "Created on",
+"Dans l'onglet Séances, les boutons « → Komoot » et « Envoyer à Komoot » envoient la séance au format FIT. Komoot lui donne la visibilité par défaut de votre compte (un réglage de Komoot, comme avec Polar Flow : si votre compte est public, la séance l'est aussi). Une séance que Komoot connaît déjà n'est pas recréée.": "In the Sessions tab, the “→ Komoot” and “Send to Komoot” buttons send the session in FIT format. Komoot gives it your account's default visibility (a Komoot setting, as with Polar Flow: if your account is public, the session is too). A session Komoot already has is not created again.",
+"Date des données déjà téléchargées": "Date of the data already downloaded",
+"Dernière installation": "Last installation",
+"Données": "Data",
+"Dossier de données changé. Le compteur sera relu dans ce dossier.": "Data folder changed. The device will be read again into this folder.",
+"Durée": "Duration",
+"Durée estimée": "Estimated time",
+"Dénivelé +": "Ascent +",
+"Déplacer la carte": "Pan the map",
+"Désactivé : rien n'est envoyé sans votre clic.": "Off: nothing is sent without your click.",
+"Détaillé": "Detailed",
+"Détails": "Details",
+"Effacer les formes dessinées": "Clear the drawn shapes",
+"Envoie la séance à votre compte Komoot": "Sends the session to your Komoot account",
+"Envoi…": "Sending…",
+"Envoyer cette séance vers Intervals.icu ? Si Polar Flow l'a déjà transmise, cela peut créer un doublon.": "Send this session to Intervals.icu? If Polar Flow already sent it, this can create a duplicate.",
+"Envoyer cette séance vers Komoot ? Elle sera ajoutée à votre compte avec la visibilité par défaut de ce compte (réglage de Komoot). Si Komoot la connaît déjà, rien n'est créé.": "Send this session to Komoot? It will be added to your account with that account's default visibility (a Komoot setting). If Komoot already has it, nothing is created.",
+"Envoyé.": "Sent.",
+"Erreur": "Error",
+"Espace libre sur le compteur": "Free space on the device",
+"FRÉQUENCE CARDIAQUE": "HEART RATE",
+"Fabrication annulée.": "Build cancelled.",
+"Fabriquer la carte": "Build the map",
+"Fabriquer une carte autour de ce point": "Build a map around this point",
+"Fabriquer une carte qui couvre ces parcours": "Build a map that covers these routes",
+"Fabriquer une carte qui le couvre…": "Build a map that covers it…",
+"Fermeture en cours…": "Closing…",
+"Fin de la lecture en cours, puis fermeture de la session du compteur. La fenêtre se fermera toute seule.": "Finishing the current read, then closing the device session. The window will close by itself.",
+"Formes dessinées": "Drawn shapes",
+"Glissez d'un coin à l'autre, ou cliquez un coin puis le coin opposé. Échap annule.": "Drag from one corner to the other, or click one corner then the opposite one. Esc cancels.",
+"Glissez du centre vers le bord, ou cliquez le centre puis le bord. Échap annule.": "Drag from the centre to the edge, or click the centre then the edge. Esc cancels.",
+"Glissez pour déplacer, molette pour zoomer.": "Drag to pan, scroll wheel to zoom.",
+"Intervals.icu : connecté (": "Intervals.icu: connected (",
+"Ko, 4 fichiers de 1 Mo au plus, les plus anciens sont effacés)": "KB, 4 files of 1 MB at most, the oldest are erased)",
+"Komoot avait déjà cette séance : rien n'a été créé.": "Komoot already had this session: nothing was created.",
+"Le GPX Komoot n'est pas téléchargé : la trace n'a pas été comparée": "The Komoot GPX is not downloaded: the track was not compared",
+"Le calcul de la zone a échoué :": "Computing the area failed:",
+"Le léger + commerces, eau, toilettes, gares, mairies, stades. Sans bâtiments.": "Light + shops, water, toilets, stations, town halls, stadiums. No buildings.",
+"Le vélo + les bâtiments. Environ 1,8 fois plus lourd, plus lent à charger.": "Cycling + buildings. About 1.8 times heavier, slower to load.",
+"Lecture de vos itinéraires sur Komoot…": "Reading your routes on Komoot…",
+"Lecture du compteur…": "Reading the device…",
+"Lecture en cours…": "Reading in progress…",
+"Léger": "Light",
+"Ma carte": "My map",
+"Maintenez le bouton et tracez : la zone suit le trait.": "Hold the button and draw: the area follows the stroke.",
+"Mes parcours": "My routes",
+"Mettre à jour le compteur": "Update the device",
+"Mis à jour. Éteignez puis rallumez le compteur pour voir les nouvelles traces.": "Updated. Turn the device off and on again to see the new tracks.",
+"Modifié sur Komoot le": "Modified on Komoot on",
+"Montée": "Ascent",
+"Ne débranchez pas le compteur et ne l'éteignez pas pendant l'écriture.": "Do not unplug or turn off the device during the write.",
+"Ne lancez pas FlowSync : il téléchargerait une ancienne carte de Polar à la place.": "Do not run FlowSync: it would download an old Polar map instead.",
+"Non synchronisé": "Not synchronised",
+"Outil ◎ : posez un centre pour ajouter un carré.": "◎ tool: place a centre to add a square.",
+"Outils à installer": "Tools to install",
+"Parcours du compteur": "Device routes",
+"Parcours supprimé. Choisissez un autre parcours.": "Route deleted. Choose another route.",
+"Pas de GPS pour cette séance.": "No GPS for this session.",
+"Pas de courbes de niveau.": "No contour lines.",
+"Placer le centre d'un carré (clic)": "Place the centre of a square (click)",
+"Plus tard": "Later",
+"Polygone : un clic par sommet, double-clic pour finir": "Polygon: one click per vertex, double-click to finish",
+"Programme arrêté, la session du compteur est refermée. Vous pouvez fermer cette fenêtre.": "App stopped, the device session is closed. You can close this window.",
+"Promesse rejetée :": "Rejected promise:",
+"Préparer la carte…": "Prepare the map…",
+"Rapport créé (": "Report created (",
+"Rectangle : glissez d'un coin à l'autre (ou deux clics)": "Rectangle: drag from one corner to the other (or two clicks)",
+"Remettre sur le compteur": "Put back on the device",
+"Reprendre l'écriture": "Resume the write",
+"Reprendre l'écriture de": "Resume writing",
+"Routes, chemins, eau, bois, lieux-dits. Sans commerces ni bâtiments.": "Roads, paths, water, woods, place names. No shops or buildings.",
+"Réessayer": "Try again",
+"Régler l'heure": "Set the time",
+"Régler l'heure du compteur sur celle de ce PC ?": "Set the device's time to this PC's time?",
+"Saisissez l'adresse e-mail et le mot de passe.": "Enter the e-mail address and the password.",
+"Se déconnecter": "Sign out",
+"Se déconnecter de Komoot ? Le jeton enregistré sur ce PC sera effacé.": "Sign out of Komoot? The token stored on this PC will be erased.",
+"Strava n'accepte l'envoi que par sa page web. Le fichier FIT de cette séance va être téléchargé, puis la page d'envoi de Strava va s'ouvrir dans votre navigateur : choisissez-y ce fichier.": "Strava only accepts uploads through its web page. This session's FIT file will be downloaded, then Strava's upload page will open in your browser: choose the file there.",
+"Supprimer cette carte de ce PC ? (Le compteur n'est pas modifié.)": "Delete this map from this PC? (The device is not modified.)",
+"Supprimé. Redémarrez le compteur pour actualiser sa liste.": "Deleted. Restart the device to refresh its list.",
+"Synchro non vérifiée": "Sync not checked",
+"Synchronisé": "Synchronised",
+"Séance envoyée à Komoot.": "Session sent to Komoot.",
+"Taille estimée": "Estimated size",
+"Thème : automatique (selon Windows)": "Theme: automatic (follows Windows)",
+"Thème : clair": "Theme: light",
+"Thème : sombre": "Theme: dark",
+"Trier par": "Sort by",
+"Télécharge le FIT puis ouvre la page d'envoi de Strava": "Downloads the FIT then opens Strava's upload page",
+"Téléchargement :": "Download:",
+"Télécharger et vérifier": "Download and verify",
+"Une autre opération est en cours : réessayez dans un instant.": "Another operation is in progress: try again in a moment.",
+"Une autre opération est en cours sur le compteur : attendez la fin, puis réessayez.": "Another operation is in progress on the device: wait for it to finish, then try again.",
+"Une autre opération est en cours sur le compteur : réessayez dans un instant.": "Another operation is in progress on the device: try again in a moment.",
+"Une clé est déjà enregistrée : collez-en une autre pour la remplacer": "A key is already stored: paste another one to replace it",
+"Une clé est déjà enregistrée sur ce PC. Pour la remplacer, collez la nouvelle clé d'API.": "A key is already stored on this PC. To replace it, paste the new API key.",
+"Une courbe tous les 100 m (500 m plus marquées). Environ 4 % de taille en plus.": "A line every 100 m (every 500 m more marked). About 4 % bigger.",
+"Une fabrication de carte est déjà en cours : suivez-la ci-dessous ou dans l'onglet Carte.": "A map build is already in progress: follow it below or in the Map tab.",
+"Une fabrication est déjà en cours : elle est suivie ci-dessous.": "A build is already in progress: it is followed below.",
+"Une lecture est en cours : elle sera interrompue proprement. Quitter ?": "A read is in progress: it will be stopped cleanly. Quit?",
+"Une opération": "An operation",
+"Vélo": "Bike",
+"Zone centrée sur": "Area centred on",
+"Zone de la nouvelle carte": "New map area",
+"arrêtée": "stopped",
+"aucun": "none",
+"aucune": "none",
+"ce parcours": "this route",
+"créé": "created",
+"depuis Komoot": "from Komoot",
+"du compteur": "of the device",
+"déjà téléchargé": "already downloaded",
+"déjà téléchargées": "already downloaded",
+"en avance": "ahead",
+"en retard": "behind",
+"et altitudes": "and elevation",
+"et vérifié": "and verified",
+"fichier": "file",
+"fichier absent": "file missing",
+"le": "on",
+"non synchronisé": "not synchronised",
+"parcours": "route",
+"parcours coché": "ticked route",
+"pas sur le compteur": "not on the device",
+"sort de la carte du compteur": "goes off the device's map",
+"sur le compteur": "on the device",
+"synchro non vérifiée": "sync not checked",
+"synchronisé": "synchronised",
+"terminée en": "finished in",
+"tracé": "track",
+"unités impériales": "imperial units",
+"unités métriques": "metric units",
+"· carré": "· square",
+"· modifié": "· modified",
+"· niveau détaillé actif": "· detailed level on",
+"· taille estimée": "· estimated size",
+"À jour": "Up to date",
+"À télécharger": "To download",
+"À écrire": "To write",
+"Écart avec ce PC :": "Gap with this PC:",
+"Échec :": "Failed:",
+"Écrire": "Write",
+"Écrire cette carte sur le compteur": "Write this map to the device",
+"Écrire sur le compteur": "Write to the device",
+"Écrit et vérifié": "Written and verified",
+"Écrit mais relecture différente": "Written but read-back differs",
+"Écriture sur le compteur…": "Writing to the device…",
+"à écrire": "to write",
+"— cliquer pour changer": "— click to change",
+"— configuré": "— set up",
+"— connecté (": "— connected (",
+"— non configuré": "— not set up",
+"— non connecté": "— not connected",
+"•••••• clé enregistrée sur ce PC": "•••••• key stored on this PC",
+"← Retour à la liste Komoot": "← Back to the Komoot list",
+"✓ Envoyé": "✓ Sent",
+"Ouvrir la page d'envoi Strava": "Open the Strava upload page",
+"Code source sur GitHub": "Source code on GitHub",
+"Zoom arrière": "Zoom out",
+"Zoom avant": "Zoom in",
+"Recentrer : zoom au mieux sur le tracé ou la zone de travail": "Recentre: best zoom on the track or the work area",
+"Recentrer": "Recentre",
+"© contributeurs OpenStreetMap · molette : zoom · glisser : déplacer": "© OpenStreetMap contributors · wheel: zoom · drag: pan",
+"tr/min": "rpm",
+"Vitesse moy.": "Avg speed",
+"Vitesse max.": "Max speed",
+"FC moy.": "Avg HR",
+"FC max.": "Max HR",
+"FC repos": "Resting HR",
+"Cadence moy.": "Avg cadence",
+"Descente": "Descent",
+"Altitude max.": "Max altitude",
+"Altitude min.": "Min altitude",
+"Poids": "Weight",
+"Taille": "Height",
+"Nom": "Name",
+"· D+": "· Asc.",
+"D+": "Asc.",
+"Komoot + compteur ·": "Komoot + device ·",
+"Compteur ·": "Device ·",
+"jamais": "never",
+"Nom sur le compteur": "Name on the device",
+"Détaillé (HD)": "Detailed (HD)",
+"Fabriquer une carte sur mesure": "Build a custom map",
+"Ouvrir l'éditeur avec la carte": "Open the editor with the map",
+"Autour de mes parcours du compteur": "Around my device routes",
+"Marge autour des tracés": "Margin around the tracks",
+"Marge autour des tracés :": "Margin around the tracks:",
+"Calculer la zone": "Compute the area",
+"Français": "French",
+"Unités d'affichage": "Display units",
+"Selon le compteur": "Follows the device",
+"Kilomètres (km, km/h, m)": "Kilometres (km, km/h, m)",
+"Miles (mi, mph, ft)": "Miles (mi, mph, ft)",
+"Le compteur est réglé en unités impériales.": "The device is set to imperial units.",
+"Le compteur est réglé en unités métriques.": "The device is set to metric units.",
+"Niveau de détail": "Level of detail",
+"Nom de la carte": "Map name",
+"La carte actuelle du compteur est copiée sur ce PC avant d'être remplacée. Données © contributeurs OpenStreetMap.": "The device's current map is copied to this PC before it is replaced. Data © OpenStreetMap contributors.",
+"Altitudes : SRTM (NASA / USGS, domaine public), via les « Terrain Tiles » d'AWS.": "Elevation: SRTM (NASA / USGS, public domain), via AWS “Terrain Tiles”.",
+"Altitudes (SRTM)": "Elevation (SRTM)",
+"Itinéraires planifiés": "Planned routes",
+"Sorties enregistrées": "Recorded rides",
+"Actualiser la liste": "Refresh the list",
+"Les miniatures et la comparaison des traces demandent le GPX de chaque parcours : il est téléchargé dans le dossier « komoot » de vos données, avec une courte pause entre deux requêtes. Interface interne de Komoot, non officielle.": "Thumbnails and track comparison need the GPX of each route: it is downloaded into the “komoot” folder of your data, with a short pause between requests. Komoot's internal, unofficial interface.",
+"Le compteur ne garde qu'une carte à la fois. Choisissez ce qu'elle doit couvrir : les bandes suivent vos tracés, avec une marge au cas où vous dévieriez. Les données viennent d'OpenStreetMap (© contributeurs OpenStreetMap), sans bâtiments ni numéros de rue, avec les commerces et services utiles à vélo.": "The device keeps only one map at a time. Choose what it should cover: the bands follow your tracks, with a margin in case you stray. The data comes from OpenStreetMap (© OpenStreetMap contributors), without buildings or street numbers, with shops and services useful to cyclists.",
+"Carte à fabriquer": "Map to build",
+"Connexions": "Connections",
+"Heure": "Time",
+"Mes cartes": "My maps",
+"Compteur de": "Device of",
+"Modifier le profil": "Edit profile",
+"Enregistrer sur le compteur": "Save to the device",
+"Prénom": "First name",
+"Nom de famille": "Last name",
+"FC max (bpm)": "Max HR (bpm)",
+"FC repos (bpm)": "Resting HR (bpm)",
+"Rien n'a changé.": "Nothing has changed.",
+"Écriture…": "Writing…",
+"Écrire ces changements dans le compteur ?": "Write these changes to the device?",
+"Une copie du profil actuel est d'abord enregistrée sur ce PC (dossier « sauvegarde-profil »), puis le compteur est relu pour vérifier. Éteignez puis rallumez le compteur pour voir le changement.": "A copy of the current profile is first saved on this PC (“sauvegarde-profil” folder), then the device is read back to check. Turn the device off and on again to see the change.",
+"Le compteur est relu pour vérifier. Éteignez puis rallumez le compteur pour voir le changement.": "The device is read back to check. Turn the device off and on again to see the change.",
+"L'e-mail et l'identifiant Polar ne sont pas modifiables. Une copie du profil actuel est d'abord enregistrée sur ce PC.": "The Polar e-mail and ID cannot be edited. A copy of the current profile is first saved on this PC.",
+"Remet sur le compteur le profil tel qu'il était avant la dernière modification": "Puts the profile back on the device as it was before the last change",
+"Remettre sur le compteur le profil de la dernière sauvegarde ?": "Put the profile from the last backup back on the device?",
+"Profil modifié et vérifié. Éteignez puis rallumez le compteur pour voir le changement.": "Profile changed and checked. Turn the device off and on again to see the change.",
+"Profil remis comme dans la sauvegarde. Éteignez puis rallumez le compteur pour voir le changement.": "Profile restored from the backup. Turn the device off and on again to see the change.",
+"Éteignez puis rallumez le compteur pour voir le changement.": "Turn the device off and on again to see the change.",
+"Rien à modifier : les valeurs sont déjà celles du compteur.": "Nothing to change: the values are already the device's.",
+"poids": "weight",
+"taille": "height",
+"prénom": "first name",
+"nom": "last name",
+"Aucune sauvegarde de profil trouvée.": "No profile backup found.",
+"Sauvegarde de profil introuvable.": "Profile backup not found.",
+"E-mail Polar": "Polar e-mail",
+"Identifiant Polar": "Polar ID",
+"Principales": "Main",
+"Komoot / GPX inclus": "Komoot / GPX included",
+"Courbes de niveau": "Contour lines",
+"Mise à jour disponible": "Update available",
+"Une version plus récente est publiée sur GitHub : cliquer pour ouvrir sa page (rien n'est téléchargé ni installé automatiquement)": "A newer version is published on GitHub: click to open its page (nothing is downloaded or installed automatically)",
+"Vérifier les mises à jour (une fois par jour, via GitHub)": "Check for updates (once a day, via GitHub)",
+"Rechercher maintenant": "Check now",
+"La vérification est une simple requête anonyme vers GitHub (seul le numéro de version du programme est transmis). Rien n'est téléchargé ni installé : vous êtes seulement prévenu qu'une nouvelle version existe.": "The check is a single anonymous request to GitHub (only the program's version number is sent). Nothing is downloaded or installed: you are just told that a new version exists.",
+"Vérification impossible (pas de connexion ?)": "Check failed (no connection?)",
+"Aucune version publiée pour l'instant.": "No release published yet.",
+"Recherche…": "Searching…",
+"FC max": "Max HR",
+"Connectez-vous avec votre compte Komoot pour retrouver vos itinéraires ici et les envoyer au compteur. Votre mot de passe sert uniquement à la connexion et n'est": "Sign in with your Komoot account to find your routes here and send them to the device. Your password is only used to sign in and is",
+"pas enregistré": "not stored",
+": Komoot renvoie un jeton, conservé sur ce PC et chiffré par Windows.": ": Komoot returns a token, kept on this PC and encrypted by Windows.",
+": Komoot renvoie un jeton, conservé sur ce PC et chiffré par Windows. Avec une connexion Google ou Apple, vous n'avez peut-être pas de mot de passe Komoot.": ": Komoot returns a token, kept on this PC and encrypted by Windows. If you sign in with Google or Apple, you may not have a Komoot password.",
+"Connectez-vous pour envoyer vos séances vers Komoot et retrouver vos itinéraires dans l'onglet Parcours. Votre mot de passe sert uniquement à la connexion et n'est": "Sign in to send your sessions to Komoot and find your routes in the Routes tab. Your password is only used to sign in and is",
+"Adresse e-mail Komoot": "Komoot e-mail address",
+"Mot de passe": "Password",
+"Se connecter": "Sign in",
+"Actualiser": "Refresh",
+"Quitter": "Quit",
+"Parcourir…": "Browse…",
+"Appliquer": "Apply",
+"Retirer": "Remove",
+"Supprimer": "Delete",
+"Annuler": "Cancel",
+"Annuler la sélection": "Clear the selection",
+"Tout": "All",
+"Date": "Date",
+"Étapes": "Steps",
+"Fermer": "Close",
+"Écrire les parcours à écrire": "Write the routes to write"
+},
+"pat": [
+[
+"chemin distant refusé: {0}",
+"remote path refused: {0}"
+],
+[
+"erreur sur {0} (taille annoncée {1}): {2}: {3}",
+"error on {0} (announced size {1}): {2}: {3}"
+],
+[
+"taille inattendue pour {0}: reçu {1}, annoncé {2}",
+"unexpected size for {0}: received {1}, announced {2}"
+],
+[
+"{0} fichiers à vérifier sur le compteur",
+"{0} files to check on the device"
+],
+[
+"Courbes de niveau: grille {0} x {1}, 1 point sur {2} (pas ≈ {3} m), équidistance {4} m",
+"Contour lines: grid {0} x {1}, 1 point out of {2} (step ≈ {3} m), interval {4} m"
+],
+[
+"impossible de se connecter au V650 ({0}). Débranchez puis rebranchez le câble USB et réessayez.",
+"cannot connect to the V650 ({0}). Unplug and replug the USB cable, then try again."
+],
+[
+"ignoré {0}: {1} {2}",
+"skipped {0}: {1} {2}"
+],
+[
+"{0} séances exportées dans {1}",
+"{0} sessions exported to {1}"
+],
+[
+"GPX de « {0} »",
+"GPX of “{0}”"
+],
+[
+"Lecture terminée: {0} fichiers nouveaux ou modifiés, {1} erreurs",
+"Reading finished: {0} new or changed files, {1} errors"
+],
+[
+"Séance {0} envoyée à Intervals.icu",
+"Session {0} sent to Intervals.icu"
+],
+[
+"Séance {0} envoyée à Komoot",
+"Session {0} sent to Komoot"
+],
+[
+"Séance {0} exportée en GPX",
+"Session {0} exported as GPX"
+],
+[
+"Séance {0}: envoi à Intervals.icu impossible ({1}); nouvel essai à la prochaine lecture",
+"Session {0}: upload to Intervals.icu failed ({1}); will retry at the next read"
+],
+[
+"Séance {0}: envoi à Komoot impossible ({1}); nouvel essai à la prochaine lecture",
+"Session {0}: upload to Komoot failed ({1}); will retry at the next read"
+],
+[
+"Séance {0}: export GPX impossible ({1})",
+"Session {0}: GPX export failed ({1})"
+],
+[
+"Komoot a refusé ce fichier (HTTP {0}). Vous pouvez l'importer à la main depuis komoot.com.",
+"Komoot refused this file (HTTP {0}). You can import it by hand from komoot.com."
+],
+[
+"Komoot a répondu par une erreur (HTTP {0}).",
+"Komoot answered with an error (HTTP {0})."
+],
+[
+"Komoot est injoignable ({0}). Vérifiez votre connexion internet.",
+"Komoot cannot be reached ({0}). Check your internet connection."
+],
+[
+"Altitudes {0}: pas de tuile (mer), ignorée",
+"Elevation {0}: no tile (sea), ignored"
+],
+[
+"Fabrication de la carte ({0} km², mode {1}, mémoire {2} Go)",
+"Building the map ({0} km², mode {1}, memory {2} GB)"
+],
+[
+"Osmosis travaille depuis {0}",
+"Osmosis has been working for {0}"
+],
+[
+"Téléchargement de {0} (Geofabrik)",
+"Downloading {0} (Geofabrik)"
+],
+[
+"Téléchargement des altitudes {0} (SRTM, environ {1} Mo)",
+"Downloading elevation {0} (SRTM, about {1} MB)"
+],
+[
+"Téléchargement: {0} ({1} Mo) depuis {2}",
+"Downloading: {0} ({1} MB) from {2}"
+],
+[
+"altitudes {0} illisibles ou incomplètes ({1}): réessayez",
+"elevation {0} unreadable or incomplete ({1}): try again"
+],
+[
+"code de sortie d'Osmosis: {0} (non significatif: voir le contrôle du fichier)",
+"Osmosis exit code: {0} (not meaningful: see the file check)"
+],
+[
+"empreinte inattendue pour {0} (fichier corrompu ou modifié): téléchargement refusé",
+"unexpected checksum for {0} (corrupted or modified file): download refused"
+],
+[
+"la carte n'a pas été produite ({0}). Fin du journal d'Osmosis:",
+"the map was not produced ({0}). End of Osmosis log:"
+],
+[
+"taille déclarée {0} différente de la taille réelle {1} (fichier incomplet)",
+"declared size {0} differs from actual size {1} (incomplete file)"
+],
+[
+"téléchargement des altitudes impossible ({0}: HTTP {1})",
+"elevation download failed ({0}: HTTP {1})"
+],
+[
+"version Mapsforge {0}: le compteur lit la version 3",
+"Mapsforge version {0}: the device reads version 3"
+],
+[
+"{0}: installé",
+"{0}: installed"
+],
+[
+"· mémoire utilisée {0} Go",
+"· memory used {0} GB"
+],
+[
+"Carte envoyée en {0} s",
+"Map sent in {0} s"
+],
+[
+"Carte « {0} » prête: {1} Mo (données OpenStreetMap du {2})",
+"Map “{0}” ready: {1} MB (OpenStreetMap data from {2})"
+],
+[
+"Envoyer la carte ({0} Mo)",
+"Send the map ({0} MB)"
+],
+[
+"Lecture de la carte actuelle du compteur ({0} Mo) pour en garder une copie",
+"Reading the device's current map ({0} MB) to keep a copy"
+],
+[
+"Télécharger et installer {0} ({1} Mo)",
+"Download and install {0} ({1} MB)"
+],
+[
+"Télécharger les altitudes SRTM : {0} (environ {1} Mo)",
+"Download SRTM elevation: {0} (about {1} MB)"
+],
+[
+"Télécharger les données OpenStreetMap : {0}",
+"Download OpenStreetMap data: {0}"
+],
+[
+"Zone très étendue ({0} km², {1} régions, {2} Mo de données) : le téléchargement et la fabrication peuvent durer de nombreuses minutes et demander beaucoup de mémoire. Pour aller plus vite, décochez les parcours très longs ou lointains, ou dessinez une zone plus restreinte.",
+"Very large area ({0} km², {1} regions, {2} MB of data): downloading and building can take many minutes and need a lot of memory. To go faster, untick very long or distant routes, or draw a smaller area."
+],
+[
+"batterie du compteur trop basse ({0} %): branchez-le et chargez-le d'abord",
+"device battery too low ({0} %): plug it in and charge it first"
+],
+[
+"Écriture de la carte ({0} Mo)",
+"Writing the map ({0} MB)"
+],
+[
+"bannière inattendue: {0}",
+"unexpected banner: {0}"
+],
+[
+"jeton attendu avant la trame suivante, reçu {0} (après {1} octets de {2})",
+"token expected before the next frame, received {0} (after {1} bytes of {2})"
+],
+[
+"refusé par le compteur ({0} de {1}): code {2} ({3})",
+"refused by the device ({0} of {1}): code {2} ({3})"
+],
+[
+"réponse inattendue à l'opération {0} sur {1}: {2}",
+"unexpected answer to operation {0} on {1}: {2}"
+],
+[
+"Intervals.icu a refusé la clé d'API (HTTP {0}). Vérifiez qu'il s'agit bien de la clé générée dans Réglages > Développeur sur intervals.icu (pas de l'identifiant client ni du secret), copiée en entier sans espace. Laissez l'identifiant d'athlète à 0.",
+"Intervals.icu refused the API key (HTTP {0}). Check that it is the key generated in Settings > Developer on intervals.icu (not the client id or the secret), copied in full without spaces. Leave the athlete id at 0."
+],
+[
+"L'identifiant d'athlète « {0} » a été refusé par Intervals.icu ; la clé est bonne, l'identifiant « 0 » (l'athlète de la clé) est utilisé.",
+"The athlete id “{0}” was refused by Intervals.icu; the key is good, so id “0” (the key's own athlete) is used."
+],
+[
+"réseau: {0}",
+"network: {0}"
+],
+[
+"(il indique {0}).",
+"(it shows {0})."
+],
+[
+"(le compteur a {0}environ 2 Go de libre)",
+"(the device has {0}about 2 GB free)"
+],
+[
+"({0}{1}). Elle n'est pas encore sur le compteur : rien n'est écrit sans votre accord.",
+"({0}{1}). It is not on the device yet: nothing is written without your approval."
+],
+[
+", avec les données OpenStreetMap du {0} (il y a {1} j)",
+", with OpenStreetMap data from {0} ({1} d ago)"
+],
+[
+", données OpenStreetMap du {0}",
+", OpenStreetMap data from {0}"
+],
+[
+": la trace Komoot est différente de celle du compteur (écart moyen {0} {1}, {2} % de longueur). Sur la carte : trait vert = compteur, pointillés orange = Komoot.",
+": the Komoot track differs from the device's (mean gap {0} {1}, {2} % in length). On the map: green line = device, orange dotted = Komoot."
+],
+[
+": la trace du compteur correspond à celle de Komoot (écart moyen {0} {1}, longueur à {2} % près).",
+": the device's track matches Komoot's (mean gap {0} {1}, length within {2} %)."
+],
+[
+": {0} {1} sur {2} ({3} %) sont hors carte{4}. Sur ces portions, le compteur n'affichera que le tracé.",
+": {0} {1} of {2} ({3} %) are outside the map{4}. On those parts the device will only show the track."
+],
+[
+"Analyse impossible : {0}",
+"Cannot analyse: {0}"
+],
+[
+"Carte actuelle du compteur : {0}.",
+"Device's current map: {0}."
+],
+[
+"Dernière carte écrite par ce programme : « {0} ».{1}",
+"Last map written by this app: “{0}”.{1}"
+],
+[
+"Données OpenStreetMap : {0} — à télécharger :",
+"OpenStreetMap data: {0} — to download:"
+],
+[
+"Durée estimée : environ {0} minutes",
+"Estimated time: about {0} minutes"
+],
+[
+"Envoi {0}/{1}…",
+"Sending {0}/{1}…"
+],
+[
+"Envoyer {0} séance(s) vers Intervals.icu ? Une séance déjà reçue de Polar Flow peut créer un doublon.",
+"Send {0} session(s) to Intervals.icu? A session already received from Polar Flow can create a duplicate."
+],
+[
+"Envoyer {0} séance(s) vers Komoot ? Elles seront ajoutées à votre compte Komoot avec la visibilité par défaut de ce compte (réglage de Komoot). Une séance que Komoot connaît déjà n'est pas recréée.",
+"Send {0} session(s) to Komoot? They will be added to your Komoot account with that account's default visibility (a Komoot setting). A session Komoot already has is not created again."
+],
+[
+"Fabriquer cette carte ({0}{1}) ? {2}Durée estimée : environ {3} minutes. Le compteur n'est pas modifié à cette étape.",
+"Build this map ({0}{1})? {2}Estimated time: about {3} minutes. The device is not modified at this step."
+],
+[
+"Fabriquer cette carte ? {0}Durée estimée : environ {1} minutes. Le compteur n'est pas modifié à cette étape.",
+"Build this map? {0}Estimated time: about {1} minutes. The device is not modified at this step."
+],
+[
+"Fichier GPX « {0} » du dossier « komoot » de vos données (pas de numéro Komoot reconnu dans son nom).",
+"GPX file “{0}” in the “komoot” folder of your data (no Komoot number recognised in its name)."
+],
+[
+"Heure réglée : {0}",
+"Time set: {0}"
+],
+[
+"Impossible d'afficher ce parcours : {0}",
+"Cannot display this route: {0}"
+],
+[
+"Komoot et GPX ({0})",
+"Komoot and GPX ({0})"
+],
+[
+"Komoot n° {0} : numéro noté dans le parcours du compteur par FlowSync. Aucune trace Komoot sur ce PC : le programme n'a pas interrogé Komoot, la trace affichée est celle du compteur.",
+"Komoot no. {0}: number noted in the device's route by FlowSync. No Komoot track on this PC: the app did not query Komoot, the track shown is the device's."
+],
+[
+"Komoot n° {0} : numéro noté dans le parcours par FlowSync, et GPX Komoot « {1} » présent dans le dossier « komoot » de vos données.",
+"Komoot no. {0}: number noted in the route by FlowSync, and Komoot GPX “{1}” present in the “komoot” folder of your data."
+],
+[
+"Komoot n° {0} : trace téléchargée, fichier « {1} » dans le dossier « komoot » de vos données.",
+"Komoot no. {0}: track downloaded, file “{1}” in the “komoot” folder of your data."
+],
+[
+"Le compteur est {0} d'environ",
+"The device is {0} by about"
+],
+[
+"Le compteur garde 20 favoris au plus : il y en a déjà {0}, vous en ajoutez {1}. Supprimez-en d'abord.",
+"The device keeps at most 20 favourites: there are already {0}, you are adding {1}. Delete some first."
+],
+[
+"Lecture du compteur… {0} / {1} fichiers",
+"Reading the device… {0} / {1} files"
+],
+[
+"Liste de votre compte Komoot (n° {0}) : trace pas encore téléchargée.",
+"From your Komoot account (no. {0}): track not downloaded yet."
+],
+[
+"Mettre à jour ({0})",
+"Update ({0})"
+],
+[
+"Mettre à jour {0} parcours du compteur avec la trace Komoot ? • {1} Le nom et le favori sont conservés ; l'ancien fichier est copié sur ce PC.",
+"Update {0} route(s) on the device with the Komoot track? • {1} The name and favourite are kept; the old file is copied to this PC."
+],
+[
+"Nom d'origine : « {0} » (accents et caractères spéciaux retirés)",
+"Original name: “{0}” (accents and special characters removed)"
+],
+[
+"Outils de fabrication à installer une fois (Java 17, Osmosis, plugin Mapsforge) : {0}",
+"Build tools to install once (Java 17, Osmosis, Mapsforge plugin): {0}"
+],
+[
+"Supprimer {0} du compteur ? • {1} C'est définitif. Les séances ne sont pas touchées.",
+"Delete {0} from the device? • {1} This is final. Sessions are not touched."
+],
+[
+"Sur le compteur ({0})",
+"On the device ({0})"
+],
+[
+"Sur le compteur · dossier {0} · {1} points (tracé tel que stocké sur le compteur)",
+"On the device · folder {0} · {1} points (track as stored on the device)"
+],
+[
+"Téléchargement du GPX de « {0} » depuis Komoot…",
+"Downloading the GPX of “{0}” from Komoot…"
+],
+[
+"Télécharger des données plus récentes (nouvelles routes…) : {0}",
+"Download more recent data (new roads…): {0}"
+],
+[
+"Une écriture de carte a été interrompue (commencée le {0} UTC) : la carte du compteur n'est peut-être pas complète.",
+"A map write was interrupted (started on {0} UTC): the device's map may be incomplete."
+],
+[
+"Vous avez demandé une nouvelle zone sur le compteur, autour de {0}° N · {1}° E. Elle n'est pas encore installée.",
+"You requested a new area on the device, around {0}° N · {1}° E. It is not installed yet."
+],
+[
+"avec les données OpenStreetMap du {0}",
+"with OpenStreetMap data from {0}"
+],
+[
+"en cours depuis {0}{1}",
+"in progress for {0}{1}"
+],
+[
+"fabriquée le {0}{1}{2}",
+"built on {0}{1}{2}"
+],
+[
+"hors carte{0}",
+"outside the map{0}"
+],
+[
+"{0} connecté",
+"{0} connected"
+],
+[
+"{0} en cours — la lecture du compteur reprendra ensuite…",
+"{0} in progress — reading the device will resume afterwards…"
+],
+[
+"{0} envoi(s) à refaire",
+"{0} upload(s) to redo"
+],
+[
+"{0} envoyée(s) à Intervals",
+"{0} sent to Intervals"
+],
+[
+"{0} exportée(s) en GPX",
+"{0} exported as GPX"
+],
+[
+"{0} itinéraires dans votre compte.",
+"{0} routes in your account."
+],
+[
+"{0} la carte « {1} » ({2}) sur le compteur ? • La carte actuelle du compteur est d'abord copiée sur ce PC si ce n'est pas déjà fait. • Le compteur doit rester branché pendant l'opération (environ {3} minutes). • Ensuite, éteignez puis rallumez le compteur.",
+"{0} the map “{1}” ({2}) to the device?\n\n• The device's current map is first copied to this PC if that is not already done.\n• The device must stay plugged in during the operation (about {3} minutes).\n• Then turn the device off and on again."
+],
+[
+"{0} parcours écrit{1}{2}.{3} Éteignez puis rallumez le compteur pour les voir.",
+"{0} route(s) written{1}{2}.{3} Turn the device off and on again to see them."
+],
+[
+"{0} séance(s) étaient déjà sur Komoot.",
+"{0} session(s) were already on Komoot."
+],
+[
+"{0} sélectionnée(s)",
+"{0} selected"
+],
+[
+"{0} traces Komoot ne sont pas encore sur ce PC. Les télécharger maintenant (environ {1} secondes) ? Sinon, seuls les parcours déjà disponibles sont cochés.",
+"{0} Komoot tracks are not on this PC yet. Download them now (about {1} seconds)? Otherwise only the routes already available are ticked."
+],
+[
+"{0} à écrire",
+"{0} to write"
+],
+[
+"{0}/{1}/{2} à {3} (UTC)",
+"{0}/{1}/{2} at {3} (UTC)"
+],
+[
+"{0}Lecture de {1} trace(s) sur Komoot…",
+"{0}Reading {1} track(s) on Komoot…"
+],
+[
+"{0}Lecture des traces sur Komoot… {1}",
+"{0}Reading tracks on Komoot… {1}"
+],
+[
+"{0}Mise à jour sur le compteur : {1}…",
+"{0}Updating on the device: {1}…"
+],
+[
+"{0}Écriture sur le compteur {1} / {2} : {3}…",
+"{0}Writing to the device {1} / {2}: {3}…"
+],
+[
+"{0} · vélo · {1} pause(s)",
+"{0} · cycling · {1} pause(s)"
+],
+[
+"· Komoot : liste du {0}",
+"· Komoot: list of {0}"
+],
+[
+"· durée annoncée ≈ {0} min",
+"· announced time ≈ {0} min"
+],
+[
+"Écrire ({0})",
+"Write ({0})"
+],
+[
+"Écrire les {0} parcours à écrire",
+"Write the {0} routes to write"
+],
+[
+"Écrire {0} parcours sur le compteur ? • {1} À tracé standard (comme FlowSync). Redémarrez le compteur ensuite.",
+"Write {0} route(s) to the device? • {1} At standard track quality (like FlowSync). Restart the device afterwards."
+],
+[
+"Écrire « {0} » sur le compteur ({1})",
+"Write “{0}” to the device ({1})"
+],
+[
+"Écrire « {0} » sur le compteur ?",
+"Write “{0}” to the device?"
+],
+[
+"Écrite par ce programme{0}{1}.",
+"Written by this app{0}{1}."
+],
+[
+"{0} — cliquer pour changer",
+"{0} — click to change"
+],
+[
+"— connecté ({0})",
+"— connected ({0})"
+],
+[
+"({0} Ko, 4 fichiers de 1 Mo au plus, les plus anciens sont effacés)",
+"({0} KB, 4 files of 1 MB at most, the oldest are erased)"
+],
+[
+"FRÉQUENCE CARDIAQUE ({0})",
+"HEART RATE ({0})"
+],
+[
+"VITESSE ({0})",
+"SPEED ({0})"
+],
+[
+"PROFIL D'ALTITUDE ({0})",
+"ELEVATION PROFILE ({0})"
+],
+[
+"Compteur {0}",
+"Device {0}"
+],
+[
+"À écrire {0}",
+"To write {0}"
+],
+[
+"Tous {0}",
+"All {0}"
+],
+[
+"Nom {0}",
+"Name {0}"
+],
+[
+"Dénivelé + {0}",
+"Ascent + {0}"
+],
+[
+"Créé le {0}",
+"Created on {0}"
+],
+[
+"Créé le {0} · Modifié sur Komoot le {1}",
+"Created on {0} · Modified on Komoot on {1}"
+],
+[
+"Modifié sur Komoot le {0}",
+"Modified on Komoot on {0}"
+],
+[
+"créé {0}",
+"created {0}"
+],
+[
+"modifié {0}",
+"modified {0}"
+],
+[
+"· modifié {0}",
+"· modified {0}"
+],
+[
+"{0} / 20 favoris",
+"{0} / 20 favourites"
+],
+[
+"· {0} / 20 favoris",
+"· {0} / 20 favourites"
+],
+[
+"· {0} / 20 favoris · Komoot : liste du {1}",
+"· {0} / 20 favourites · Komoot: list of {1}"
+],
+[
+"Origine : {0}",
+"Origin: {0}"
+],
+[
+"Nouveau parcours · fichier {0} · {1} points dans le GPX",
+"New route · file {0} · {1} points in the GPX"
+],
+[
+"Standard : {0} points (écart max {1} {2}, comme FlowSync) · HD : {3} points (écart max {4} {5})",
+"Standard: {0} points (max gap {1} {2}, like FlowSync) · HD: {3} points (max gap {4} {5})"
+],
+[
+"Carré autour de {0}° N · {1}° E, de",
+"Square around {0}° N · {1}° E, of"
+],
+[
+"{0} · unités métriques · {1}",
+"{0} · metric units · {1}"
+],
+[
+"{0} · unités impériales · {1}",
+"{0} · imperial units · {1}"
+],
+[
+"{0} parcours",
+"{0} routes"
+],
+[
+"{0} de côté",
+"{0} side"
+],
+[
+"{0} tuile ({1})",
+"{0} tile ({1})"
+],
+[
+"{0} tuiles ({1})",
+"{0} tiles ({1})"
+],
+[
+"Vos itinéraires Komoot s'ajoutent à la liste de gauche ; ceux qui sont déjà sur le compteur n'y figurent qu'une fois, avec leur état de synchronisation. Dernière liste : {0}.",
+"Your Komoot routes are added to the list on the left; those already on the device appear only once, with their sync status. Last list: {0}."
+],
+[
+"Télécharger les GPX manquants ({0})",
+"Download the missing GPX files ({0})"
+],
+[
+"Poids ({0})",
+"Weight ({0})"
+],
+[
+"Taille ({0})",
+"Height ({0})"
+],
+[
+"Revenir à la sauvegarde du {0}",
+"Restore the backup of {0}"
+],
+[
+"{0}: valeur invalide",
+"{0}: invalid value"
+],
+[
+"{0}: entre {1} et {2}",
+"{0}: between {1} and {2}"
+],
+[
+"{0}: 1 à {1} caractères, sans caractère de contrôle",
+"{0}: 1 to {1} characters, no control characters"
+],
+[
+"{0}: champ absent du profil du compteur",
+"{0}: field missing from the device's profile"
+],
+[
+"{0}: champ absent du compte du compteur",
+"{0}: field missing from the device's account"
+],
+[
+"champ non modifiable: {0}",
+"field cannot be edited: {0}"
+],
+[
+"la relecture de {0} ne correspond pas à ce qui a été écrit",
+"reading {0} back does not match what was written"
+],
+[
+"Version {0} disponible.",
+"Version {0} available."
+],
+[
+"Vous avez la dernière version ({0}).",
+"You have the latest version ({0})."
+],
+[
+"· {0} / 20 favoris · Komoot : liste non chargée",
+"· {0} / 20 favourites · Komoot: list not loaded"
+],
+[
+"Supprimer ({0})",
+"Delete ({0})"
+]
+]
+}

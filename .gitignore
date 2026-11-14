@@ -1,0 +1,33 @@
+# Données personnelles : ne jamais publier
+sauvegarde/
+sauvegarde-*/
+export/
+komoot/
+Komoot/
+parcours/
+cartes/
+rapports/
+carte/
+flow/
+config.json
+journal.txt
+docs/visuels/
+
+# Outils et gros fichiers téléchargés
+tools/
+*.pbf
+*.map
+*.pcapng
+*.pcap
+manualPolarV650.pdf
+*-installer/
+
+# Construction et environnement
+.venv/
+build/
+dist/
+__pycache__/
+*.pyc
+*.egg-info/
+.idea/
+.vscode/

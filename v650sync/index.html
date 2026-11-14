@@ -1,0 +1,853 @@
+<!doctype html>
+<html lang="fr"__THEME_ATTR__><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>V650 Sync</title><link rel="icon" type="image/png" href="/favicon.png">
+<style>
+/* Identité: « tableau de bord de vélo ». Chiffres condensés façon compteur, jaune-vert fluo (gilet), fond bitume.
+   Bahnschrift est livrée avec Windows 10/11; repli sur des polices condensées ou système. */
+:root{color-scheme:dark;--trace:#d6ff3a;--bg:#0b0e12;--panel:#12171d;--panel2:#171d25;--line:#232b35;--ink:#eaf0f6;--mut:#8593a3;--lime:#d6ff3a;--on-lime:#10150a;--cyan:#38d5ff;--hr:#ff4a5f;--amber:#ffb12e;--ok:#5be37d;--warn:#ffb12e;--err:#ff5d6e;
+ --num:Bahnschrift,"DIN Alternate","Roboto Condensed","Arial Narrow",system-ui,sans-serif;--txt:"Segoe UI Variable Text","Segoe UI",system-ui,sans-serif}
+@media(prefers-color-scheme:light){:root:not([data-theme=dark]){color-scheme:light;--trace:#5d7a00;--bg:#ece9df;--panel:#f8f6ef;--panel2:#f1eee4;--line:#d8d3c4;--ink:#161a1f;--mut:#6a6f76;--lime:#c9f21f;--on-lime:#10150a;--cyan:#0a87b5;--hr:#d62b42;--amber:#b87400;--ok:#1d8a3b;--warn:#a06500;--err:#c8243a}}
+:root[data-theme=light]{color-scheme:light;--trace:#5d7a00;--bg:#ece9df;--panel:#f8f6ef;--panel2:#f1eee4;--line:#d8d3c4;--ink:#161a1f;--mut:#6a6f76;--lime:#c9f21f;--on-lime:#10150a;--cyan:#0a87b5;--hr:#d62b42;--amber:#b87400;--ok:#1d8a3b;--warn:#a06500;--err:#c8243a}
+*{box-sizing:border-box}html,body{height:100%}body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.45 var(--txt);
+ background-image:radial-gradient(circle at 20% -10%,rgba(214,255,58,.06),transparent 40%),repeating-linear-gradient(135deg,transparent 0 22px,rgba(255,255,255,.012) 22px 23px)}
+a{color:inherit}button,input,select{font:inherit;color:inherit}
+.num{font-family:var(--num);font-variation-settings:"wdth" 78;font-weight:700;font-variant-numeric:tabular-nums;letter-spacing:.01em}
+button{padding:7px 14px;background:transparent;border:1.5px solid var(--line);border-radius:6px;cursor:pointer;text-transform:uppercase;font-size:12px;letter-spacing:.07em;font-weight:600}
+button:hover{border-color:var(--lime)}button.p{background:var(--lime);color:var(--on-lime);border-color:var(--lime)}button:disabled{opacity:.4;cursor:default}
+input,select{padding:7px 10px;background:var(--panel2);border:1.5px solid var(--line);border-radius:6px}
+input:focus,select:focus{outline:none;border-color:var(--lime)}
+.shell{display:grid;grid-template-columns:88px 1fr;min-height:100%}@media(max-width:760px){.shell{grid-template-columns:1fr;grid-template-rows:1fr 60px}.rail{order:2;flex-direction:row!important;justify-content:space-around;border-right:0!important;border-top:1px solid var(--line)}}
+.rail{background:var(--panel);border-right:1px solid var(--line);display:flex;flex-direction:column;align-items:center;gap:6px;padding:14px 0;position:sticky;top:0;height:100vh}@media(max-width:760px){.rail{height:60px;position:sticky;bottom:0;padding:6px}}
+.logo{font-size:22px;color:var(--trace);margin-bottom:14px;writing-mode:vertical-rl;transform:rotate(180deg);letter-spacing:.12em}@media(max-width:760px){.logo{display:none}}
+.nav{width:76px;padding:8px 0 6px;white-space:nowrap;letter-spacing:.03em;border:0;border-radius:8px;display:flex;flex-direction:column;align-items:center;gap:3px;font-size:10px;color:var(--mut)}
+.nav svg{width:24px;height:24px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}.nav.on{color:var(--on-lime);background:var(--lime)}.nav:hover{border:0;color:var(--ink)}.nav.on:hover{color:var(--on-lime)}
+.content{min-width:0}.bar{display:flex;align-items:center;gap:14px;padding:14px 22px;flex-wrap:wrap}
+.lcd{background:#06090c;border:1.5px solid var(--line);border-radius:6px;padding:5px 12px;font-size:15px;color:var(--lime);display:flex;gap:14px;align-items:baseline;box-shadow:inset 0 0 12px rgba(0,0,0,.6)}.lcd small{color:var(--mut);font-family:var(--txt);font-weight:400;font-size:10px;margin-right:3px;letter-spacing:.1em}
+.lcd span{display:flex;align-items:center;gap:6px}.lcd .ico{width:20px;height:20px;flex:none}.lcd.off{color:var(--err)}.ibtn{padding:6px 9px;display:flex;align-items:center}.ibtn svg{width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}.status{color:var(--mut);font-size:13px}
+.road{height:6px;margin:0 22px;border-radius:99px;background:var(--line);overflow:hidden;position:relative;opacity:0;transition:opacity .3s}.road.on{opacity:1}
+.road i{position:absolute;inset:0 auto 0 0;border-radius:99px;background:var(--lime);width:0;transition:width .7s cubic-bezier(.22,.8,.3,1)}.road.ind i{width:34%;background:linear-gradient(90deg,transparent,var(--lime) 35%,var(--lime) 65%,transparent);animation:glide 1.6s cubic-bezier(.45,.05,.55,.95) infinite alternate}
+@keyframes glide{from{transform:translateX(0)}to{transform:translateX(194%)}}
+.spin{display:inline-block;width:13px;height:13px;border:2px solid var(--line);border-top-color:var(--lime);border-radius:50%;animation:spin .8s linear infinite;vertical-align:-2px;margin-right:7px}@keyframes spin{to{transform:rotate(360deg)}}
+.modal{position:fixed;inset:0;z-index:50;background:rgba(4,6,9,.72);display:grid;place-items:center;padding:16px}.modal[hidden]{display:none}.modal .job{width:min(760px,94vw);max-height:92vh;overflow:auto;margin:0;padding:18px 22px;box-shadow:0 20px 60px rgba(0,0,0,.55)}.jact{display:flex;gap:10px;justify-content:flex-end;margin-top:14px}.job{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:12px 16px;margin-bottom:10px}
+.jh{display:flex;align-items:center;gap:12px;flex-wrap:wrap}.jh b{font-size:14px}.jh .jpct{color:var(--trace);font-weight:700}.jh .jel{color:var(--mut);font-size:12.5px;flex:1}
+.jbar{height:6px;border-radius:99px;background:var(--line);overflow:hidden;position:relative}.jbar i{position:absolute;inset:0 auto 0 0;border-radius:99px;background:var(--lime);width:0;transition:width .6s cubic-bezier(.22,.8,.3,1)}
+.jbar.ind i{width:34%;background:linear-gradient(90deg,transparent,var(--lime) 35%,var(--lime) 65%,transparent);animation:glide 1.6s cubic-bezier(.45,.05,.55,.95) infinite alternate}
+.job>.jbar{margin:9px 0 6px}.jsteps{list-style:none;margin:8px 0 0;padding:0}.jsteps li{display:grid;grid-template-columns:22px 1fr 130px 110px;gap:10px;align-items:center;padding:5px 0;font-size:13.5px}
+.jsteps li.pending{color:var(--mut)}.jsteps .jic{text-align:center;font-weight:700}.jsteps li.done .jic{color:var(--ok)}.jsteps li.error .jic{color:var(--err)}.jsteps .jp{text-align:right;color:var(--mut);font-size:12.5px}
+.job details{margin-top:8px;font-size:12.5px;color:var(--mut)}.job pre{margin:6px 0 0;max-height:120px;overflow:auto;white-space:pre-wrap}.jres{margin-top:8px;font-size:13.5px}
+@media(max-width:760px){.jsteps li{grid-template-columns:22px 1fr 70px 40px}}
+main{padding:14px 22px 40px}.banner{display:flex;gap:14px;align-items:center;flex-wrap:wrap;padding:11px 16px;margin-bottom:12px;border-radius:8px;background:var(--panel);border-left:5px solid var(--warn)}.banner.err{border-left-color:var(--err)}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:10px}.pad{padding:16px 18px}h2{margin:0 0 10px;font-size:13px;color:var(--mut);text-transform:uppercase;letter-spacing:.14em;font-weight:600}
+.grid{display:grid;grid-template-columns:minmax(310px,400px) 1fr;gap:16px;align-items:start}@media(max-width:980px){.grid{grid-template-columns:1fr}}
+.tools{display:flex;gap:10px;align-items:center;flex-wrap:wrap;padding:11px 14px;border-bottom:1px solid var(--line)}
+#list{max-height:calc(100vh - 210px);overflow:auto}.it{display:grid;grid-template-columns:22px 62px 1fr;gap:10px;align-items:center;padding:9px 14px;border-bottom:1px solid var(--line);cursor:pointer;position:relative}
+.it:hover{background:var(--panel2)}.it.on{background:var(--panel2)}.it.on:before{content:"";position:absolute;left:0;top:0;bottom:0;width:4px;background:var(--lime)}
+.it .d{font-size:21px;line-height:1.05}.it .d small{font-size:12px;color:var(--mut);font-family:var(--txt);font-weight:400;margin-left:5px;letter-spacing:0}
+.it .s{color:var(--mut);font-size:13px}.thumb{width:62px;height:46px;background:var(--panel2);border-radius:6px}.thumb path{fill:none;stroke:var(--trace);stroke-width:3.4;stroke-linejoin:round;stroke-linecap:round}
+input[type=checkbox]{accent-color:var(--lime);width:16px;height:16px}
+.tiles{display:grid;grid-template-columns:repeat(auto-fill,minmax(128px,1fr));gap:8px;margin:10px 0}.tile{background:var(--panel2);border-radius:8px;padding:6px 12px 7px;border-top:3px solid var(--line)}
+.tile small{display:block;color:var(--mut);font-size:10.5px;letter-spacing:.14em;text-transform:uppercase}.tile .v{font-size:25px;line-height:1.1}.tile .v u{text-decoration:none;font-size:14px;color:var(--mut);margin-left:4px;font-family:var(--txt);font-weight:400}
+.t-dist{border-top-color:var(--lime)}.t-spd{border-top-color:var(--cyan)}.t-hr{border-top-color:var(--hr)}.t-alt{border-top-color:var(--amber)}
+.title{font-size:26px;line-height:1.1;margin:0}.sub{color:var(--mut);font-size:13px}
+svg.chart{width:100%;height:auto;display:block;border-radius:8px;background:var(--panel2)}.mapwrap{position:relative;height:clamp(190px,30vh,340px);border-radius:8px;overflow:hidden;background:var(--panel2)}svg.map{width:100%;height:100%;display:block;cursor:grab;touch-action:none;user-select:none}svg.map.grab{cursor:grabbing}
+.mapbtn{position:absolute;top:8px;right:8px;display:flex;flex-direction:column;align-items:flex-end;gap:4px}.mapbtn button{width:30px;height:30px;padding:0;font-size:17px;line-height:1;background:var(--panel);display:flex;align-items:center;justify-content:center}
+.mapcr{position:absolute;right:6px;bottom:4px;font-size:10.5px;color:#fff;text-shadow:0 0 3px #000,0 0 3px #000}.mapbox .tl{filter:grayscale(.2)}:root[data-theme=dark] .mapbox .tl{filter:invert(.93) hue-rotate(180deg) saturate(.55) brightness(.92)}@media(prefers-color-scheme:dark){:root:not([data-theme=light]) .mapbox .tl{filter:invert(.93) hue-rotate(180deg) saturate(.55) brightness(.92)}}
+.rr{cursor:pointer}.rr:hover td{background:var(--panel2)}.rr.on td{background:var(--panel2);color:var(--trace)}
+table{width:100%;border-collapse:collapse}th,td{text-align:left;padding:8px 10px;border-bottom:1px solid var(--line)}th{color:var(--mut);font-size:11px;letter-spacing:.12em;text-transform:uppercase;font-weight:600}
+#drop{border:2px dashed var(--line);border-radius:10px;padding:14px;margin:12px 14px 4px;text-align:center;color:var(--mut);font-size:13px}.it>div{min-width:0}.it .d{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}#drop.over{border-color:var(--lime);color:var(--ink)}
+pre{background:#06090c;color:#9fb0c0;border-radius:8px;padding:10px;max-height:200px;overflow:auto;font-size:12px;white-space:pre-wrap;margin:8px 0 0}
+.modal{position:fixed;inset:0;background:rgba(0,0,0,.72);display:flex;align-items:center;justify-content:center;padding:20px;z-index:50}.modal.hid{display:none}
+.row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}.mut{color:var(--mut)}.ok{color:var(--ok)}.err{color:var(--err)}.warn{color:var(--warn)}.hid{display:none}
+.chip{background:var(--panel2);border:1px solid var(--line);border-radius:14px;padding:3px 10px;font-size:12.5px;color:var(--mut);cursor:pointer}.chip.on{background:var(--lime);color:var(--on-lime);border-color:var(--lime);font-weight:700}.bds{display:flex;gap:4px;flex-wrap:wrap;margin-top:3px}.bg{border-radius:4px;padding:1px 6px;font-size:10.5px;font-weight:700;background:var(--panel2);color:var(--mut);border:1px solid var(--line);white-space:nowrap}.bg.w{background:var(--lime);color:var(--on-lime);border-color:var(--lime)}.bg.s{color:var(--ok);border-color:var(--ok);background:transparent}.bg.x{color:var(--err);border-color:var(--err);background:transparent}.bg.u{color:var(--mut);border-style:dashed}.bg.o{color:var(--warn);border-color:var(--warn);background:transparent}.rg input{background:var(--panel2);border:1px solid var(--line);border-radius:5px;color:var(--ink);padding:2px 4px;font-size:12px}.edgrid{display:grid;grid-template-columns:270px 1fr 300px;gap:12px;align-items:start}@media(max-width:1100px){.edgrid{grid-template-columns:1fr}}.edmap{height:calc(100vh - 130px);min-height:520px}.edmap .mapwrap{height:100%;border-radius:0}.edmap svg.map{height:100%}.edtools{position:absolute;left:10px;top:10px;display:flex;flex-direction:column;gap:4px;background:rgba(18,23,29,.92);border:1px solid var(--line);border-radius:8px;padding:5px;z-index:3}.edtools button{width:36px;height:32px;padding:0;font-size:17px}.edtools button.on{background:var(--lime);color:var(--on-lime);border-color:var(--lime)}.edleg{position:absolute;right:10px;bottom:26px;background:rgba(18,23,29,.92);border:1px solid var(--line);border-radius:8px;padding:7px 10px;font-size:12px;display:grid;gap:3px;z-index:3}.edleg i{display:inline-block;width:20px;height:5px;border-radius:3px;margin-right:7px;vertical-align:middle}.edleg i.dash{height:0;border-top:3px dashed;background:transparent}.edhint{position:absolute;left:58px;top:12px;background:rgba(18,23,29,.92);border:1px solid var(--line);border-radius:6px;padding:4px 10px;font-size:12.5px;z-index:3}.edgrp{padding:7px 12px 3px;font-size:11.5px;color:var(--mut);text-transform:uppercase;letter-spacing:.1em}.edrow{display:flex;align-items:center;gap:7px;padding:4px 12px;font-size:13px;cursor:pointer}.edrow:hover{background:var(--panel2)}.edrow i{width:12px;height:5px;border-radius:3px;flex:none}.edrow .nm{flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.edrow .km{color:var(--mut);font-size:12px}.kv{display:flex;justify-content:space-between;gap:8px;font-size:13px;padding:4px 0;border-bottom:1px solid var(--panel2)}.edh{margin:10px 0 4px;font-size:12.5px;color:var(--ink)}.seg{display:flex;border:1px solid var(--line);border-radius:8px;overflow:hidden;margin:4px 0 6px}.seg button{flex:1;border:0;border-radius:0;background:var(--panel2);padding:7px 2px}.seg button.on{background:var(--lime);color:var(--on-lime);font-weight:700}
+/* Un seul ascenseur: la fenêtre ne défile plus (sauf sur les pages longues: Intervals, Compteur, où « main » défile seule) ; sur Séances, Parcours
+   et Carte, la page tient dans la fenêtre et seules les listes et le détail ont leur propre ascenseur. Écrans étroits: défilement normal de la page. */
+@media(min-width:981px){
+ html,body{overflow:hidden}.shell{height:100vh;min-height:0}.content{display:flex;flex-direction:column;height:100vh;min-height:0}
+ .content>.bar,.content>.road{flex:none}main{flex:1;min-height:0;overflow:auto;display:flex;flex-direction:column}main>#banners{flex:none}
+ main.fill{overflow:hidden;padding-bottom:16px}main.fill>section:not(.hid){flex:1;min-height:0;display:block}
+ main.fill .grid,main.fill .edgrid{height:100%;align-items:stretch}main.fill .grid>*,main.fill .edgrid>*{min-height:0;overflow:auto}
+ main.fill .grid>.panel:first-child,main.fill .edgrid>.panel:first-child{display:flex;flex-direction:column;overflow:hidden}
+ main.fill #list,main.fill #rlist,main.fill #ed_list{flex:1;min-height:0;max-height:none!important;overflow:auto}
+ main.fill .edmap{height:100%;min-height:0}main.fill .edgrid>.panel:nth-child(2){overflow:hidden}}
+.edbusy{position:absolute;left:58px;top:50px;z-index:4;background:var(--panel);color:var(--ink);border:1px solid var(--lime);border-radius:99px;padding:5px 16px;font-size:13px;box-shadow:0 4px 18px rgba(0,0,0,.35);pointer-events:none}.edbusy[hidden]{display:none}
+/* éditeur de carte en thème clair: les cadres posés sur la carte (outils, légende, aide) étaient sombres avec un texte sombre */
+:root[data-theme=light] .edtools,:root[data-theme=light] .edleg,:root[data-theme=light] .edhint{background:rgba(248,246,239,.95)}
+@media(prefers-color-scheme:light){:root:not([data-theme=dark]) .edtools,:root:not([data-theme=dark]) .edleg,:root:not([data-theme=dark]) .edhint{background:rgba(248,246,239,.95)}}
+:root[data-theme=light] .edtools button,:root[data-theme=light] .edleg,:root[data-theme=light] .edhint{color:var(--ink)}
+@media(prefers-color-scheme:light){:root:not([data-theme=dark]) .edtools button,:root:not([data-theme=dark]) .edleg,:root:not([data-theme=dark]) .edhint{color:var(--ink)}}
+.updtag{background:transparent;color:var(--lime);border:1px solid var(--lime);border-radius:99px;padding:3px 12px;font-size:12px;white-space:nowrap}.updtag:hover{background:var(--lime);color:var(--on-lime)}</style></head><body>
+<div class="shell">
+ <nav class="rail">
+  <div class="logo num">V650</div>
+  <button class="nav on" data-t="sessions"><svg viewBox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h10"/></svg>Séances</button>
+  <button class="nav" data-t="routes"><svg viewBox="0 0 24 24"><circle cx="6" cy="18" r="2.2"/><circle cx="18" cy="6" r="2.2"/><path d="M8 17c5 0 2-10 8-10"/></svg>Parcours</button>
+  <button class="nav" data-t="connect"><svg viewBox="0 0 24 24"><path d="M10 14a4 4 0 0 0 5.7 0l3-3a4 4 0 0 0-5.7-5.7l-1 1M14 10a4 4 0 0 0-5.7 0l-3 3a4 4 0 0 0 5.7 5.7l1-1"/></svg>Connexions</button>
+  <button class="nav" data-t="device"><svg viewBox="0 0 24 24"><rect x="6" y="2.5" width="12" height="19" rx="2.5"/><path d="M10 17.5h4"/></svg>Compteur</button>
+  <button class="nav" data-t="map"><svg viewBox="0 0 24 24"><path d="M3 6l6-2 6 2 6-2v14l-6 2-6-2-6 2z"/><path d="M9 4v14M15 6v14"/></svg>Carte</button>
+ </nav>
+ <div class="content">
+  <div class="bar"><div id="lcd" class="lcd off num"><span>HORS LIGNE</span></div><span id="status" class="status">Recherche du compteur…</span><span style="flex:1"></span><button id="upd" class="updtag hid" title="Une version plus récente est publiée sur GitHub : cliquer pour ouvrir sa page (rien n'est téléchargé ni installé automatiquement)">⬆ <span>Mise à jour disponible</span> <b id="updv"></b></button><button id="lang" class="ibtn" title="Langue / Language"></button><button id="theme" class="ibtn" title="Thème"></button><button id="syncnow">Actualiser</button><button id="quit" title="Referme proprement la session du compteur et arrête le programme">Quitter</button></div>
+  <div class="road" id="road"><i id="roadfill"></i></div>
+  <main class="fill">
+   <div id="banners"></div>
+
+   <section id="t_sessions">
+    <div class="grid">
+     <div class="panel" style="overflow:hidden">
+      <div class="tools"><label class="row" style="gap:6px"><input type="checkbox" id="all"> Tout</label>
+       <select id="fmt"><option value="fit">FIT</option><option value="gpx">GPX</option></select>
+       <button id="zip" disabled>Exporter en ZIP</button><button id="sendsel" class="hid" disabled>Envoyer à Intervals</button><button id="sendkom" class="hid" disabled>Envoyer à Komoot</button><span id="selcount" class="mut"></span></div>
+      <div id="list"><div class="mut" style="padding:18px">Aucune séance pour l'instant. Branchez le compteur : les nouvelles séances sont lues automatiquement.</div></div>
+     </div>
+     <div id="detail" class="panel pad"><span class="mut">Choisissez une séance pour voir son tracé, ses chiffres clés et ses courbes.</span></div>
+    </div>
+   </section>
+
+   <section id="t_routes" class="hid">
+    <div class="grid" style="grid-template-columns:minmax(380px,470px) 1fr">
+     <div class="panel" style="overflow:hidden">
+      <div class="tools"><input id="lq" placeholder="Filtrer par nom…" size="14" style="flex:1;min-width:100px"><button id="radd" title="Ajouter un fichier GPX (Komoot, etc.)">+ GPX</button><button id="rkom" title="Votre compte Komoot">Komoot</button><input id="file" type="file" accept=".gpx" hidden></div>
+      <div class="tools" id="lchips" style="gap:6px;padding:8px 14px"></div>
+      <div class="tools" id="lsort" style="gap:6px;padding:8px 14px"></div>
+      <div id="rlist" style="max-height:calc(100vh - 360px);overflow:auto"><div class="mut" style="padding:18px">Lecture…</div></div>
+      <div id="drop">Glissez un fichier .gpx ici</div>
+      <div class="tools" id="lfoot" style="border-top:1px solid var(--line);border-bottom:0"></div>
+      <p class="mut" style="font-size:12.5px;margin:0;padding:6px 14px 12px">Le compteur garde 20 favoris au plus. Un parcours ajouté n'apparaît qu'après un redémarrage du compteur, et FlowSync l'effacerait à sa prochaine synchro.</p>
+     </div>
+     <div id="rdetail" class="panel pad"><span class="mut">Choisissez un parcours pour voir son tracé et ses chiffres clés. Cochez ceux à écrire sur le compteur : les parcours Komoot et les fichiers GPX qui n'y sont pas encore.</span></div>
+    </div>
+   </section>
+
+   <section id="t_connect" class="hid">
+    <p class="mut" style="margin:0 0 14px;max-width:78ch">Services facultatifs où envoyer vos séances. Rien n'est contacté tant que vous ne vous y connectez pas, et rien n'est envoyé sans votre clic (ou sans l'option d'envoi automatique ci-dessous).</p>
+    <div class="panel pad"><h2>Intervals.icu <span id="sv_intervals" style="text-transform:none;letter-spacing:0"></span></h2>
+     <p class="mut" style="margin:0 0 12px;max-width:62ch">Sans compte Intervals.icu, ne remplissez rien : aucun bouton d'envoi n'apparaît. Sinon, sur intervals.icu : Réglages, Développeur, générez une clé d'API et collez-la ici. Elle reste sur ce PC. L'identifiant d'athlète peut rester à 0.</p>
+     <div class="row"><input id="iv_id" placeholder="Athlète (0)" size="10" value="0"><input id="iv_key" type="password" placeholder="Clé d'API" size="32"><button class="p" id="iv_go">Enregistrer et tester</button><button id="iv_off">Retirer</button></div>
+     <p class="mut" style="font-size:13px;margin:14px 0 0;max-width:62ch">Les séances sont envoyées à Intervals.icu au format FIT.</p></div>
+    <div class="panel pad" style="margin-top:16px"><h2>Komoot <span id="sv_komoot" style="text-transform:none;letter-spacing:0"></span></h2><div id="ck_body"></div></div>
+    <div class="panel pad" style="margin-top:16px"><h2>Envoi automatique des nouvelles séances</h2>
+     <p class="mut" style="margin:0 0 12px;max-width:66ch">À chaque lecture du compteur (branchement, ou bouton de relecture) avec le programme ouvert, les séances <b>plus récentes que celles déjà copiées sur ce PC au moment de l'activation</b> sont envoyées d'elles-mêmes. L'historique n'est jamais envoyé en masse. Une séance n'est comptée envoyée qu'après un envoi réussi : en cas d'échec (pas d'internet), elle est retentée à la lecture suivante.</p>
+     <label class="row" style="gap:8px;margin-bottom:8px"><input type="checkbox" id="au_iv"> Envoyer à Intervals.icu (FIT) <span id="au_ivnote" class="mut"></span></label>
+     <label class="row" style="gap:8px;margin-bottom:8px"><input type="checkbox" id="au_kom"> Envoyer à Komoot (FIT)<span id="au_komnote" class="mut"></span></label>
+     <label class="row" style="gap:8px"><input type="checkbox" id="au_gpx"> Enregistrer en GPX dans le dossier « export » du dossier de données</label>
+     <p id="au_state" class="mut" style="margin:10px 0 0"></p></div>
+    <div class="panel pad" style="margin-top:16px"><h2>Strava</h2>
+     <p class="mut" style="margin:0 0 10px;max-width:66ch">Intervals.icu <b>ne transmet pas</b> vos activités à Strava : il sait en importer depuis Strava (et resynchroniser le titre et la description d'activités déjà liées), mais pas en envoyer. L'API de Strava, elle, est payante pour ce programme. Pour mettre une séance sur Strava : dans l'onglet Séances, le bouton « Strava » télécharge le FIT puis ouvre la page d'envoi de Strava, où vous déposez le fichier.</p>
+     <div class="row"><button id="st_open">Ouvrir la page d'envoi Strava</button><button id="iv_site">Réglages Intervals.icu</button></div></div>
+   </section>
+
+   <section id="t_map" class="hid">
+    <div class="edgrid">
+     <div class="panel" style="overflow:hidden"><div class="tools" style="padding:10px 12px"><b style="font-size:13px">Parcours dans la zone</b></div><div id="ed_list" style="max-height:calc(100vh - 215px);overflow:auto"></div>
+      <div class="tools" style="border-top:1px solid var(--line);border-bottom:0;gap:6px;padding:8px 12px"><button id="ed_all">Tous</button><button id="ed_none">Aucun</button><button id="ed_dev">Compteur seul</button></div>
+      <label class="row" style="gap:6px;font-size:12px;padding:0 12px 6px;color:var(--mut)"><input type="checkbox" id="ed_showall"> Afficher aussi les parcours non retenus</label><div id="ed_note" class="mut" style="font-size:12px;padding:0 12px 8px"></div></div>
+     <div class="panel" style="position:relative;overflow:hidden"><div id="ed_map" class="edmap mapbox"></div><div class="edtools" id="ed_tools"></div><div class="edleg" id="ed_leg"></div><div class="edhint" id="ed_hint"></div><div class="edbusy" id="ed_busy" hidden></div></div>
+     <div class="panel pad" id="ed_right"></div>
+    </div>
+   </section>
+   <section id="t_device" class="hid">
+    <div class="grid" style="grid-template-columns:1fr 1fr">
+     <div class="panel pad"><h2>Profil enregistré dans le compteur</h2><div id="profile" class="mut">Lecture…</div></div>
+     <div class="panel pad"><h2>Heure</h2><div id="clock" class="mut"></div><div class="row" style="margin-top:12px"><button id="settime">Régler sur l'heure du PC</button><span id="timestate" class="mut"></span></div></div>
+    </div>
+    <div class="panel pad" style="margin-top:16px"><h2>Unités d'affichage</h2><div class="row"><select id="units"><option value="auto">Selon le compteur</option><option value="metric">Kilomètres (km, km/h, m)</option><option value="imperial">Miles (mi, mph, ft)</option></select><span class="mut" id="units_note"></span></div></div>
+    <div class="panel pad" style="margin-top:16px"><h2>Carte hors ligne</h2><div id="mapinfo" class="mut">Lecture…</div><div id="mapfab" style="margin-top:14px"></div></div>
+    <div class="panel pad" style="margin-top:16px"><h2>Dossier de données</h2>
+     <p class="mut" style="margin:0 0 10px;max-width:62ch">Les copies du compteur, les exports et la configuration sont rangés ici. Par défaut : « V650 Sync » dans votre dossier personnel.</p>
+     <div class="row"><input id="ddir" size="52"><button id="ddir_pick">Parcourir…</button><button id="ddir_set">Appliquer</button><button id="ddir_open">Ouvrir le dossier</button></div></div>
+    <div class="panel pad" style="margin-top:16px"><h2>Journal et rapport de bug</h2>
+     <p class="mut" style="margin:0 0 10px;max-width:70ch">Le programme tient un journal détaillé (appels, tâches, échanges avec le compteur, Komoot, fabrication des cartes, erreurs avec leur trace). Les mots de passe, jetons et adresses e-mail n'y sont jamais écrits. En cas de bug, créez un rapport : c'est un fichier ZIP enregistré sur votre PC, <b>rien n'est envoyé</b>. Il peut contenir des noms de parcours et des chemins de fichiers : relisez-le avant de le transmettre.</p>
+     <div id="jinfo" class="mut" style="margin-bottom:10px;word-break:break-all">Lecture…</div>
+     <div class="row"><button id="jreport" class="pri">Créer un rapport de bug</button><button id="jopen">Ouvrir le dossier du journal</button><span id="jstate" class="mut"></span></div></div>
+    <div class="panel pad" style="margin-top:16px"><h2>À propos</h2>
+     <p style="margin:0 0 8px"><b>V650 Sync</b> · version <span id="ab_ver">…</span> · licence GPL-3.0</p>
+     <div class="row" style="margin-bottom:10px"><button id="ab_repo">Code source sur GitHub</button><button id="ab_lic">Licence</button></div>
+     <div class="row" style="margin-bottom:10px;gap:10px"><label class="row" style="gap:8px"><input type="checkbox" id="ab_updchk"> Vérifier les mises à jour (une fois par jour, via GitHub)</label><button id="ab_updnow">Rechercher maintenant</button><span id="ab_updmsg" class="mut"></span></div>
+     <p class="mut" style="margin:0 0 10px;max-width:78ch;font-size:12.5px">La vérification est une simple requête anonyme vers GitHub (seul le numéro de version du programme est transmis). Rien n'est téléchargé ni installé : vous êtes seulement prévenu qu'une nouvelle version existe.</p>
+     <p class="mut" style="margin:0;max-width:78ch;font-size:13.5px">Logiciel libre et indépendant (ni affilié à Polar, Komoot, Strava ni Intervals.icu). Issu d'une rétro-ingénierie non officielle, testé sur un seul Polar V650 sous Windows 11. <b>Fourni sans aucune garantie : utilisation sous votre responsabilité</b>. Il écrit dans la mémoire du compteur (parcours, cartes, heure) et les auteurs déclinent toute responsabilité en cas de dommage, y compris un compteur qui ne fonctionnerait plus. Développé avec l'aide de Claude (Anthropic).</p>
+     <p class="mut" style="margin:8px 0 0;max-width:78ch;font-size:12.5px">Cartes : données © contributeurs OpenStreetMap (licence ODbL). Courbes de niveau : altitudes SRTM (NASA / USGS, domaine public) via les « Terrain Tiles » d'AWS.</p></div>
+    <div class="panel pad" style="margin-top:16px"><h2>Journal de lecture</h2><pre id="log">—</pre></div>
+   </section>
+  </main>
+ </div>
+</div>
+<div id="first" class="modal hid"><div class="panel pad" style="max-width:560px">
+ <h3 class="title" style="font-size:26px;margin-bottom:8px">Où ranger vos données ?</h3>
+ <p class="mut" style="margin:0 0 12px">Les copies du compteur (séances, parcours), les exports et la configuration seront enregistrés dans ce dossier. Rien n'est créé avant votre choix, et vous pourrez le changer plus tard dans l'onglet Compteur.</p>
+ <div class="row"><input id="fdir" style="flex:1;min-width:260px"><button id="fpick">Parcourir…</button></div>
+ <div class="row" style="margin-top:14px"><button class="p" id="fgo">Utiliser ce dossier</button></div></div></div>
+<script>
+/* Langue (français ou anglais). Le texte de l'interface est écrit en français dans ce fichier et dans les messages de l'application; en anglais,
+   un traducteur remplace, au fur et à mesure qu'ils apparaissent, les textes qui figurent dans le dictionnaire I18N (v650sync/i18n_en.json):
+   textes exacts, ou modèles avec des valeurs variables {0}, {1}… Un texte absent du dictionnaire reste en français (jamais d'erreur). */
+const LANG=(()=>{let l="__LANG__";if(l!=="fr"&&l!=="en")l=(navigator.language||"fr").toLowerCase().startsWith("fr")?"fr":"en";return l})();
+const I18N=__I18N__;
+const _EX=new Map(Object.entries(I18N.ex||{})),_PAT=(I18N.pat||[]).map(([k,v])=>{const parts=k.split(/\{\d+\}/);return{re:new RegExp("^"+parts.map(p=>p.replace(/[.*+?^${}()|[\]\\]/g,"\\$&")).join("(.+?)")+"$","s"),v,len:k.length}}).sort((a,b)=>b.len-a.len);
+function tr(s){if(LANG==="fr"||!s||typeof s!=="string")return s;const m=s.match(/^(\s*)([\s\S]*?)(\s*)$/),core=m[2].replace(/\s+/g," ");if(!core)return s;
+ let out=_EX.get(core);if(out===undefined)for(const p of _PAT){const r=p.re.exec(core);if(r){out=p.v.replace(/\{(\d+)\}/g,(_,i)=>{const c=r[+i+1];return c===undefined?"":tr(c)});break}}
+ if(out===undefined&&core.includes("\n")===false&&s.includes("\n")){return s.split("\n").map(l=>l.trim()?tr(l):l).join("\n")}
+ return out===undefined?s:m[1]+out+m[3]}
+if(LANG!=="fr"){
+ const _al=window.alert.bind(window),_co=window.confirm.bind(window);window.alert=m=>_al(tr(String(m)));window.confirm=m=>_co(tr(String(m)));
+ const trText=n=>{const v=n.nodeValue,r=tr(v);if(r!==v)n.nodeValue=r};
+ const trAttrs=e=>{for(const a of ["title","placeholder","aria-label"]){const v=e.getAttribute&&e.getAttribute(a);if(v){const r=tr(v);if(r!==v)e.setAttribute(a,r)}}};
+ const trTree=root=>{if(root.nodeType===3){trText(root);return}if(root.nodeType!==1)return;if(/^(SCRIPT|STYLE)$/.test(root.tagName))return;trAttrs(root);
+  const w=document.createTreeWalker(root,NodeFilter.SHOW_ELEMENT|NodeFilter.SHOW_TEXT);let n;while(n=w.nextNode()){if(n.nodeType===3){if(!/^(SCRIPT|STYLE)$/.test(n.parentNode.tagName))trText(n)}else trAttrs(n)}};
+ document.documentElement.lang="en";
+ addEventListener("DOMContentLoaded",()=>{trTree(document.body);document.title=tr(document.title);
+  new MutationObserver(ms=>{for(const m of ms){if(m.type==="characterData")trText(m.target);else if(m.type==="attributes")trAttrs(m.target);else m.addedNodes.forEach(trTree)}}).observe(document.body,{childList:true,subtree:true,characterData:true,attributes:true,attributeFilter:["title","placeholder"]})});
+}
+/* erreurs JavaScript: envoyées au journal du programme (rapport de bug) */
+(()=>{let n=0;const send=(m,s,l)=>{if(n++>20)return;try{fetch("/api/clientlog",{method:"POST",headers:{"X-Token":TOKEN},body:JSON.stringify({message:m,source:s,line:l})}).catch(()=>{})}catch(e){}};
+ addEventListener("error",e=>send(e.message,e.filename,e.lineno));addEventListener("unhandledrejection",e=>send("Promesse rejetée : "+(e.reason&&e.reason.message||e.reason),"",0))})();
+const TOKEN="__TOKEN__",$=id=>document.getElementById(id),esc=s=>String(s??"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+async function api(p,o={}){const r=await fetch(p,{...o,headers:{...(o.headers||{}),"X-Token":TOKEN}});return r.json()}
+const dur=s=>{s=Math.round(s);const h=Math.floor(s/3600),m=Math.floor(s%3600/60),x=s%60;return `${h}:${String(m).padStart(2,"0")}:${String(x).padStart(2,"0")}`};
+const MOIS=LANG==="fr"?["JAN","FÉV","MAR","AVR","MAI","JUN","JUL","AOÛ","SEP","OCT","NOV","DÉC"]:["JAN","FEB","MAR","APR","MAY","JUN","JUL","AUG","SEP","OCT","NOV","DEC"],
+ JOURS=LANG==="fr"?["dimanche","lundi","mardi","mercredi","jeudi","vendredi","samedi"]:["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"],LOC=LANG==="fr"?"fr-FR":"en-US",TO=LANG==="fr"?"à":"to";
+/* Unités: elles suivent le COMPTEUR (profil: unités métriques ou impériales), pas la langue: l'anglais s'affiche en km et km/h si le compteur est en métrique.
+   Réglage « selon le compteur / kilomètres / miles » dans l'onglet Compteur. Les valeurs reçues du programme sont toujours en km, km/h et m. */
+const UNITS_PREF="__UNITS__",DEV_METRIC="__DEVMETRIC__",IMP=UNITS_PREF==="imperial"||(UNITS_PREF==="auto"&&DEV_METRIC==="0"),KMI=1.609344,FTM=3.28084,
+ D=(km,d=1)=>km==null||!IMP?km:+(km/KMI).toFixed(d),S=kmh=>kmh==null||!IMP?kmh:+(kmh/KMI).toFixed(1),A=m=>m==null||!IMP?m:Math.round(m*FTM),A2=k2=>!IMP?k2:Math.round(k2/(KMI*KMI)),
+ UD=IMP?"mi":"km",US=IMP?"mph":"km/h",UA=IMP?"ft":"m",UA2=IMP?"mi²":"km²",kmTxt=km=>D(km,0)+" "+UD;
+let SVC={intervals:{}},SESS=[],SEL=new Set(),CUR=null,connected=false,syncing=false;
+
+document.querySelectorAll(".nav").forEach(b=>b.onclick=()=>{document.querySelectorAll(".nav").forEach(x=>x.classList.toggle("on",x===b));document.querySelector("main").classList.toggle("fill",["sessions","routes","map"].includes(b.dataset.t));
+ ["sessions","routes","connect","device","map"].forEach(t=>$("t_"+t).classList.toggle("hid",t!==b.dataset.t));
+ if(b.dataset.t==="routes")listRoutes();if(b.dataset.t==="device")loadProfile();if(b.dataset.t==="map")edOpen()});
+function banner(id,html,cls){let e=$("b_"+id);if(!html){e&&e.remove();return}if(!e){e=document.createElement("div");e.id="b_"+id;$("banners").appendChild(e)}e.className="banner "+(cls||"");e.innerHTML=html}
+
+/* compteur: état, puis lecture automatique du profil, de l'heure et des nouvelles séances */
+/* Une seule session avec le compteur: recherche, état, heure et profil, puis lecture des nouvelles séances */
+let PROFILE=null,retryT=null;
+const battIcon=p=>{const v=Math.max(0,Math.min(100,+p||0)),h=v*15.6/100,c=v<=15?"var(--err)":v<=30?"var(--amber)":"currentColor";
+ return`<svg class="ico" viewBox="0 0 24 24"><rect x="9.3" y="1.6" width="5.4" height="2.2" rx=".7" fill="currentColor"/><rect x="6.9" y="3.8" width="10.2" height="18.2" rx="2.2" fill="none" stroke="currentColor" stroke-width="1.8"/><rect x="8.6" y="${(20.4-h).toFixed(1)}" width="6.8" height="${h.toFixed(1)}" rx=".7" fill="${c}"/></svg>`};
+const DRIVE='<svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" stroke-linecap="round"><path d="M9.5 2.6h8A2 2 0 0 1 19.5 4.6v14.8a2 2 0 0 1-2 2h-11a2 2 0 0 1-2-2V7.7z"/><path d="M9.2 5.6v3M12 5.6v3M14.8 5.6v3"/></svg>';
+/* thème: automatique (suit Windows), clair ou sombre; mémorisé par le programme */
+let THEME="__THEME__";
+const TH={auto:["Thème : automatique (selon Windows)",'<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"/><path d="M12 4a8 8 0 0 1 0 16z" fill="currentColor"/></svg>'],
+ light:["Thème : clair",'<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2.5v2.5M12 19v2.5M2.5 12H5M19 12h2.5M5.3 5.3l1.8 1.8M16.9 16.9l1.8 1.8M5.3 18.7l1.8-1.8M16.9 7.1l1.8-1.8"/></svg>'],
+ dark:["Thème : sombre",'<svg viewBox="0 0 24 24"><path d="M20 14.2A8.2 8.2 0 0 1 9.8 4 8.2 8.2 0 1 0 20 14.2z"/></svg>']};
+function applyTheme(t){THEME=TH[t]?t:"auto";t==="auto"||!TH[t]?document.documentElement.removeAttribute("data-theme"):document.documentElement.setAttribute("data-theme",t);$("theme").innerHTML=TH[THEME][1];$("theme").title=TH[THEME][0]+" — cliquer pour changer"}
+$("theme").onclick=()=>{const n={auto:"light",light:"dark",dark:"auto"}[THEME]||"auto";applyTheme(n);api("/api/theme",{method:"POST",body:JSON.stringify({theme:n})}).catch(()=>{})};
+applyTheme(THEME);
+/* unités: le choix « selon le compteur » suit le profil lu sur le compteur (mémorisé par le programme pour les lancements suivants) */
+$("units").value=UNITS_PREF;$("units_note").textContent=UNITS_PREF==="auto"?(IMP?"Le compteur est réglé en unités impériales.":"Le compteur est réglé en unités métriques."):"";
+$("units").onchange=async()=>{await api("/api/units",{method:"POST",body:JSON.stringify({units:$("units").value})});location.reload()};
+let _unitsSeen=null;function unitsSeen(p){if(p&&typeof p.metric==="boolean"&&_unitsSeen!==p.metric){_unitsSeen=p.metric;if(UNITS_PREF==="auto"&&(!p.metric)!==IMP){api("/api/units/seen",{method:"POST",body:JSON.stringify({metric:p.metric})}).then(()=>location.reload())}else api("/api/units/seen",{method:"POST",body:JSON.stringify({metric:p.metric})}).catch(()=>{})}}
+$("lang").textContent=LANG.toUpperCase();$("lang").style.fontWeight="700";$("lang").onclick=async()=>{await api("/api/lang",{method:"POST",body:JSON.stringify({lang:LANG==="fr"?"en":"fr"})});location.reload()};
+function lcdSearch(){$("lcd").className="lcd off num";$("lcd").innerHTML="<span>RECHERCHE…</span>"}
+function showOffline(){connected=false;PROFILE=null;$("lcd").className="lcd off num";$("lcd").innerHTML="<span>HORS LIGNE</span>";$("status").textContent="Compteur non détecté";
+ banner("dev","Compteur non détecté. Branchez-le au PC avec le câble USB et vérifiez qu'il est allumé. S'il est branché mais ne répond pas : débranchez puis rebranchez le câble. Nouvelle recherche automatique toutes les 10 secondes.","err")}
+function showStatus(s){connected=true;banner("dev","");$("lcd").className="lcd num";
+ $("lcd").innerHTML=`<span title="Batterie du compteur">${battIcon(s.battery)}${s.battery??"?"}%</span>${s.free_gb!=null?`<span title="Espace libre sur le compteur">${DRIVE}${s.free_gb} ${LANG==="fr"?"Go":"GB"}</span>`:""}`}
+function showClock(p){const d=p.drift_s;
+ if(Math.abs(d)>20){const m=Math.abs(d)>=90?`${Math.round(Math.abs(d)/60)} min`:`${Math.abs(d)} s`;
+  banner("clock",`<span>Le compteur est ${d<0?"en retard":"en avance"} d'environ <b>${m}</b> (il indique ${esc(p.local_time)}).</span><button class="p" id="fixclock">Régler l'heure</button>`,"");$("fixclock").onclick=setTime}else banner("clock","")}
+async function setTime(){if(!confirm("Régler l'heure du compteur sur celle de ce PC ?"))return;const r=await api("/api/set-time",{method:"POST"});
+ if(r.error)alert(r.error);else{banner("clock","");$("timestate").textContent=`Heure réglée : ${r.set_to_local}`;PROFILE=null;loadProfile()}}
+
+/* lecture avec animation: route qui défile tant que la taille est inconnue, puis barre de progression */
+function road(mode,pct){const r=$("road");r.className="road "+(mode?"on":"")+(mode==="ind"?" ind":"");if(mode==="pct")$("roadfill").style.width=pct+"%"}
+async function startSync(){if(syncing)return;syncing=true;clearTimeout(retryT);PROFILE=null;road("ind");lcdSearch();$("status").textContent="Recherche du compteur…";
+ const r=await api("/api/connect",{method:"POST"});pollSync()}
+async function pollSync(){const j=await api("/api/job"),inf=j.info||{},mine=j.kind==="connect"||j.kind==="sync";
+ if(!mine&&j.running){  /* une autre opération (écriture de carte, téléchargement Komoot…) occupe le compteur: on ne la fait pas passer pour une lecture */
+  const[d,t]=j.progress||[0,0];road(t?"pct":"ind",t?Math.round(d/t*100):0);$("status").textContent=`${j.title||"Une opération"} en cours — la lecture du compteur reprendra ensuite…`;setTimeout(pollSync,1000);return}
+ if(!mine&&!j.running&&j.kind){syncing=false;road(null);startSync();return}  /* l'autre opération est finie: on lit le compteur */
+ $("log").textContent=(j.log||[]).slice(-60).join("\n")||"—";
+ if(inf.status&&!connected){showStatus(inf.status);$("status").textContent=`${inf.status.model} connecté`}
+ if(inf.profile&&!PROFILE){PROFILE=inf.profile;showClock(PROFILE);if(!$("t_device").classList.contains("hid"))renderProfile(PROFILE)}
+ if(j.running){const[d,t]=j.progress||[0,0];
+  if(t){road("pct",Math.round(d/t*100));$("status").textContent=`Lecture du compteur… ${d} / ${t} fichiers`}
+  else{road("ind");$("status").textContent=inf.status?"Lecture du compteur…":"Recherche du compteur…"}
+  setTimeout(pollSync,500);return}
+ syncing=false;road(null);
+ if(j.error&&!inf.status){showOffline();retryT=setTimeout(startSync,10000);return}
+ const au=j.result&&j.result.auto,aut=au?[au.intervals?`${au.intervals} envoyée(s) à Intervals`:"",au.gpx?`${au.gpx} exportée(s) en GPX`:"",au.errors?`<span class="err">${au.errors} envoi(s) à refaire</span>`:""].filter(Boolean).join(" · "):"";
+ $("status").innerHTML=j.error?`<span class="err">${esc(j.error)}</span>`:`<span class="ok">À jour</span> <span class="mut">· ${(j.result||{}).copied||0} nouveau(x) fichier(s)</span>${aut?` <span class="mut">· ${aut}</span>`:""}`;await loadSessions()}
+$("syncnow").onclick=()=>{connected=false;startSync()};
+
+/* séances */
+function thumb(sh){if(!sh||sh.length<2)return'<div class="thumb"></div>';return`<svg class="thumb" viewBox="-6 -6 112 112"><path d="M${sh.map(p=>p.join(",")).join(" L")}"/></svg>`}
+async function loadSessions(){SESS=await api("/api/sessions");SVC=await api("/api/services");const on=SVC.intervals.configured;
+ const A=SVC.auto||{},onk=!!(SVC.komoot&&SVC.komoot.connected);$("au_iv").checked=!!A.intervals;$("au_gpx").checked=!!A.gpx;$("au_kom").checked=!!A.komoot;$("au_ivnote").textContent=on?"":"(configurez d'abord Intervals.icu ci-dessus)";$("au_komnote").textContent=onk?"":"(connectez-vous d'abord à Komoot ci-dessus)";
+ $("sendsel").classList.toggle("hid",!on);$("sendkom").classList.toggle("hid",!onk);renderConnKomoot();$("sv_intervals").textContent=on?"— configuré":"— non configuré";if(on){$("iv_id").value=SVC.intervals.athlete_id||"0";$("iv_key").placeholder="•••••• clé enregistrée sur ce PC";$("iv_key").title="Une clé est déjà enregistrée : collez-en une autre pour la remplacer"}else $("iv_key").placeholder="Clé d'API";renderList();if(CUR)showDetail(CUR)}
+function renderList(){if(!SESS.length)return;
+ $("list").innerHTML=SESS.map(x=>{const[y,m,d]=x.start_local.slice(0,10).split("-");return`<div class="it ${x.id===CUR?"on":""}" data-id="${x.id}"><input type="checkbox" class="cb" data-id="${x.id}" ${SEL.has(x.id)?"checked":""}>${thumb(x.shape)}
+  <div><div class="d num">${+d} ${MOIS[+m-1]}<small>${y} · ${x.start_local.slice(11)}</small></div><div class="s"><span class="num" style="font-size:17px;color:var(--ink)">${D(x.distance_km)}</span> ${UD} · ${dur(x.duration_s)}${x.hr_avg?" · "+x.hr_avg+" bpm":""}${x.sent&&x.sent.includes("intervals")?' · <span class="ok">✓ Intervals</span>':""}${x.sent&&x.sent.includes("komoot")?' · <span class="ok">✓ Komoot</span>':""}</div></div></div>`}).join("");
+ document.querySelectorAll(".it").forEach(e=>e.onclick=ev=>{if(ev.target.classList.contains("cb"))return;showDetail(e.dataset.id)});
+ document.querySelectorAll(".cb").forEach(c=>c.onchange=()=>{c.checked?SEL.add(c.dataset.id):SEL.delete(c.dataset.id);updSel()});updSel()}
+function updSel(){$("zip").disabled=!SEL.size;$("sendsel").disabled=!SEL.size;$("sendkom").disabled=!SEL.size;$("selcount").textContent=SEL.size?`${SEL.size} sélectionnée(s)`:"";$("all").checked=SESS.length>0&&SEL.size===SESS.length}
+$("all").onchange=()=>{SEL=$("all").checked?new Set(SESS.map(x=>x.id)):new Set();renderList()};
+$("zip").onclick=async()=>{$("zip").disabled=true;const r=await fetch("/api/zip",{method:"POST",headers:{"X-Token":TOKEN},body:JSON.stringify({ids:[...SEL],format:$("fmt").value})});
+ const b=await r.blob(),a=document.createElement("a");a.href=URL.createObjectURL(b);a.download=`seances_${$("fmt").value}.zip`;a.click();updSel()};
+$("sendsel").onclick=async()=>{if(!confirm(`Envoyer ${SEL.size} séance(s) vers Intervals.icu ?\nUne séance déjà reçue de Polar Flow peut créer un doublon.`))return;
+ let n=0,errs=[];for(const id of SEL){$("sendsel").textContent=`Envoi ${++n}/${SEL.size}…`;const r=await api("/api/upload",{method:"POST",body:JSON.stringify({session:id,target:"intervals"})});if(r.error)errs.push(`${id}: ${r.error}`)}
+ $("sendsel").textContent="Envoyer à Intervals";alert(errs.length?"Erreurs :\n"+errs.join("\n"):"Envoyé.");loadSessions()};
+$("sendkom").onclick=async()=>{if(!confirm(`Envoyer ${SEL.size} séance(s) vers Komoot ?\n\nElles seront ajoutées à votre compte Komoot avec la visibilité par défaut de ce compte (réglage de Komoot). Une séance que Komoot connaît déjà n'est pas recréée.`))return;
+ let n=0,errs=[],dups=0;for(const id of SEL){$("sendkom").textContent=`Envoi ${++n}/${SEL.size}…`;const r=await api("/api/upload",{method:"POST",body:JSON.stringify({session:id,target:"komoot"})});if(r.error)errs.push(`${id}: ${r.error}`);else if(r.created===false)dups++}
+ $("sendkom").textContent="Envoyer à Komoot";alert((errs.length?"Erreurs :\n"+errs.join("\n")+"\n\n":"")+(dups?`${dups} séance(s) étaient déjà sur Komoot.\n\n`:"")+(errs.length?"":"Envoyé."));loadSessions()};
+
+/* détail d'une séance */
+async function showDetail(id){CUR=id;document.querySelectorAll(".it").forEach(e=>e.classList.toggle("on",e.dataset.id===id));$("detail").innerHTML='<span class="mut">Chargement…</span>';
+ const d=await api("/api/session/"+id);if(d.error){$("detail").innerHTML=`<span class="err">${esc(d.error)}</span>`;return}
+ const s=d.stats,dt=new Date(d.start_local.replace(" ","T")),tile=(c,l,v,u)=>v==null||v===""?"":`<div class="tile ${c}"><small>${l}</small><div class="v num">${v}<u>${u||""}</u></div></div>`;
+ $("detail").innerHTML=`<div class="row"><div><h3 class="title num">${JOURS[dt.getDay()].toUpperCase()} ${dt.getDate()} ${MOIS[dt.getMonth()]}</h3><div class="sub">${d.start_local.slice(11)} · vélo · ${d.pauses} pause(s)</div></div><span style="flex:1"></span>
+  <a href="/download/${id}.fit"><button>FIT</button></a><a href="/download/${id}.gpx"><button>GPX</button></a><button id="st1" title="Télécharge le FIT puis ouvre la page d'envoi de Strava">Strava</button>${SVC.intervals.configured?'<button id="up1">→ Intervals</button>':""}${SVC.komoot&&SVC.komoot.connected?'<button id="up2" title="Envoie la séance à votre compte Komoot">→ Komoot</button>':""}</div>
+  <div class="tiles">${tile("t-dist","Distance",D(s.distance_km),UD)}${tile("","Durée",dur(s.timer_s))}${tile("t-spd","Vitesse moy.",S(s.avg_kmh),US)}${tile("t-spd","Vitesse max.",S(s.max_kmh),US)}
+  ${tile("t-hr","FC moy.",s.hr_avg,"bpm")}${tile("t-hr","FC max.",s.hr_max,"bpm")}${tile("","Cadence moy.",s.cad_avg,"tr/min")}${tile("t-alt","Montée",A(s.ascent),UA)}${tile("t-alt","Descente",A(s.descent),UA)}${tile("t-alt","Altitude max.",A(s.alt_max),UA)}${tile("","Calories",s.calories||null,"kcal")}</div>
+  <div id="map" class="mapbox"></div><div id="charts"></div>`;
+ drawMap($("map"),d.track);chart($("charts"),d.series,"hr","FRÉQUENCE CARDIAQUE","bpm","var(--hr)");chart($("charts"),d.series.map(r=>({...r,kmh:S(r.kmh)})),"kmh","VITESSE",US,"var(--cyan)");chart($("charts"),d.series.map(r=>({...r,alt:A(r.alt)})),"alt","ALTITUDE",UA,"var(--amber)");
+ $("st1").onclick=()=>stravaSend(id);
+ if($("up1"))$("up1").onclick=async()=>{if(!confirm("Envoyer cette séance vers Intervals.icu ?\nSi Polar Flow l'a déjà transmise, cela peut créer un doublon."))return;$("up1").disabled=true;$("up1").textContent="Envoi…";
+  const r=await api("/api/upload",{method:"POST",body:JSON.stringify({session:id,target:"intervals"})});$("up1").disabled=false;$("up1").textContent=r.error?"Réessayer":"✓ Envoyé";if(r.error)alert("Intervals.icu : "+r.error);else loadSessions()};
+ if($("up2"))$("up2").onclick=async()=>{if(!confirm("Envoyer cette séance vers Komoot ?\n\nElle sera ajoutée à votre compte avec la visibilité par défaut de ce compte (réglage de Komoot). Si Komoot la connaît déjà, rien n'est créé."))return;$("up2").disabled=true;$("up2").textContent="Envoi…";
+  const r=await api("/api/upload",{method:"POST",body:JSON.stringify({session:id,target:"komoot"})});$("up2").disabled=false;$("up2").textContent=r.error?"Réessayer":"✓ Envoyé";
+  if(r.error)alert("Komoot : "+r.error);else{alert((r.created===false?"Komoot avait déjà cette séance : rien n'a été créé.\n":"Séance envoyée à Komoot.\n")+"\nhttps://www.komoot.com/tour/"+r.tour_id);loadSessions()}}}
+function mx(lon){return(lon+180)/360}function my(lat){const r=lat*Math.PI/180;return(1-Math.log(Math.tan(r)+1/Math.cos(r))/Math.PI)/2}
+/* carte interactive (tuiles OpenStreetMap): molette ou +/− pour zoomer, glisser pour déplacer, ⌖ pour recentrer sur le tracé */
+/* Carte OpenStreetMap interactive (zoom molette, glisser). opts.layers: couches en plus du tracé principal
+   [{pts:[[lat,lon]..], ou rings:[[[lat,lon]..]..] (zone en un seul dessin), color,width,dash,poly,fill,fillOpacity}].
+   opts.pointer (objet modifiable): {mode:"pan"|"click"|"pen", onclick(lat,lon), ondbl(), onpen(points)} pour l'éditeur de carte.
+   Renvoie un contrôleur: {setLayers(couches), fit(), draw(), toLL(événement)}. */
+function drawMap(el,track,opts={}){const keep=l=>(l.pts&&l.pts.length)||(l.rings&&l.rings.length);
+ /* tous les contours d'une zone dans le même sens: sinon deux rectangles qui se chevauchent s'annulent (trou) avec la règle de remplissage « nonzero » */
+ const fix=a=>(a||[]).filter(keep).map(l=>l.rings?Object.assign({},l,{rings:l.rings.map(r=>{let s=0;for(let i=0;i<r.length;i++){const p=r[i],q=r[(i+1)%r.length];s+=p[1]*q[0]-q[1]*p[0]}return s<0?r.slice().reverse():r})}):l);let L=fix(opts.layers);
+ if(!track.length&&!L.length&&!opts.empty){el.innerHTML='<p class="mut">Pas de GPS pour cette séance.</p>';return}
+ const NS="http://www.w3.org/2000/svg";
+ el.innerHTML=`<div class="mapwrap"><svg class="map"><g class="tl"></g><polyline class="pl0" fill="none" stroke="#000" stroke-opacity=".55" stroke-width="6.5" stroke-linejoin="round" stroke-linecap="round"/><polyline class="pl1" fill="none" stroke="#d6ff3a" stroke-width="3.4" stroke-linejoin="round" stroke-linecap="round"/>
+  <circle class="ma" r="8" fill="#5be37d" stroke="#000" stroke-width="2.5"/><circle class="mb" r="8" fill="#fff" stroke="#000" stroke-width="2.5"/></svg>
+  <div class="mapbtn"><button data-z="1" title="Zoom avant">+</button><button data-z="-1" title="Zoom arrière">−</button><button data-z="0" class="mfit" title="Recentrer : zoom au mieux sur le tracé ou la zone de travail" aria-label="Recentrer">⤢</button></div><div class="mapcr">© contributeurs OpenStreetMap · molette : zoom · glisser : déplacer</div></div>`;
+ const svg=el.querySelector("svg"),g=svg.querySelector(".tl"),pl0=svg.querySelector(".pl0"),pl1=svg.querySelector(".pl1"),ca=svg.querySelector(".ma"),cb=svg.querySelector(".mb"),cache=new Map();
+ const ly=svg.insertBefore(document.createElementNS(NS,"g"),ca);let LE=[],AUX=[];
+ const pv=svg.insertBefore(document.createElementNS(NS,"polygon"),ca);for(const[k,v]of Object.entries({fill:"rgba(255,255,255,.14)",stroke:"#fff","stroke-width":2.4,"stroke-dasharray":"5 4","stroke-linejoin":"round"}))pv.setAttribute(k,v);pv.style.pointerEvents="none";let PV=[]; /* aperçu en direct d'une forme en cours de tracé */const defs=svg.insertBefore(document.createElementNS(NS,"defs"),svg.firstChild);
+ const lp=l=>l.rings?[].concat(...l.rings):l.pts;
+ function build(){ly.innerHTML="";defs.innerHTML="";AUX=[];LE=L.map((l,i)=>{const e=document.createElementNS(NS,l.rings?"path":(l.poly?"polygon":"polyline"));e.setAttribute("fill",l.fill||"none");if(l.fill)e.setAttribute("fill-opacity",l.fillOpacity??.2);if(l.rings)e.setAttribute("fill-rule","nonzero");
+  e.setAttribute("stroke",l.color||"#38d5ff");e.setAttribute("stroke-width",l.width==null?2.5:l.width);if(l.dash)e.setAttribute("stroke-dasharray",l.dash);e.setAttribute("stroke-linejoin","round");e.setAttribute("stroke-linecap","round");e.style.pointerEvents="none";ly.appendChild(e);
+  if(l.rings&&l.outline){const f=document.createElementNS(NS,"filter"),id="ol"+i;f.setAttribute("id",id);f.setAttribute("filterUnits","userSpaceOnUse");f.setAttribute("x","-100");f.setAttribute("y","-100");f.setAttribute("width","6000");f.setAttribute("height","6000");
+   f.innerHTML=`<feMorphology in="SourceAlpha" operator="dilate" radius="1.6" result="d"/><feComposite in="d" in2="SourceAlpha" operator="out" result="o"/><feFlood flood-color="${l.outline}"/><feComposite in2="o" operator="in"/>`;defs.appendChild(f);
+   const g2=document.createElementNS(NS,"g");g2.setAttribute("filter",`url(#${id})`);const p2=document.createElementNS(NS,"path");p2.setAttribute("fill","#000");p2.setAttribute("fill-rule","nonzero");p2.style.pointerEvents="none";g2.appendChild(p2);ly.appendChild(g2);AUX[i]=p2}
+  return e})}
+ build();
+ const xs=track.map(p=>mx(p[1])),ys=track.map(p=>my(p[0])),mm=a=>{let lo=1e9,hi=-1e9;for(const v of a){if(v<lo)lo=v;if(v>hi)hi=v}return[lo,hi]};
+ /* cadrage: les couches marquées nofit (carte actuelle du compteur, parcours non retenus) ne comptent pas, sauf s'il n'y a rien d'autre */
+ let bx0=0,bx1=1,by0=0,by1=1;function bounds(){let ap=track.concat(...L.filter(l=>!l.nofit).map(lp));if(!ap.length)ap=track.concat(...L.map(lp));if(!ap.length)return;[bx0,bx1]=mm(ap.map(p=>mx(p[1])));[by0,by1]=mm(ap.map(p=>my(p[0])))}bounds();
+ let W=800,H=300,z=12,cx=.5,cy=.5,raf=0;
+ const size=()=>{W=svg.clientWidth||800;H=svg.clientHeight||300;svg.setAttribute("viewBox",`0 0 ${W} ${H}`)};
+ function fit(){size();bounds();z=17;while(z>2&&((bx1-bx0)*2**z*256>W-70||(by1-by0)*2**z*256>H-60))z--;cx=(bx0+bx1)/2;cy=(by0+by1)/2}
+ function render(){raf=0;const n=2**z*256,ox=cx*n-W/2,oy=cy*n-H/2,need=new Set(),max=2**z,P=p=>`${(mx(p[1])*n-ox).toFixed(1)},${(my(p[0])*n-oy).toFixed(1)}`;
+  for(let tx=Math.floor(ox/256);tx<=Math.floor((ox+W)/256);tx++)for(let ty=Math.floor(oy/256);ty<=Math.floor((oy+H)/256);ty++){
+   if(tx<0||ty<0||tx>=max||ty>=max)continue;const k=`${z}/${tx}/${ty}`;need.add(k);let im=cache.get(k);
+   if(!im){im=document.createElementNS(NS,"image");im.setAttribute("href",`https://tile.openstreetmap.org/${k}.png`);im.setAttribute("width",256);im.setAttribute("height",256);im.addEventListener("error",()=>im.remove());cache.set(k,im);g.appendChild(im)}
+   im.setAttribute("x",(tx*256-ox).toFixed(1));im.setAttribute("y",(ty*256-oy).toFixed(1))}
+  for(const[k,im]of cache)if(!need.has(k)){im.remove();cache.delete(k)}
+  const pts=track.map((p,i)=>`${(xs[i]*n-ox).toFixed(1)},${(ys[i]*n-oy).toFixed(1)}`);pl0.setAttribute("points",pts.join(" "));pl1.setAttribute("points",pts.join(" "));
+  L.forEach((l,i)=>{if(l.rings){const d=l.rings.map(r=>"M"+r.map(P).join("L")+"Z").join("");LE[i].setAttribute("d",d);if(AUX[i])AUX[i].setAttribute("d",d)}else LE[i].setAttribute("points",l.pts.map(P).join(" "))});pv.setAttribute("points",PV.map(P).join(" "));
+  if(pts.length){const a=pts[0].split(","),b=pts[pts.length-1].split(",");ca.setAttribute("r",8);cb.setAttribute("r",8);ca.setAttribute("cx",a[0]);ca.setAttribute("cy",a[1]);cb.setAttribute("cx",b[0]);cb.setAttribute("cy",b[1])}else{ca.setAttribute("r",0);cb.setAttribute("r",0)}}
+ const draw=()=>{if(!raf)raf=requestAnimationFrame(render)};
+ const lat=y=>Math.atan(Math.sinh(Math.PI*(1-2*y)))*180/Math.PI,lon=x=>x*360-180;
+ const toLL=e=>{const r=svg.getBoundingClientRect(),n=2**z*256,px=(e.clientX-r.left)*W/r.width,py=(e.clientY-r.top)*H/r.height;return[lat((py+cy*n-H/2)/n),lon((px+cx*n-W/2)/n)]};
+ function zoom(dz,px,py){const nz=Math.max(2,Math.min(18,z+dz));if(nz===z)return;const n=2**z*256,wx=cx+((px??W/2)-W/2)/n,wy=cy+((py??H/2)-H/2)/n;z=nz;const m=2**z*256;cx=wx-((px??W/2)-W/2)/m;cy=wy-((py??H/2)-H/2)/m;draw()}
+ svg.addEventListener("wheel",e=>{e.preventDefault();const r=svg.getBoundingClientRect();zoom(e.deltaY<0?1:-1,(e.clientX-r.left)*W/r.width,(e.clientY-r.top)*H/r.height)},{passive:false});
+ /* outils de l'éditeur (opts.pointer): onclick(lat,lon) = un clic ; onmove(lat,lon,départ) = aperçu en direct quand la souris bouge (départ = point où le bouton a été pressé, si on glisse) ;
+    ondrag(départ,arrivée) = tracé par glisser-déposer (le fond de carte ne bouge pas pendant ce tracé) ; onpen/onpenmove = crayon */
+ let drag=null,moved=0,pen=null,sd=null;const PT=()=>opts.pointer||{mode:"pan"};
+ svg.addEventListener("pointerdown",e=>{svg.setPointerCapture(e.pointerId);if(PT().mode==="pen"){pen=[toLL(e)];if(PT().onpenmove)PT().onpenmove(pen);return}drag={x:e.clientX,y:e.clientY};moved=0;sd=PT().mode==="click"&&PT().ondrag?toLL(e):null;if(!sd)svg.classList.add("grab")});
+ svg.addEventListener("pointermove",e=>{if(pen){const p=toLL(e),q=pen[pen.length-1];if(Math.abs(p[0]-q[0])+Math.abs(p[1]-q[1])>1e-5/Math.max(1,2**(z-12))){pen.push(p);if(PT().onpenmove)PT().onpenmove(pen)}return}
+  if(!drag){if(PT().mode==="click"&&PT().onmove){const[a,b]=toLL(e);PT().onmove(a,b,null)}return}
+  moved+=Math.abs(e.clientX-drag.x)+Math.abs(e.clientY-drag.y);
+  if(sd){const[a,b]=toLL(e);if(PT().onmove)PT().onmove(a,b,sd);drag={x:e.clientX,y:e.clientY};return}
+  const r=svg.getBoundingClientRect(),n=2**z*256;cx-=(e.clientX-drag.x)*(W/r.width)/n;cy-=(e.clientY-drag.y)*(H/r.height)/n;drag={x:e.clientX,y:e.clientY};draw()});
+ const end=e=>{if(pen){const p=pen;pen=null;if(PT().onpen)PT().onpen(p);return}
+  if(drag&&e&&e.type==="pointerup"&&PT().mode==="click"){if(sd&&moved>=5&&PT().ondrag){PT().ondrag(sd,toLL(e))}else if(moved<5&&PT().onclick){const [a,b]=toLL(e);PT().onclick(a,b)}}
+  drag=null;sd=null;svg.classList.remove("grab")};
+ svg.addEventListener("pointerup",end);svg.addEventListener("pointercancel",end);
+ svg.addEventListener("dblclick",e=>{if(PT().ondbl&&PT().mode==="click"){PT().ondbl();return}const r=svg.getBoundingClientRect();zoom(1,(e.clientX-r.left)*W/r.width,(e.clientY-r.top)*H/r.height)});
+ el.querySelectorAll(".mapbtn button").forEach(b=>b.onclick=()=>{+b.dataset.z?zoom(+b.dataset.z):(fit(),draw())});
+ if(window.ResizeObserver)new ResizeObserver(()=>{const w=svg.clientWidth,h=svg.clientHeight;if(w&&h&&(w!==W||h!==H)){size();draw()}}).observe(svg);
+ fit();render();
+ return{setLayers(n){L=fix(n);build();draw()},fit(){fit();draw()},draw,toLL,svg,setPreview(p){PV=p||[];draw()}}}
+let CH=0;function chart(el,data,key,label,unit,color){const v=data.filter(d=>d[key]!=null&&(d[key]!==0||key==="alt"));if(v.length<2)return;
+ const W=900,H=80,p=40,ys=v.map(d=>d[key]),lo=Math.min(...ys),hi=Math.max(...ys),sx=i=>p+i/(v.length-1)*(W-p-10),sy=y=>H-16-(y-lo)/((hi-lo)||1)*(H-34),pts=v.map((d,i)=>sx(i).toFixed(1)+","+sy(d[key]).toFixed(1)),id="g"+(++CH);
+ el.insertAdjacentHTML("beforeend",`<svg class="chart" viewBox="0 0 ${W} ${H}" style="margin-top:6px"><defs><linearGradient id="${id}" x1="0" x2="0" y1="0" y2="1"><stop offset="0" stop-color="${color}" stop-opacity=".45"/><stop offset="1" stop-color="${color}" stop-opacity="0"/></linearGradient></defs>
+  <text x="${p}" y="14" font-size="11" letter-spacing="1.5" fill="var(--mut)">${label} (${unit})</text><text x="6" y="${sy(hi)+4}" font-size="11" fill="var(--mut)" class="num">${Math.round(hi)}</text><text x="6" y="${sy(lo)+4}" font-size="11" fill="var(--mut)" class="num">${Math.round(lo)}</text>
+  <polygon points="${p},${H-16} ${pts.join(" ")} ${sx(v.length-1)},${H-16}" fill="url(#${id})"/><polyline points="${pts.join(" ")}" fill="none" stroke="${color}" stroke-width="1.8" stroke-linejoin="round"/></svg>`)}
+
+/* parcours: même présentation que les séances (liste à gauche, détail à droite) */
+let RCUR=null,CURF=null;
+function statTiles(s){const tile=(c,l,v,u)=>v==null?"":`<div class="tile ${c}"><small>${l}</small><div class="v num">${v}<u>${u||""}</u></div></div>`;
+ return tile("t-dist","Distance",D(s.km),UD)+tile("t-alt","Montée",A(s.has_ele?s.ascent:null),UA)+tile("t-alt","Descente",A(s.has_ele?s.descent:null),UA)+tile("t-alt","Altitude max.",A(s.alt_max),UA)+tile("t-alt","Altitude min.",A(s.alt_min),UA)}
+/* nom sur le compteur: sans accents ni caractères spéciaux (lettres, chiffres, espace, tiret, souligné), 30 caractères */
+const safeName=(s,end)=>{s=String(s||"").normalize("NFD").replace(/[̀-ͯ]/g,"").replace(/[^A-Za-z0-9 _-]+/g," ").replace(/\s{2,}/g," ");return(end?s.replace(/^[\s_-]+|[\s_-]+$/g,""):s.replace(/^\s+/,"")).slice(0,30)};
+function shapeOf(track){if(!track||track.length<2)return null;const xs=track.map(p=>mx(p[1])),ys=track.map(p=>my(p[0])),x0=Math.min(...xs),y0=Math.min(...ys),w=Math.max(...xs)-x0,h=Math.max(...ys)-y0,k=100/(Math.max(w,h)||1),ox=(100-w*k)/2,oy=(100-h*k)/2,st=Math.max(1,Math.floor(track.length/48));
+ return track.filter((_,i)=>i%st===0).map(p=>[+(ox+(mx(p[1])-x0)*k).toFixed(1),+(oy+(my(p[0])-y0)*k).toFixed(1)])}
+/* ---- Parcours: une seule liste (compteur + Komoot + GPX), un parcours = une ligne ---- */
+let LIB=[],LSEL=new Set(),LCUR=null,LS={k:"date",dir:-1},LF={src:"all",q:"",kmMin:"",kmMax:"",dMin:"",dMax:""},LCOV={},LINFO={};
+const SRCN={compteur:"Compteur",komoot:"Komoot",gpx:"GPX"};
+/* dates comme sur Komoot: « créé » = la date affichée par Komoot ; « modifié » = dernière modification sur Komoot */
+function libDates(x){const c=(x.created||"").slice(0,10),m=(x.changed||"").slice(0,10);if(!c&&!m)return"";
+ const tip=[c?"Créé le "+frd(c):"",m?"Modifié sur Komoot le "+frd(m):""].filter(Boolean).join(" · ");
+ return` · <span class="mut" title="${esc(tip)}">${c?"créé "+frd(c):""}${m&&m!==c?" · modifié "+frd(m):""}</span>`}
+/* d'où vient la trace: le programme ne contacte Komoot que si vous êtes connecté ; le numéro Komoot d'un parcours du compteur est écrit dans le compteur par FlowSync */
+function originOf(x){
+ if(x.on_device){if(!x.komoot_id)return"Compteur seul : aucun numéro Komoot dans ce parcours (il a été ajouté autrement).";
+  return x.file?`Komoot n° ${x.komoot_id} : numéro noté dans le parcours par FlowSync, et GPX Komoot « ${x.file} » présent dans le dossier « komoot » de vos données.`
+   :`Komoot n° ${x.komoot_id} : numéro noté dans le parcours du compteur par FlowSync. Aucune trace Komoot sur ce PC : le programme n'a pas interrogé Komoot, la trace affichée est celle du compteur.`}
+ if(x.source==="gpx")return`Fichier GPX « ${x.file} » du dossier « komoot » de vos données (pas de numéro Komoot reconnu dans son nom).`;
+ return x.file?`Komoot n° ${x.komoot_id} : trace téléchargée, fichier « ${x.file} » dans le dossier « komoot » de vos données.`:`Liste de votre compte Komoot (n° ${x.komoot_id}) : trace pas encore téléchargée.`}
+async function listRoutes(){$("rlist").innerHTML='<div class="mut" style="padding:18px">Lecture…</div>';
+ const r=await api("/api/library");if(r.error){$("rlist").innerHTML=`<div class="err" style="padding:18px">${esc(r.error)}</div>`;return}
+ LIB=r.items;LINFO=r;LSEL=new Set([...LSEL].filter(id=>LIB.some(x=>x.id===id)));renderLib();libCoverage()}
+async function libCoverage(){if(!PROFILE||!PROFILE.map||!LIB.length)return;
+ const c=await api("/api/map/coverage",{method:"POST",body:JSON.stringify({map:PROFILE.map,sources:{items:LIB.map(x=>x.id)}})}).catch(()=>null);
+ if(c&&c.routes){LCOV=c.routes;renderLib()}}
+const libStatusRank=x=>x.on_device?(x.status==="diff"?1:x.status==="sync"?3:2):0;
+function libFiltered(){const q=plain(LF.q),n=v=>v===""?null:+v;
+ return LIB.filter(x=>{if(q&&!plain(x.name).includes(q))return false;
+  if(LF.src==="device"&&!x.on_device)return false;if(LF.src==="komoot"&&!(x.komoot_id||x.source==="komoot"))return false;if(LF.src==="gpx"&&x.source!=="gpx")return false;
+  if(LF.src==="write"&&!(LSEL.has(x.id)&&!x.on_device))return false;
+  if(n(LF.kmMin)!=null&&D(x.km)<n(LF.kmMin))return false;if(n(LF.kmMax)!=null&&D(x.km)>n(LF.kmMax))return false;
+  if(n(LF.dMin)!=null&&(x.dplus==null||A(x.dplus)<n(LF.dMin)))return false;if(n(LF.dMax)!=null&&(x.dplus==null||A(x.dplus)>n(LF.dMax)))return false;return true})
+  .sort((a,b)=>{let r=LS.k==="name"?a.name.localeCompare(b.name,"fr"):LS.k==="date"?(a.modified||"").localeCompare(b.modified||""):LS.k==="dplus"?(a.dplus??-1)-(b.dplus??-1):a.km-b.km;
+   if(LS.k==="name"?LS.dir<0:false)r=-r;return LS.k==="name"?r:r*LS.dir})}
+function libBadges(x){const b=[],cv=LCOV[x.id];
+ if(x.on_device)b.push('<span class="bg">sur le compteur</span>');else b.push(LSEL.has(x.id)?'<span class="bg w">à écrire</span>':'<span class="bg">pas sur le compteur</span>');
+ if(x.status==="sync")b.push('<span class="bg s">synchronisé</span>');else if(x.status==="diff")b.push('<span class="bg x">non synchronisé</span>');
+ else if(x.on_device&&x.komoot_id&&!x.file)b.push('<span class="bg u" title="Le GPX Komoot n\'est pas téléchargé : la trace n\'a pas été comparée">synchro non vérifiée</span>');
+ if(cv&&cv.km_outside>1)b.push(`<span class="bg o">hors carte${cv.km_outside<cv.km_total*.99?" "+kmTxt(cv.km_outside):""}</span>`);return b.join(" ")}
+function renderLib(){
+ const cnt={all:LIB.length,device:LIB.filter(x=>x.on_device).length,komoot:LIB.filter(x=>x.komoot_id||x.source==="komoot").length,gpx:LIB.filter(x=>x.source==="gpx").length,write:LIB.filter(x=>LSEL.has(x.id)&&!x.on_device).length};
+ const chips=[["all","Tous"],["device","Compteur"],["komoot","Komoot"],["gpx","GPX"],["write","À écrire"]];
+ $("lchips").innerHTML=chips.map(([k,l])=>`<button class="chip ${LF.src===k?"on":""}" data-s="${k}">${l} ${cnt[k]}</button>`).join("")+`<span class="mut" style="margin-left:auto;font-size:12.5px">${cnt.device} / 20 favoris</span>`;
+ const sk=[["date","Date"],["km","Distance"],["dplus","Dénivelé +"],["name","Nom"]];
+ $("lsort").innerHTML=`<span class="mut" style="font-size:12.5px">Trier par</span>`+sk.map(([k,l])=>`<button class="chip ${LS.k===k?"on":""}" data-k="${k}">${l}${LS.k===k?(LS.dir<0?" ↓":" ↑"):""}</button>`).join("")
+  +`<span class="mut rg" style="margin-left:auto;font-size:12px">${UD} <input id="lkmin" value="${esc(LF.kmMin)}" placeholder="min" size="3"> – <input id="lkmax" value="${esc(LF.kmMax)}" placeholder="max" size="3"> · D+ <input id="ldmin" value="${esc(LF.dMin)}" placeholder="min" size="4"> – <input id="ldmax" value="${esc(LF.dMax)}" placeholder="max" size="4"></span>`;
+ const rows=libFiltered();
+ $("rlist").innerHTML=rows.length?rows.map(x=>`<div class="it ${x.id===LCUR?"on":""}" data-id="${esc(x.id)}"><input type="checkbox" class="rcb" data-id="${esc(x.id)}" ${LSEL.has(x.id)?"checked":""}>${thumb(shapeOf(x.track))}
+  <div><div class="d num">${esc(x.name)}</div><div class="s" title="${esc(originOf(x))}">${SRCN[x.on_device&&(x.komoot_id||x.source==="komoot")?"komoot":x.source]||x.source}${x.on_device&&x.komoot_id?" + compteur":""} · <span class="num" style="font-size:16px;color:var(--ink)">${D(x.km)}</span> ${UD}${x.dplus!=null?` · ↗ ${A(x.dplus)} ${UA}`:""}${libDates(x)}</div><div class="bds">${libBadges(x)}</div></div></div>`).join(""):'<div class="mut" style="padding:18px">Aucun parcours.</div>';
+ document.querySelectorAll("#rlist .it").forEach(e=>e.onclick=ev=>{if(ev.target.classList.contains("rcb"))return;showLib(e.dataset.id)});
+ document.querySelectorAll("#rlist .rcb").forEach(c=>c.onchange=()=>{c.checked?LSEL.add(c.dataset.id):LSEL.delete(c.dataset.id);renderLib()});
+ document.querySelectorAll("#lchips .chip").forEach(b=>b.onclick=()=>{LF.src=b.dataset.s;renderLib()});
+ document.querySelectorAll("#lsort .chip").forEach(b=>b.onclick=()=>{if(LS.k===b.dataset.k)LS.dir*=-1;else{LS.k=b.dataset.k;LS.dir=b.dataset.k==="name"?1:-1}renderLib()});
+ document.querySelectorAll("#lsort .chip").forEach(b=>b.title=b.dataset.k==="date"?"Comme Komoot : dernière modification en haut (sans Komoot : date du parcours sur le compteur ou du fichier GPX)":"");
+ [["lkmin","kmMin"],["lkmax","kmMax"],["ldmin","dMin"],["ldmax","dMax"]].forEach(([id,k])=>$(id).onchange=()=>{LF[k]=$(id).value.trim();renderLib()});
+ libFooter()}
+function libFooter(){const sel=LIB.filter(x=>LSEL.has(x.id)),w=sel.filter(x=>!x.on_device),u=sel.filter(x=>x.on_device&&x.status==="diff"&&x.file),d=sel.filter(x=>x.on_device),fav=LIB.filter(x=>x.on_device).length;
+ const k=(LINFO.komoot||{}).connected;
+ $("lfoot").innerHTML=`<span class="mut" style="flex:1;font-size:12.5px"><b style="color:var(--ink)">${w.length} à écrire</b> · ${fav+w.length} / 20 favoris${k?(LINFO.komoot_fetched?` · Komoot : liste du ${esc(LINFO.komoot_fetched.slice(0,16))}`:" · Komoot : liste non chargée"):""}</span>
+  <button class="p" id="lwrite" ${w.length?"":"disabled"}>Écrire (${w.length})</button>${u.length?`<button id="lupd">Mettre à jour (${u.length})</button>`:""}<button id="ldel" ${d.length?"":"disabled"}>Supprimer (${d.length})</button><button id="lmap" title="Fabriquer une carte qui couvre ces parcours">Préparer la carte…</button>`;
+ $("lwrite").onclick=()=>libWrite(w);$("ldel").onclick=()=>libDelete(d);$("lmap").onclick=()=>{MAPOPT.items=sel.map(x=>x.id);MAPOPT.gpx=[];MAPOPT.dev=!sel.length;MAPOPT.home=false;document.querySelector('.nav[data-t="device"]').click();mapDraw();setTimeout(()=>{$("mapfab").scrollIntoView({behavior:"smooth"});mapPlan()},300)};
+ if($("lupd"))$("lupd").onclick=()=>libUpdate(u)}
+$("lq").oninput=e=>{LF.q=e.target.value;const p=e.target.selectionStart;renderLib();$("lq").focus();$("lq").setSelectionRange(p,p)};
+
+async function showLib(id){try{await showLib0(id)}catch(e){$("rdetail").innerHTML=`<span class="err">Impossible d'afficher ce parcours : ${esc((e&&e.message)||e)}</span> <button id="rretry">Réessayer</button>`;if($("rretry"))$("rretry").onclick=()=>showLib(id);throw e}}
+async function showLib0(id){LCUR=id;document.querySelectorAll("#rlist .it").forEach(e=>e.classList.toggle("on",e.dataset.id===id));
+ $("rdetail").innerHTML='<span class="mut">Chargement…</span>';const d=await api("/api/library/detail",{method:"POST",body:JSON.stringify({id})});
+ if(d.error){$("rdetail").innerHTML=`<span class="err">${esc(d.error)}</span>`;return}
+ const x=d.item;
+ if(d.preview){CURF=d.preview;showImportPreview(d.preview,false);return}
+ if(d.need_download){$("rdetail").innerHTML=`<span class="mut">Téléchargement du GPX de « ${esc(x.name)} » depuis Komoot…</span>`;
+  const r=await api("/api/komoot/fetch",{method:"POST",body:JSON.stringify({id:x.komoot_id,name:x.name,date:x.date||""})});
+  if(r.error){$("rdetail").innerHTML=`<span class="err">${esc(r.error)}</span>`;return}showImportPreview(r,false);listRoutes();return}
+ const sync=x.status==="sync"?`<div class="banner" style="border-left-color:var(--ok)"><span><b>Synchronisé</b> : la trace du compteur correspond à celle de Komoot (écart moyen ${A(x.mean_m)} ${UA}, longueur à ${x.km_diff_pct} % près).</span></div>`
+  :x.status==="diff"?`<div class="banner"><span><b>Non synchronisé</b> : la trace Komoot est différente de celle du compteur (écart moyen ${A(x.mean_m)} ${UA}, ${x.km_diff_pct} % de longueur). Sur la carte : trait vert = compteur, pointillés orange = Komoot.</span><button class="p" id="dupd">Mettre à jour le compteur</button></div>`
+  :x.komoot_id&&!x.file?`<div class="banner" style="border-left-color:var(--mut)"><span><b>Synchro non vérifiée</b> : le GPX Komoot n'est pas téléchargé, la trace n'a pas été comparée.</span><button id="ddl">Télécharger et vérifier</button></div>`:"";
+ $("rdetail").innerHTML=`<div class="row"><div><h3 class="title">${esc(x.name)}</h3><div class="sub">Sur le compteur · dossier ${x.slot} · ${d.device_points} points (tracé tel que stocké sur le compteur)</div><div class="mut" style="font-size:12.5px;margin-top:3px;max-width:72ch">Origine : ${esc(originOf(x))}</div></div><span style="flex:1"></span><button id="rdel1" class="del">Supprimer</button></div>
+  ${sync}<div id="dcover" style="margin-top:8px"></div><div class="tiles">${statTiles(d.stats)}</div><div id="rmap" class="mapbox"></div><div id="rchart"></div>`;
+ drawMap($("rmap"),d.track,{layers:d.other_track?[{pts:d.other_track,color:"#ffb12e",width:3,dash:"7 5"}]:[]});if(d.stats.has_ele)chart($("rchart"),d.stats.profile.map(r=>({...r,alt:A(r.alt)})),"alt","PROFIL D'ALTITUDE",UA,"var(--amber)");
+ $("rdel1").onclick=()=>libDelete([x]);if($("dupd"))$("dupd").onclick=()=>libUpdate([x]);
+ if($("ddl"))$("ddl").onclick=async()=>{$("ddl").disabled=true;await libDownload([x.komoot_id]);await listRoutes();showLib(id)};
+ mapCover({items:[x.id]},"dcover")}
+async function libDownload(ids){const r=await api("/api/library/komoot-gpx",{method:"POST",body:JSON.stringify({ids})});if(!r.started){alert("Une autre opération est en cours : réessayez dans un instant.");return}
+ for(;;){const j=await api("/api/job");$("lfoot").innerHTML=`<span class="mut" style="font-size:12.5px">${SPIN}Lecture des traces sur Komoot… ${(j.progress||[0,0]).join(" / ")}</span>`;if(!j.running){if(j.error)alert(j.error);return}await new Promise(r=>setTimeout(r,1000))}}
+async function libWrite(items){const fav=LIB.filter(x=>x.on_device).length;if(fav+items.length>20){alert(`Le compteur garde 20 favoris au plus : il y en a déjà ${fav}, vous en ajoutez ${items.length}. Supprimez-en d'abord.`);return}
+ if(!confirm(`Écrire ${items.length} parcours sur le compteur ?\n\n• ${items.map(x=>x.name).join("\n• ")}\n\nÀ tracé standard (comme FlowSync). Redémarrez le compteur ensuite.`))return;
+ const miss=items.filter(x=>!x.file&&x.komoot_id);if(miss.length){await libDownload(miss.map(x=>x.komoot_id));await listRoutes();items=LIB.filter(y=>items.some(x=>x.id===y.id||(x.komoot_id&&y.komoot_id===x.komoot_id)))}
+ const done=[],errs=[];let n=0;for(const x of items){if(!x.file){errs.push(`${x.name}: GPX absent`);continue}$("lfoot").innerHTML=`<span class="mut" style="font-size:12.5px">${SPIN}Écriture sur le compteur ${++n} / ${items.length} : ${esc(x.name)}…</span>`;
+  const r=await api("/api/put-route",{method:"POST",body:JSON.stringify({file:x.file,name:safeName(x.name,true),hd:false})});r.error?errs.push(`${x.name}: ${r.error}`):done.push(r)}
+ LSEL=new Set();await listRoutes();alert(`${done.length} parcours écrit${done.length>1?"s":""}${done.every(r=>r.verified)?" et vérifié"+(done.length>1?"s":""):" (relecture différente pour certains)"}.${errs.length?"\n\nErreurs :\n"+errs.join("\n"):""}\n\nÉteignez puis rallumez le compteur pour les voir.`)}
+async function libUpdate(items){if(!confirm(`Mettre à jour ${items.length} parcours du compteur avec la trace Komoot ?\n\n• ${items.map(x=>x.name).join("\n• ")}\n\nLe nom et le favori sont conservés ; l'ancien fichier est copié sur ce PC.`))return;
+ const errs=[];for(const x of items){$("lfoot").innerHTML=`<span class="mut" style="font-size:12.5px">${SPIN}Mise à jour sur le compteur : ${esc(x.name)}…</span>`;const r=await api("/api/update-route",{method:"POST",body:JSON.stringify({slot:x.slot,file:x.file,hd:false})});if(r.error)errs.push(`${x.name}: ${r.error}`)}
+ LSEL=new Set();await listRoutes();if(LCUR)showLib(LCUR);alert(errs.length?"Erreurs :\n"+errs.join("\n"):"Mis à jour. Éteignez puis rallumez le compteur pour voir les nouvelles traces.")}
+async function libDelete(items){if(!confirm(`Supprimer ${items.length>1?items.length+" parcours":"ce parcours"} du compteur ?\n\n• ${items.map(x=>x.name).join("\n• ")}\n\nC'est définitif. Les séances ne sont pas touchées.`))return;
+ const errs=[];let n=0;for(const x of items){$("lfoot").innerHTML=`<span class="mut" style="font-size:12.5px">Suppression ${++n} / ${items.length}…</span>`;const r=await api("/api/remove-route",{method:"POST",body:JSON.stringify({slot:x.slot})});r.error?errs.push(`${x.name}: ${r.error}`):LSEL.delete(x.id)}
+ if(items.some(x=>x.id===LCUR)){LCUR=null;$("rdetail").innerHTML='<span class="mut">Parcours supprimé. Choisissez un autre parcours.</span>'}
+ await listRoutes();alert(errs.length?"Erreurs :\n"+errs.join("\n"):"Supprimé. Redémarrez le compteur pour actualiser sa liste.")}
+
+/* import d'un GPX (fichier ou Komoot): aperçu avant écriture */
+function showImportPreview(r,back){CURF=r;const s=r.stats;
+ $("rdetail").innerHTML=`${back?'<button id="kback" style="margin-bottom:10px">← Retour à la liste Komoot</button>':""}<div><h3 class="title">${esc(r.original_name)}</h3><div class="sub">Nouveau parcours · ${back?"depuis Komoot":"fichier"} ${esc(r.file)} · ${r.gpx_points} points dans le GPX</div></div>
+  <div class="row" style="margin:12px 0 2px"><label>Nom sur le compteur <input id="rname" size="30" maxlength="30"></label><span id="rname_hint" class="mut" style="font-size:12.5px"></span></div>
+  <div id="pvcover" style="margin-top:10px"></div><div class="tiles">${statTiles(s)}</div><div id="pvmap" class="mapbox"></div><div id="pvchart"></div>
+  <div class="row" style="margin:14px 0 4px"><label class="row" style="gap:5px"><input type="radio" name="q" value="std" checked> Standard</label><label class="row" style="gap:5px"><input type="radio" name="q" value="hd"> Détaillé (HD)</label>
+   <span class="mut" style="font-size:13px">Standard : ${r.standard.points} points (écart max ${A(r.standard.tolerance_m)} ${UA}, comme FlowSync) · HD : ${r.hd.points} points (écart max ${A(r.hd.tolerance_m)} ${UA})</span></div>
+  <div class="row"><button class="p" id="put">Écrire sur le compteur</button><span id="putstate" class="mut"></span></div>`;
+ if(back&&$("kback"))$("kback").onclick=()=>showKomoot();
+ $("rname").value=r.name;$("rname_hint").textContent=r.name!==r.original_name?`Nom d'origine : « ${r.original_name} » (accents et caractères spéciaux retirés)`:"";
+ $("rname").oninput=e=>{const v=safeName(e.target.value);if(v!==e.target.value)e.target.value=v};$("rname").onblur=e=>{e.target.value=safeName(e.target.value,true)};
+ drawMap($("pvmap"),r.track);mapCover(r.file,"pvcover");
+ if(s.has_ele)chart($("pvchart"),s.profile.map(r=>({...r,alt:A(r.alt)})),"alt","PROFIL D'ALTITUDE",UA,"var(--amber)");else $("pvchart").innerHTML='<p class="mut" style="font-size:13px">Ce fichier ne contient pas d\'altitudes : le compteur affichera un parcours plat.</p>';
+ $("put").onclick=async()=>{const name=safeName($("rname").value,true)||CURF.name;if(!confirm(`Écrire « ${name} » sur le compteur ?`))return;$("put").disabled=true;$("putstate").innerHTML=SPIN+"Écriture sur le compteur…";
+  const hd=document.querySelector("input[name=q]:checked").value==="hd",w=await api("/api/put-route",{method:"POST",body:JSON.stringify({file:CURF.file,name,hd})});$("put").disabled=false;
+  $("putstate").innerHTML=w.error?`<span class="err">${esc(w.error)}</span>`:`<span class="${w.verified?"ok":"warn"}">${w.verified?"Écrit et vérifié":"Écrit mais relecture différente"} (dossier ${w.slot}, ${w.points} points). ${esc(w.note)}</span>`;if(!w.error)listRoutes()}}
+async function upload(f){RCUR=null;CURF=null;document.querySelectorAll("#rlist .it").forEach(e=>e.classList.remove("on"));$("rdetail").innerHTML='<span class="mut">Analyse du fichier…</span>';
+ try{const fd=new FormData();fd.append("file",f);const r=await api("/api/preview",{method:"POST",body:fd});if(r.error){$("rdetail").innerHTML=`<span class="err">${esc(r.error)}</span>`;return}showImportPreview(r,false)}
+ catch(e){$("rdetail").innerHTML=`<span class="err">Analyse impossible : ${esc(e.message||e)}</span>`}}
+
+/* Komoot (API interne de Komoot, non officielle): connexion, liste des tours, import */
+let KOM={tours:[],kind:"planned"};
+function renderKomootLogin(msg){RCUR=null;CURF=null;document.querySelectorAll("#rlist .it").forEach(e=>e.classList.remove("on"));
+ $("rdetail").innerHTML=`<h3 class="title">Komoot</h3><p class="mut" style="max-width:66ch;margin:6px 0 12px">Connectez-vous avec votre compte Komoot pour retrouver vos itinéraires ici et les envoyer au compteur. Votre mot de passe sert uniquement à la connexion et n'est <b>pas enregistré</b> : Komoot renvoie un jeton, conservé sur ce PC et chiffré par Windows.</p>
+  <div class="row"><input id="kemail" type="email" placeholder="Adresse e-mail Komoot" size="32" autocomplete="username"><input id="kpass" type="password" placeholder="Mot de passe" size="24" autocomplete="current-password"><button class="p" id="klogin">Se connecter</button></div>
+  <div id="kmsg" style="margin-top:10px">${msg?`<span class="err">${esc(msg)}</span>`:""}</div>
+  <p class="mut" style="font-size:12.5px;max-width:66ch;margin-top:14px">Ce programme utilise l'interface interne de Komoot (la même que ses applications), non documentée : elle peut cesser de fonctionner sans préavis. Il n'est ni affilié à Komoot ni approuvé par Komoot. N'utilisez que votre propre compte. Si vous vous connectez à Komoot avec Google ou Apple, il se peut que vous n'ayez pas de mot de passe Komoot : dans ce cas, déposez plutôt le fichier GPX exporté depuis Komoot.</p>`;
+ const go=async()=>{const e=$("kemail").value.trim(),p=$("kpass").value;if(!e||!p){$("kmsg").innerHTML='<span class="err">Saisissez l\'adresse e-mail et le mot de passe.</span>';return}
+  $("klogin").disabled=true;$("kmsg").innerHTML='<span class="mut">Connexion à Komoot…</span>';
+  const r=await api("/api/komoot/login",{method:"POST",body:JSON.stringify({email:e,password:p})});$("kpass").value="";
+  if(r.error){$("klogin").disabled=false;$("kmsg").innerHTML=`<span class="err">${esc(r.error)}</span>`;return}
+  SVC.komoot={connected:true,username:r.username};komSync();showKomoot()};
+ $("klogin").onclick=go;$("kpass").onkeydown=ev=>{if(ev.key==="Enter")go()}}
+const plain=s=>String(s||"").normalize("NFD").replace(/[̀-ͯ]/g,"").toLowerCase();
+async function showKomoot(){LCUR=null;document.querySelectorAll("#rlist .it").forEach(e=>e.classList.remove("on"));$("rdetail").innerHTML='<span class="mut">Komoot…</span>';
+ const sv=await api("/api/services");SVC.komoot=sv.komoot||{};if(!SVC.komoot.connected){renderKomootLogin();return}
+ const miss=LIB.filter(x=>x.komoot_id&&!x.file).length;
+ $("rdetail").innerHTML=`<div class="row"><h3 class="title">Komoot</h3><span class="mut">${esc(SVC.komoot.username||"")}</span><span style="flex:1"></span><button id="klogout">Se déconnecter</button></div>
+  <p class="mut" style="max-width:66ch;margin:8px 0">Vos itinéraires Komoot s'ajoutent à la liste de gauche ; ceux qui sont déjà sur le compteur n'y figurent qu'une fois, avec leur état de synchronisation. Dernière liste : ${esc((LINFO.komoot_fetched||"jamais"))}.</p>
+  <div class="row"><select id="kkind"><option value="planned">Itinéraires planifiés</option><option value="recorded">Sorties enregistrées</option></select><button class="p" id="kref">Actualiser la liste</button><button id="kdl" ${miss?"":"disabled"}>Télécharger les GPX manquants (${miss})</button></div>
+  <div id="kmsg" style="margin-top:10px"></div>
+  <p class="mut" style="font-size:12.5px;max-width:66ch;margin-top:12px">Les miniatures et la comparaison des traces demandent le GPX de chaque parcours : il est téléchargé dans le dossier « komoot » de vos données, avec une courte pause entre deux requêtes. Interface interne de Komoot, non officielle.</p>`;
+ $("kref").onclick=async()=>{$("kref").disabled=true;$("kmsg").innerHTML='<span class="mut">'+SPIN+'Lecture de vos itinéraires sur Komoot…</span>';const r=await api("/api/library/komoot-refresh",{method:"POST",body:JSON.stringify({kind:$("kkind").value})});
+  if(r.error){$("kmsg").innerHTML=`<span class="err">${esc(r.error)}</span>`;$("kref").disabled=false;if(/refus/.test(r.error)){SVC.komoot={};renderKomootLogin(r.error)}return}
+  await listRoutes();$("kmsg").innerHTML=`<span class="ok">${r.count} itinéraires dans votre compte.</span>`;showKomootCount()};
+ $("kdl").onclick=async()=>{const ids=LIB.filter(x=>x.komoot_id&&!x.file).map(x=>x.komoot_id).slice(0,60);await libDownload(ids);await listRoutes();showKomoot()};
+ $("klogout").onclick=async()=>{if(!confirm("Se déconnecter de Komoot ? Le jeton enregistré sur ce PC sera effacé."))return;await api("/api/komoot/logout",{method:"POST"});SVC.komoot={};komSync();renderKomootLogin()}}
+function komSync(){renderConnKomoot();$("sendkom").classList.toggle("hid",!(SVC.komoot&&SVC.komoot.connected));$("au_komnote").textContent=(SVC.komoot&&SVC.komoot.connected)?"":"(connectez-vous d'abord à Komoot ci-dessus)"}
+function showKomootCount(){}
+$("rkom").onclick=showKomoot;
+$("radd").onclick=()=>$("file").click();$("file").onchange=e=>{e.target.files[0]&&upload(e.target.files[0]);e.target.value=""};
+const dz=$("drop");dz.ondragover=e=>{e.preventDefault();dz.classList.add("over")};dz.ondragleave=()=>dz.classList.remove("over");dz.ondrop=e=>{e.preventDefault();dz.classList.remove("over");e.dataTransfer.files[0]&&upload(e.dataTransfer.files[0])};
+
+/* Strava: pas d'API (payante) ni de relais via Intervals.icu: on télécharge le FIT et on ouvre la page d'envoi de Strava */
+function stravaSend(id){if(!confirm("Strava n'accepte l'envoi que par sa page web.\n\nLe fichier FIT de cette séance va être téléchargé, puis la page d'envoi de Strava va s'ouvrir dans votre navigateur : choisissez-y ce fichier."))return;
+ const a=document.createElement("a");a.href=`/download/${id}.fit`;a.download="";document.body.appendChild(a);a.click();a.remove();setTimeout(()=>api("/api/open-external",{method:"POST",body:JSON.stringify({target:"strava_upload"})}),900)}
+$("st_open").onclick=()=>api("/api/open-external",{method:"POST",body:JSON.stringify({target:"strava_upload"})});
+$("ab_repo").onclick=()=>api("/api/open-external",{method:"POST",body:JSON.stringify({target:"repo"})});
+$("ab_lic").onclick=()=>api("/api/open-external",{method:"POST",body:JSON.stringify({target:"licence"})});
+$("iv_site").onclick=()=>api("/api/open-external",{method:"POST",body:JSON.stringify({target:"intervals_settings"})});
+/* envoi automatique */
+async function saveAuto(){if($("au_iv").checked&&!(SVC.intervals&&SVC.intervals.configured)){$("au_iv").checked=false;$("au_state").textContent="Configurez d'abord Intervals.icu (clé d'API) pour l'envoi automatique.";return}
+ if($("au_kom").checked&&!(SVC.komoot&&SVC.komoot.connected)){$("au_kom").checked=false;$("au_state").textContent="Connectez-vous d'abord à Komoot pour l'envoi automatique.";return}
+ const r=await api("/api/auto",{method:"POST",body:JSON.stringify({intervals:$("au_iv").checked,gpx:$("au_gpx").checked,komoot:$("au_kom").checked})});
+ $("au_state").textContent=(r.intervals||r.gpx||r.komoot)?"Activé : les séances enregistrées à partir de maintenant seront traitées à la prochaine lecture du compteur.":"Désactivé : rien n'est envoyé sans votre clic.";SVC=await api("/api/services")}
+$("au_iv").onchange=saveAuto;$("au_gpx").onchange=saveAuto;$("au_kom").onchange=saveAuto;
+/* Komoot (page Connexions): connexion, état, envoi des séances. Même API interne que l'import des parcours. */
+function renderConnKomoot(msg){const k=SVC.komoot||{},b=$("ck_body");if(!b)return;$("sv_komoot").textContent=k.connected?"— connecté ("+(k.username||"")+")":"— non connecté";
+ const note='<p class="mut" style="font-size:12.5px;max-width:72ch;margin:14px 0 0">Ce programme utilise l\'interface interne de Komoot (la même que ses applications), non documentée : elle peut cesser de fonctionner sans préavis, et son usage reste à vos risques. Il n\'est ni affilié à Komoot ni approuvé par Komoot : n\'utilisez que votre propre compte. Si Komoot refuse un envoi, exportez le FIT depuis l\'onglet Séances et importez-le à la main sur komoot.com.</p>';
+ if(!k.connected){b.innerHTML=`<p class="mut" style="margin:0 0 12px;max-width:66ch">Connectez-vous pour envoyer vos séances vers Komoot et retrouver vos itinéraires dans l'onglet Parcours. Votre mot de passe sert uniquement à la connexion et n'est <b>pas enregistré</b> : Komoot renvoie un jeton, conservé sur ce PC et chiffré par Windows. Avec une connexion Google ou Apple, vous n'avez peut-être pas de mot de passe Komoot.</p>
+  <div class="row"><input id="ck_email" type="email" placeholder="Adresse e-mail Komoot" size="30" autocomplete="username"><input id="ck_pass" type="password" placeholder="Mot de passe" size="22" autocomplete="current-password"><button class="p" id="ck_go">Se connecter</button></div>
+  <div id="ck_msg" style="margin-top:10px">${msg?`<span class="err">${esc(msg)}</span>`:""}</div>${note}`;
+  const go=async()=>{const e=$("ck_email").value.trim(),p=$("ck_pass").value;if(!e||!p){$("ck_msg").innerHTML='<span class="err">Saisissez l\'adresse e-mail et le mot de passe.</span>';return}
+   $("ck_go").disabled=true;$("ck_msg").innerHTML='<span class="mut">'+SPIN+'Connexion à Komoot…</span>';const r=await api("/api/komoot/login",{method:"POST",body:JSON.stringify({email:e,password:p})});$("ck_pass").value="";
+   if(r.error){renderConnKomoot(r.error);return}await loadSessions()};
+  $("ck_go").onclick=go;$("ck_pass").onkeydown=ev=>{if(ev.key==="Enter")go()}}
+ else{b.innerHTML=`<div class="row"><span>Connecté en tant que <b>${esc(k.username||"")}</b></span><span style="flex:1"></span><button id="ck_off">Se déconnecter</button></div>
+  <p class="mut" style="margin:10px 0 0;max-width:70ch">Dans l'onglet Séances, les boutons « → Komoot » et « Envoyer à Komoot » envoient la séance au format FIT. Komoot lui donne la visibilité par défaut de votre compte (un réglage de Komoot, comme avec Polar Flow : si votre compte est public, la séance l'est aussi). Une séance que Komoot connaît déjà n'est pas recréée.</p>${note}`;
+  $("ck_off").onclick=async()=>{if(!confirm("Se déconnecter de Komoot ? Le jeton enregistré sur ce PC sera effacé."))return;await api("/api/komoot/logout",{method:"POST"});await loadSessions()}}}
+/* intervals */
+$("iv_go").onclick=async()=>{if(!$("iv_key").value.trim()){alert(SVC&&SVC.intervals&&SVC.intervals.configured?"Une clé est déjà enregistrée sur ce PC. Pour la remplacer, collez la nouvelle clé d'API.":"Collez d'abord votre clé d'API Intervals.icu.");return}const r=await api("/api/intervals/config",{method:"POST",body:JSON.stringify({athlete_id:$("iv_id").value,api_key:$("iv_key").value})});if(r.ok){$("iv_key").value="";$("iv_id").value=r.athlete_id||"0";alert("Intervals.icu : connecté ("+r.name+")"+(r.note?"\n\n"+r.note:""))}else alert(r.error||"Erreur");loadSessions()};
+$("iv_off").onclick=async()=>{await api("/api/disconnect",{method:"POST",body:JSON.stringify({service:"intervals"})});loadSessions()};
+
+/* compteur */
+async function loadDataDir(){const r=await api("/api/data-dir");$("ddir").value=r.path}
+$("ddir_open").onclick=()=>api("/api/open-folder",{method:"POST"});
+async function loadJournal(){try{const r=await api("/api/journal");$("ab_ver").textContent=r.version||"?";$("jinfo").innerHTML="Journal : <code>"+esc(r.path)+"</code> ("+(r.size/1024).toFixed(0)+" Ko, 4 fichiers de 1 Mo au plus, les plus anciens sont effacés)"+(r.debug?" · niveau détaillé actif":"")+"<br>Rapports : <code>"+esc(r.reports)+"</code>"}catch(e){$("jinfo").textContent="Journal indisponible"}}
+$("jopen").onclick=()=>api("/api/journal/open",{method:"POST"});
+$("jreport").onclick=async()=>{const b=$("jreport");b.disabled=true;$("jstate").textContent="Création…";try{const r=await api("/api/journal/report",{method:"POST"});$("jstate").textContent=r.error?("Échec : "+r.error):("Rapport créé ("+(r.size/1024).toFixed(0)+" Ko) : "+r.path)}catch(e){$("jstate").textContent="Échec : "+e}b.disabled=false;loadJournal()};
+loadJournal();
+function paintUpd(u,manual){$("upd").classList.toggle("hid",!u.available);$("updv").textContent=u.available?u.latest:"";$("ab_updchk").checked=u.enabled;
+ if(manual)$("ab_updmsg").textContent=u.error?"Vérification impossible (pas de connexion ?)":u.available?`Version ${u.latest} disponible.`:u.latest?`Vous avez la dernière version (${u.current}).`:"Aucune version publiée pour l'instant."}
+async function updInit(){try{let u=await api("/api/update");paintUpd(u);if(u.enabled)paintUpd(await api("/api/update/check",{method:"POST",body:"{}"}))}catch(e){}}
+$("upd").onclick=()=>api("/api/open-external",{method:"POST",body:JSON.stringify({target:"update"})});
+$("ab_updchk").onchange=async e=>{try{paintUpd(await api("/api/update/enable",{method:"POST",body:JSON.stringify({enabled:e.target.checked})}))}catch(x){}};
+$("ab_updnow").onclick=async()=>{const b=$("ab_updnow");b.disabled=true;$("ab_updmsg").textContent="Recherche…";try{paintUpd(await api("/api/update/check",{method:"POST",body:JSON.stringify({force:true})}),true)}catch(e){$("ab_updmsg").textContent="Vérification impossible (pas de connexion ?)"}b.disabled=false};
+updInit();
+$("ddir_set").onclick=async()=>{const r=await api("/api/data-dir",{method:"POST",body:JSON.stringify({path:$("ddir").value})});
+ if(r.error)return alert(r.error);$("ddir").value=r.path;alert("Dossier de données changé. Le compteur sera relu dans ce dossier.");SESS=[];loadSessions();startSync()};
+async function loadProfile(){loadDataDir();if(PROFILE)return renderProfile(PROFILE);
+ if(syncing){$("profile").innerHTML='<span class="mut">Lecture en cours…</span>';return}
+ const p=await api("/api/profile");if(p.error){$("profile").innerHTML=`<span class="err">${esc(p.error)}</span>`;return}PROFILE=p;renderProfile(p)}
+let PEDIT=false,PBK=[];
+async function loadPBackups(){try{PBK=(await api("/api/profile/backups")).backups||[]}catch(e){PBK=[]}}
+function profileForm(p){const o=p.owner||{},w=IMP?Math.round(p.weight_kg*22.0462)/10:p.weight_kg,h=IMP?Math.round(p.height_cm/0.254)/10:p.height_cm;
+ const r=(id,l,v,ty,ex,wd)=>`<tr><td class="mut">${l}</td><td><input id="${id}" type="${ty}" value="${esc(String(v))}" ${ex||""} style="width:${wd||120}px"></td></tr>`;
+ return `<table>${r("pe_first","Prénom",o.first||"","text",'maxlength="30"',220)}${r("pe_last","Nom de famille",o.last||"","text",'maxlength="30"',220)}${r("pe_w","Poids ("+(IMP?"lb":"kg")+")",w,"number",'step="0.1" min="20" max="660"')}${r("pe_h","Taille ("+(IMP?"in":"cm")+")",h,"number",'step="0.1"')}${r("pe_hrmax","FC max (bpm)",p.hr_max,"number",'step="1" min="100" max="240"')}${r("pe_hrrest","FC repos (bpm)",p.hr_rest,"number",'step="1" min="25" max="120"')}${r("pe_vo2","VO2max",p.vo2max,"number",'step="1" min="10" max="100"')}${r("pe_ftp","FTP (W)",p.ftp,"number",'step="1" min="60" max="600"')}</table>`}
+async function saveProfile(){
+ const f={first:["pe_first","Prénom"],last:["pe_last","Nom de famille"],weight_kg:["pe_w","Poids"],height_cm:["pe_h","Taille"],hr_max:["pe_hrmax","FC max"],hr_rest:["pe_hrrest","FC repos"],vo2max:["pe_vo2","VO2max"],ftp:["pe_ftp","FTP"]};
+ const ch={},lines=[];
+ for(const [key,[id,lab]] of Object.entries(f)){const e=$(id);if(!e||e.value===e.defaultValue)continue;let v=e.value;
+  if(key==="weight_kg"&&IMP)v=String(+v/2.20462);if(key==="height_cm"&&IMP)v=String(+v*2.54);
+  ch[key]=v;lines.push(`• ${tr(lab)} : ${e.defaultValue} → ${e.value}`)}
+ if(!lines.length){$("pstate").textContent=tr("Rien n'a changé.");return}
+ if(!confirm([tr("Écrire ces changements dans le compteur ?"),"",...lines,"",tr("Une copie du profil actuel est d'abord enregistrée sur ce PC (dossier « sauvegarde-profil »), puis le compteur est relu pour vérifier. Éteignez puis rallumez le compteur pour voir le changement.")].join("\n")))return;
+ $("psave").disabled=true;$("pstate").textContent=tr("Écriture…");
+ try{const r=await api("/api/profile/edit",{method:"POST",body:JSON.stringify({changes:ch})});
+  if(r.error){$("pstate").textContent=r.error;$("psave").disabled=false;return}
+  PEDIT=false;await loadPBackups();await loadProfile();$("pstate").textContent=r.changed.length?tr("Profil modifié et vérifié. Éteignez puis rallumez le compteur pour voir le changement."):tr(r.note)}
+ catch(e){$("pstate").textContent=String(e.message||e);if($("psave"))$("psave").disabled=false}}
+async function restoreProfile(){const b=PBK[0];if(!b)return;
+ if(!confirm(tr("Remettre sur le compteur le profil de la dernière sauvegarde ?")+"\n\n"+tr("Le compteur est relu pour vérifier. Éteignez puis rallumez le compteur pour voir le changement.")))return;
+ $("pstate").textContent=tr("Écriture…");
+ try{const r=await api("/api/profile/restore",{method:"POST",body:JSON.stringify({stamp:b.stamp})});
+  if(r.error){$("pstate").textContent=r.error;return}
+  await loadProfile();$("pstate").textContent=tr("Profil remis comme dans la sauvegarde. Éteignez puis rallumez le compteur pour voir le changement.")}
+ catch(e){$("pstate").textContent=String(e.message||e)}}
+loadPBackups().then(()=>{if(PROFILE&&!PEDIT&&!$("t_device").classList.contains("hid"))renderProfile(PROFILE)});
+function renderProfile(p){unitsSeen(p);
+ const k=(l,v)=>`<tr><td class="mut">${l}</td><td class="num" style="font-size:19px">${v}</td></tr>`;
+ const o=p.owner,nm=o?[o.first,o.last].filter(Boolean).join(" "):"";
+ const who=o&&(nm||o.email||o.polar_id)?`${nm?`<div style="margin:0 0 6px"><span class="mut">Compteur de</span> <b class="num" style="font-size:21px">${esc(nm)}</b></div>`:""}<table style="margin-bottom:10px">${o.email?k("E-mail Polar",`<span style="word-break:break-all;font-size:16px">${esc(o.email)}</span>`):""}${o.polar_id!=null?k("Identifiant Polar",esc(String(o.polar_id))):""}</table>`:"";
+ const view=`<table>${k("Poids",IMP?Math.round(p.weight_kg*2.20462)+" lb":p.weight_kg+" kg")}${k("Taille",IMP?Math.floor(p.height_cm/2.54/12)+" ft "+Math.round(p.height_cm/2.54%12)+" in":p.height_cm+" cm")}${k("FC max",p.hr_max+" bpm")}${k("FC repos",p.hr_rest+" bpm")}${k("VO2max",p.vo2max)}${k("FTP",p.ftp+" W")}</table><p class="mut" style="font-size:13px;margin:8px 0 0">${esc(p.language)} · ${p.metric?"unités métriques":"unités impériales"} · ${p.clock_24h?"24 h":"12 h"}</p>`;
+ const bk=PBK[0],bkd=bk?`${bk.stamp.slice(8,10)}/${bk.stamp.slice(5,7)}/${bk.stamp.slice(0,4)} ${bk.stamp.slice(11,13)}:${bk.stamp.slice(14,16)}`:"";
+ const acts=PEDIT?`<div class="row" style="margin-top:12px"><button class="pri" id="psave">Enregistrer sur le compteur</button><button id="pcancel">Annuler</button><span id="pstate" class="mut"></span></div><p class="mut" style="font-size:12.5px;margin:8px 0 0;max-width:60ch">L'e-mail et l'identifiant Polar ne sont pas modifiables. Une copie du profil actuel est d'abord enregistrée sur ce PC.</p>`:`<div class="row" style="margin-top:12px"><button id="pedit">Modifier le profil</button>${bk?`<button id="prestore" title="Remet sur le compteur le profil tel qu'il était avant la dernière modification">Revenir à la sauvegarde du ${bkd}</button>`:""}<span id="pstate" class="mut"></span></div>`;
+ $("profile").innerHTML=`${PEDIT?profileForm(p):who+view}${acts}`;
+ if(PEDIT){$("psave").onclick=saveProfile;$("pcancel").onclick=()=>{PEDIT=false;renderProfile(PROFILE)}}else{$("pedit").onclick=()=>{PEDIT=true;renderProfile(PROFILE)};if(bk)$("prestore").onclick=restoreProfile}
+ renderMap(p.map);
+ $("clock").innerHTML=`<div class="num" style="font-size:34px;color:var(--trace)">${esc(p.local_time.slice(11))}</div><div>${esc(p.local_time.slice(0,10))} · UTC ${esc(p.system_time_utc.slice(11))}<br>Écart avec ce PC : <b>${p.drift_s} s</b></div>`}
+function renderMap(m){
+ if(!m){$("mapinfo").innerHTML='<span class="mut">Aucune carte hors ligne lue sur le compteur.</span>';MAPM=null;mapRefresh();return}
+ const d=m.installed_utc,fr=LANG==="fr"?`${d.slice(8,10)}/${d.slice(5,7)}/${d.slice(0,4)} à ${d.slice(11,16)} (UTC)`:`${d.slice(0,10)} at ${d.slice(11,16)} (UTC)`;
+ $("mapinfo").innerHTML=`<table><tr><td class="mut">Zone centrée sur</td><td class="num" style="font-size:19px">${m.lat.toFixed(4)}° N · ${m.lon.toFixed(4)}° E</td></tr><tr><td class="mut">Dernière installation</td><td class="num" style="font-size:19px">${esc(fr)}</td></tr></table>
+  <div id="mapstate" style="margin-top:8px;font-size:13.5px"></div>`;MAPM=m;mapRefresh()}
+/* ---- Cartes hors ligne: zone sur mesure (carré autour d'un point, bande autour des parcours), fabrication, écriture, reprise ---- */
+let MAPM=null,MAPST=null,MAPPLAN=null,MAPOPT={dev:true,home:false,r:50,margin:15,gpx:[],items:[]};
+const fmtMo=n=>n>=1000?(n/1000).toFixed(1)+(LANG==="fr"?" Go":" GB"):Math.round(n)+(LANG==="fr"?" Mo":" MB");
+const frd=s=>s?(LANG==="fr"?`${s.slice(8,10)}/${s.slice(5,7)}/${s.slice(0,4)}`:s.slice(0,10)):"",ageDays=s=>Math.max(0,Math.round((Date.now()-Date.parse(s))/864e5));
+/* date de la carte installée par ce programme: écrite le…, avec les données OpenStreetMap du… (les nouvelles routes viennent avec de nouvelles données) */
+function instInfo(){const i=MAPST&&MAPST.installed;if(!i)return"";const w=frd((i.written_utc||"").slice(0,10));return ` Écrite par ce programme${w?" le "+w:""}${i.osm_date?`, avec les données OpenStreetMap du ${frd(i.osm_date)} (il y a ${ageDays(i.osm_date)} j)`:""}.`}
+async function mapRefresh(){MAPST=await api("/api/map/status");mapDraw()}
+function mapDraw(){const m=MAPM,st=MAPST;if(!st||!$("mapfab"))return;if(st.error){$("mapfab").innerHTML=`<span class="err">${esc(st.error)}</span>`;return}
+ /* état de la zone demandée / de l'écriture */
+ let s="";if(m){if(m.pending){const pw=st.pending_write;
+   if(pw){const rec=st.maps.find(x=>x.id===pw.map_id);s=`<p class="warn" style="margin:0">Une écriture de carte a été interrompue (commencée le ${esc(pw.since)} UTC) : la carte du compteur n'est peut-être pas complète. <button class="p" id="mresume">Reprendre l'écriture</button> ${rec?"":'<span class="err">(la carte à écrire n\'existe plus)</span>'}</p>`}
+   else s=`<p class="warn" style="margin:0">Vous avez demandé une nouvelle zone sur le compteur, autour de ${m.lat.toFixed(3)}° N · ${m.lon.toFixed(3)}° E. Elle n'est pas encore installée. <button class="p" id="mhere">Fabriquer une carte autour de ce point</button><br><span class="mut">Ne lancez pas FlowSync : il téléchargerait une ancienne carte de Polar à la place.</span></p>`}
+  else s='<p class="ok" style="margin:0">Carte à jour : aucune nouvelle zone n\'est demandée.</p>'}
+ if(st.installed)s+=`<p class="mut" style="margin:6px 0 0;font-size:13px">Dernière carte écrite par ce programme : « ${esc(st.installed.name||"")} ».${instInfo()}</p>`;
+ $("mapstate")&&($("mapstate").innerHTML=s);
+ const home=m?`${m.lat.toFixed(3)}° N · ${m.lon.toFixed(3)}° E`:"du compteur",o=MAPOPT;
+ const maps=st.maps.map(x=>`<tr><td><b>${esc(x.name)}</b><div class="mut" style="font-size:12px">fabriquée le ${esc(frd((x.created||"").slice(0,10)))}${x.osm_date?` avec les données OpenStreetMap du ${frd(x.osm_date)}`:""}${x.regions&&x.regions.length?" · "+esc(x.regions.join(", ")):""}</div></td><td class="num">${fmtMo(x.size/1e6)}</td>
+   <td style="text-align:right">${x.exists?`<button data-w="${esc(x.id)}">${x.kind==="sauvegarde"?"Remettre sur le compteur":"Écrire sur le compteur"}</button> <button data-d="${esc(x.id)}">Supprimer</button>`:'<span class="mut">fichier absent</span>'}</td></tr>`).join("");
+ $("mapfab").innerHTML=`<div style="border-top:1px solid var(--line);padding-top:12px"><b>Fabriquer une carte sur mesure</b> <button class="p" id="ed_open" style="margin-left:10px">Ouvrir l'éditeur avec la carte</button>
+  <p class="mut" style="margin:4px 0 10px;font-size:13px;max-width:70ch">Le compteur ne garde qu'une carte à la fois. Choisissez ce qu'elle doit couvrir : les bandes suivent vos tracés, avec une marge au cas où vous dévieriez. Les données viennent d'OpenStreetMap (© contributeurs OpenStreetMap), sans bâtiments ni numéros de rue, avec les commerces et services utiles à vélo.</p>
+  <div class="row"><label class="row" style="gap:5px"><input type="checkbox" id="mf_dev" ${o.dev?"checked":""}> Autour de mes parcours du compteur</label>
+   <label class="row" style="gap:5px"><input type="checkbox" id="mf_home" ${o.home?"checked":""}> Carré autour de ${home}, de <select id="mf_r"><option value="25">${kmTxt(50)} de côté</option><option value="50">${kmTxt(100)} de côté</option><option value="75">${kmTxt(150)} de côté</option></select></label></div>
+  <div class="row" style="margin-top:8px"><label>Marge autour des tracés <select id="mf_m"><option value="10">${kmTxt(10)}</option><option value="15">${kmTxt(15)}</option><option value="25">${kmTxt(25)}</option></select></label>
+   <span id="mf_gpx" class="mut"></span><button id="mf_plan">Calculer la zone</button></div>
+  <div id="mf_res" style="margin-top:10px"></div></div>
+  <div style="margin-top:14px"><b>Mes cartes</b>${st.maps.length?`<table style="width:100%;margin-top:6px">${maps}</table>`:'<p class="mut" style="margin:4px 0">Aucune carte fabriquée pour l\'instant.</p>'}</div><div id="mf_job" style="margin-top:10px"></div>`;
+ $("mf_r").value=o.r;$("mf_m").value=o.margin;
+ $("mf_gpx").innerHTML=o.gpx.length||(o.items||[]).length?`+ ${o.gpx.length?"tracé"+(o.gpx.length>1?"s":"")+" : "+o.gpx.map(esc).join(", "):(o.items.length+" parcours coché"+(o.items.length>1?"s":""))} <a href="#" id="mf_gpxx">retirer</a>`:"";if($("mf_gpxx"))$("mf_gpxx").onclick=e=>{e.preventDefault();o.gpx=[];o.items=[];mapDraw()};
+ $("mf_plan").onclick=mapPlan;$("ed_open").onclick=()=>document.querySelector('.nav[data-t="map"]').click();if($("mresume"))$("mresume").onclick=()=>mapWrite(st.pending_write.map_id,true);
+ if($("mhere"))$("mhere").onclick=()=>{o.dev=false;o.home=true;o.r=50;mapDraw();mapPlan()};
+ $("mapfab").querySelectorAll("[data-w]").forEach(b=>b.onclick=()=>mapWrite(b.dataset.w));
+ $("mapfab").querySelectorAll("[data-d]").forEach(b=>b.onclick=async()=>{if(!confirm("Supprimer cette carte de ce PC ? (Le compteur n'est pas modifié.)"))return;const r=await api("/api/map/delete",{method:"POST",body:JSON.stringify({map_id:b.dataset.d})});if(r.error)alert(r.error);mapRefresh()})}
+function mapOpts(){const o=MAPOPT;o.dev=$("mf_dev").checked;o.home=$("mf_home").checked;o.r=+$("mf_r").value;o.margin=+$("mf_m").value;
+ const body={margin_km:o.margin,sources:{device_routes:o.dev,gpx:o.gpx,items:o.items||[]}};if(o.home&&MAPM)body.home={lat:MAPM.lat,lon:MAPM.lon,half_km:o.r};return body}
+async function mapPlan(){const body=mapOpts();if(!body.sources.device_routes&&!body.sources.gpx.length&&!body.sources.items.length&&!body.home){$("mf_res").innerHTML='<span class="warn">Cochez au moins une source.</span>';return}
+ $("mf_res").innerHTML='<span class="mut">Calcul de la zone… (la liste des régions est téléchargée la première fois)</span>';
+ const p=await api("/api/map/plan",{method:"POST",body:JSON.stringify(body)});if(p.error){$("mf_res").innerHTML=`<span class="err">${esc(p.error)}</span>`;return}
+ MAPPLAN=p;const tl=p.tools.installed?"":`<li>Outils de fabrication à installer une fois (Java 17, Osmosis, plugin Mapsforge) : ${fmtMo(p.tools.download_mb)}</li>`;
+ const regs=p.regions.map(r=>`${esc(r.name)} (${r.cached?"déjà téléchargé":r.mb?fmtMo(r.mb):"taille inconnue"})`).join(", ");
+ $("mf_res").innerHTML=`${mapSvg(p)}<ul style="margin:8px 0;padding-left:18px;font-size:13.5px"><li>Surface couverte : <b>${A2(p.area_km2).toLocaleString(LOC)} ${UA2}</b> · taille estimée <b>${fmtMo(p.estimate_mb[0])} ${TO} ${fmtMo(p.estimate_mb[1])}</b> (le compteur a ${MAPST&&MAPST.installed?"":""}environ 2 Go de libre)</li>
+  <li>Données OpenStreetMap : ${regs||"aucune"} — à télécharger : <b>${fmtMo(p.download_mb)}</b>${p.download_mb?" (une seule fois, gardé sur ce PC)":""}</li>${tl}<li>Durée estimée : environ ${p.minutes} minutes</li></ul>
+  <div class="row"><label>Nom <input id="mf_name" size="26" maxlength="60" value="${esc(mapDefaultName(p))}"></label><button class="p" id="mf_build">Fabriquer la carte</button></div>`;
+ $("mf_build").onclick=()=>mapBuild(p)}
+function mapDefaultName(p){const o=MAPOPT;return o.gpx.length?"Parcours "+o.gpx[0].replace(/\.gpx$/i,"").slice(0,30):o.home&&!o.dev?"Autour de chez moi":"Mes parcours"}
+function mapSvg(p){const r=p.rings,W=360,H=190;let la0=1e9,la1=-1e9,lo0=1e9,lo1=-1e9;r.forEach(q=>q.forEach(([a,b])=>{la0=Math.min(la0,a);la1=Math.max(la1,a);lo0=Math.min(lo0,b);lo1=Math.max(lo1,b)}));
+ const k=Math.cos((la0+la1)/2*Math.PI/180),w=(lo1-lo0)*k||1,h=(la1-la0)||1,sc=Math.min((W-16)/w,(H-16)/h),ox=(W-w*sc)/2,oy=(H-h*sc)/2;
+ const X=b=>ox+(b-lo0)*k*sc,Y=a=>oy+(la1-a)*sc;
+ return `<svg viewBox="0 0 ${W} ${H}" style="width:100%;max-width:${W}px;background:var(--panel2);border-radius:8px;border:1px solid var(--line)">${r.map(q=>`<polygon points="${q.map(([a,b])=>X(b).toFixed(1)+","+Y(a).toFixed(1)).join(" ")}" fill="var(--lime)" fill-opacity=".22" stroke="var(--lime)" stroke-width=".8"/>`).join("")}</svg>`}
+async function mapBuild(p){const need=(p.download_mb||0)+(p.tools.installed?0:p.tools.download_mb);
+ if(!confirm(`Fabriquer cette carte ?\n\n${need?"Téléchargement : "+fmtMo(need)+" (outils et données OpenStreetMap, une seule fois).\n":""}Durée estimée : environ ${p.minutes} minutes. Le compteur n'est pas modifié à cette étape.`))return;
+ const r=await api("/api/map/build",{method:"POST",body:JSON.stringify({plan_id:p.plan_id,name:$("mf_name").value})});
+ if(!r.started){$("mf_job").innerHTML='<span class="warn">Une fabrication de carte est déjà en cours : suivez-la ci-dessous ou dans l\'onglet Carte.</span>';return}jobsTick()}
+async function mapWrite(id,resume,boxId="mf_job"){const m=MAPST.maps.find(x=>x.id===id);if(!m)return;
+ if(!confirm(`${resume?"Reprendre l'écriture de":"Écrire"} la carte « ${m.name} » (${fmtMo(m.size/1e6)}) sur le compteur ?\n\n• La carte actuelle du compteur est d'abord copiée sur ce PC si ce n'est pas déjà fait.\n• Le compteur doit rester branché pendant l'opération (environ ${Math.max(1,Math.round(m.size/2.2e6/60*2))} minutes).\n• Ensuite, éteignez puis rallumez le compteur.`))return;
+ const r=await api("/api/map/write",{method:"POST",body:JSON.stringify({map_id:id})});
+ if(!r.started){alert("Une autre opération est en cours sur le compteur : attendez la fin, puis réessayez.");return}jobsTick()}
+/* tâches de fond (fabrication et écriture de carte): liste d'étapes avec une barre chacune, suivie sur toutes les pages et reprise si on change d'onglet */
+const SPIN='<span class="spin"></span>',JSHOW=["map-build","map-tools","map-write"],JST={main:null,build:null};let JNOW=0,jtimer=0,JDISMISS=new Set();
+try{JDISMISS=new Set(JSON.parse(localStorage.getItem("jdismiss")||"[]"))}catch(e){}
+function jdismiss(j){JDISMISS.add(Math.round(j.started));try{localStorage.setItem("jdismiss",JSON.stringify([...JDISMISS].slice(-50)))}catch(e){}renderTasks()}
+const fmtDur=s=>{s=Math.max(0,Math.round(s));return s<60?s+" s":Math.floor(s/60)+" min "+String(s%60).padStart(2,"0")+" s"};
+function jobSteps(j){return j.steps&&j.steps.length?j.steps:[{key:"_",label:j.title,state:j.running?"running":(j.error?"error":"done"),done:(j.progress||[0,0])[0],total:(j.progress||[0,0])[1]}]}
+function jobPct(j){const st=jobSteps(j);let sum=0;for(const s of st){if(s.state==="done")sum+=1;else if(s.state==="running"&&s.total)sum+=Math.min(1,s.done/s.total)}return !j.running?(j.error?null:100):Math.round(sum*100/st.length)}
+function setBar(b,pct,run){b.classList.toggle("ind",run&&pct===null);b.firstChild.style.width=pct===null?"":pct+"%"}
+const mbTxt=n=>n>=1e9?(n/1e9).toFixed(1)+(LANG==="fr"?" Go":" GB"):Math.round(n/1e6)+(LANG==="fr"?" Mo":" MB");
+/* Fenêtre de fabrication / d'écriture d'une carte: bloque le reste de la page, liste d'étapes avec une barre chacune, annulation possible pour la fabrication */
+function paintJob(el,j,now){const st=jobSteps(j),sig=j.started+"|"+(j.running?1:0)+(j.error?1:0)+"|"+st.map(s=>s.key+s.label+s.state).join("|");
+ if(el._sig!==sig){el._sig=sig;const icon={done:"✓",error:"✕",pending:"○",running:SPIN},res=j.result||{},built=j.kind==="map-build"&&!j.running&&!j.error&&res.id;
+  el.innerHTML=`<div class="jh"><b>${esc(j.title)}</b><span class="jpct"></span><span class="jel"></span></div>
+   <div class="jbar jall"><i></i></div><ul class="jsteps">${st.map(s=>`<li class="${s.state}" data-k="${esc(s.key)}"><span class="jic">${icon[s.state]}</span><span>${esc(s.label)}</span><div class="jbar"><i></i></div><span class="jp"></span></li>`).join("")}</ul>
+   <div class="jnote mut" style="font-size:12.5px;margin-top:8px"></div><div class="jres"></div>${j.running&&j.kind==="map-write"?'<p class="warn" style="margin:8px 0 0;font-size:13px">Ne débranchez pas le compteur et ne l\'éteignez pas pendant l\'écriture.</p>':""}
+   <details><summary>Détails</summary><pre class="jlog"></pre></details>
+   <div class="jact">${j.running&&j.kind==="map-build"?'<button class="jcancel">Annuler la fabrication</button>':""}${built?'<button class="p jwrite">Écrire cette carte sur le compteur</button>':""}${j.running?"":`<button class="jclose">${built?"Plus tard":"Fermer"}</button>`}</div>`;
+  const c=el.querySelector(".jcancel");if(c)c.onclick=()=>{c.disabled=true;c.textContent="Annulation…";api("/api/map/cancel",{method:"POST"})};
+  const x=el.querySelector(".jclose");if(x)x.onclick=()=>jdismiss(j);
+  const w=el.querySelector(".jwrite");if(w)w.onclick=async()=>{jdismiss(j);ED.built=res;await mapRefresh();mapWrite(res.id,false,"ed_job")}}
+ const pc=jobPct(j),el_=now-j.started,eta=(j.info&&j.info.eta_min)||0;el.querySelector(".jpct").textContent=j.running?(pc===null?"":pc+" %"):(j.error?"":"100 %");
+ el.querySelector(".jel").textContent=j.running?`en cours depuis ${fmtDur(el_)}${eta&&j.kind==="map-build"?` · durée annoncée ≈ ${eta} min`:""}`:(j.error?"arrêtée":"terminée en "+fmtDur(j.ended-j.started));
+ setBar(el.querySelector(".jall"),j.running?(pc===null||pc===0&&st.every(s=>!s.total)?null:pc):(j.error?0:100),j.running);
+ for(const s of st){const li=el.querySelector(`li[data-k="${s.key}"]`);if(!li)continue;const p=s.state==="done"?100:(s.total?Math.min(100,Math.round(s.done*100/s.total)):null);
+  setBar(li.querySelector(".jbar"),s.state==="pending"?0:p,s.state==="running");
+  let t="";if(s.state==="running"&&p!==null){t=p+" %";if(s.t0&&p>=3&&p<100){const e=now-s.t0;if(e>=4)t+=" · "+fmtDur(Math.round(e*(100-p)/p/5)*5||5)}}li.querySelector(".jp").textContent=t}
+ const res=j.result||{};el.querySelector(".jres").innerHTML=j.error?`<span class="err">${/annul/i.test(j.error)?"Fabrication annulée.":esc(j.error)}</span>`:(!j.running?(res.note?`<span class="ok"><b>Carte écrite et vérifiée</b> (relue en entier, empreinte identique).</span> ${esc(res.note)}`:(j.kind==="map-build"?`<span class="ok"><b>Carte fabriquée</b> (${res.size?fmtMo(res.size/1e6):""}${res.osm_date?`, données OpenStreetMap du ${frd(res.osm_date)}`:""}). Elle n'est pas encore sur le compteur : rien n'est écrit sans votre accord.</span>`:"")):"");
+ el.querySelector(".jnote").textContent=j.running?(j.note||""):"";
+ el.querySelector(".jlog").textContent=(j.log||[]).slice(-12).join("\n")}
+const JSEEN=new Set();
+function renderTasks(now){if(now)JNOW=now;let show=null;
+ for(const k of ["build","main"]){const j=JST[k];if(!j||!j.kind||!JSHOW.includes(j.kind))continue;const key=Math.round(j.started);
+  if(j.running){JSEEN.add(key);show=j;break}
+  if(!show&&!JDISMISS.has(key)&&(JSEEN.has(key)||JNOW-j.ended<90))show=j}
+ const m=$("jmodal");m.hidden=!show;document.querySelectorAll(".rail,.content").forEach(e=>show?e.setAttribute("inert",""):e.removeAttribute("inert"));
+ if(show){const box=$("jmbox"),id="job_"+Math.round(show.started)+"_"+show.kind;let d=box.firstChild;if(!d||d.id!==id){box.innerHTML="";d=document.createElement("div");d.id=id;d.className="job";box.appendChild(d)}paintJob(d,show,JNOW)}}
+async function refreshAfterWrite(){const p=await api("/api/profile").catch(()=>null);if(!p||p.error)return;PROFILE=p;MAPM=p.map;if(!$("t_device").classList.contains("hid"))renderProfile(p);await mapRefresh();await edCoverage();edRight()}
+function jobDone(j){if(!JSHOW.includes(j.kind))return;if(j.kind==="map-build"&&!j.error&&j.result&&j.result.id)ED.built=j.result;
+ if(j.kind==="map-write"&&!j.error){refreshAfterWrite();return}mapRefresh().then(()=>{if(ED.init)edRight()})}
+async function jobsTick(){clearTimeout(jtimer);let J;try{J=await api("/api/jobs")}catch(e){jtimer=setTimeout(jobsTick,3000);return}
+ for(const k of ["build","main"]){const j=J[k],prev=JST[k];if(prev&&prev.running&&!j.running&&prev.started===j.started)jobDone(j);JST[k]=j}
+ renderTasks(J.now);jtimer=setTimeout(jobsTick,(J.build.running||(J.main.running&&JSHOW.includes(J.main.kind)))?800:2500)}
+jobsTick();
+/* parcours hors de la carte du compteur: bandeau dans l'aperçu d'un parcours */
+async function mapCover(src,elId){const file=typeof src==="string"?src:null;const el=$(elId);if(!el||!PROFILE||!PROFILE.map)return;
+ const c=await api("/api/map/coverage",{method:"POST",body:JSON.stringify({map:PROFILE.map,sources:file?{gpx:[file]}:src})}).catch(()=>null);if(!c||!c.outside||!$(elId))return;
+ const v=Object.values(c.routes)[0]||{km_outside:0,km_total:0},pc=Math.round(v.km_outside*100/(v.km_total||1));
+ el.innerHTML=`<div class="banner"><span>Ce parcours <b>sort de la carte du compteur</b> : ${D(v.km_outside,0)} ${UD} sur ${D(v.km_total,0)} (${pc} %) sont hors carte${c.origin==="polar"?" (zone de la carte de Polar déduite)":""}. Sur ces portions, le compteur n'affichera que le tracé.</span><button class="p" id="mcover">Fabriquer une carte qui le couvre…</button></div>`;
+ $("mcover").onclick=()=>{MAPOPT.gpx=file?[file]:[];MAPOPT.items=file?[]:src.items;MAPOPT.dev=true;MAPOPT.home=false;document.querySelector('.nav[data-t="device"]').click();mapDraw();setTimeout(()=>{$("mapfab").scrollIntoView({behavior:"smooth"});mapPlan()},300)}}
+$("settime").onclick=setTime;
+
+/* appelée aussi par le programme quand on clique sur la croix de la fenêtre */
+function showClosing(){document.body.innerHTML='<div style="padding:60px;color:var(--ink);font:18px var(--txt)"><div class="num" style="font-size:34px;color:var(--lime);margin-bottom:10px">Fermeture en cours…</div><div id="qmsg" class="mut">Fin de la lecture en cours, puis fermeture de la session du compteur. La fenêtre se fermera toute seule.</div></div>'}
+$("quit").onclick=async()=>{if(syncing&&!confirm("Une lecture est en cours : elle sera interrompue proprement. Quitter ?"))return;
+ showClosing();
+ await api("/api/quit",{method:"POST"}).catch(()=>{});
+ for(let i=0;i<80;i++){await new Promise(r=>setTimeout(r,500));try{const c=new AbortController(),t=setTimeout(()=>c.abort(),1500);await fetch("/api/ping",{cache:"no-store",signal:c.signal});clearTimeout(t)}catch(e){break}}
+ const m=document.getElementById("qmsg");if(m){m.innerHTML="Programme arrêté, la session du compteur est refermée. Vous pouvez fermer cette fenêtre."}try{window.close()}catch(e){}};
+setInterval(()=>fetch("/api/ping").catch(()=>{}),5000);fetch("/api/ping").catch(()=>{});
+addEventListener("pagehide",()=>{try{navigator.sendBeacon("/api/closing",JSON.stringify({token:TOKEN}))}catch(e){}});
+/* ---- Éditeur de carte: parcours cochés + formes dessinées + niveau de détail -> zone, taille, fabrication, écriture ---- */
+const ED={ctl:null,inc:new Set(),shapes:[],center:null,sq:0,margin:15,profile:"velo",contours:"none",plan:null,cov:null,tool:"pan",draft:[],pen:null,P:{mode:"pan"},built:null,t:0,name:""};
+const EDC={dev:"#9db4cf",inc:"#ffb12e",off:"#5a6573",shape:"#ff4fd8",zone:"#d6ff3a",cur:"#38d5ff"};
+const PROFN={leger:["Léger","Routes, chemins, eau, bois, lieux-dits. Sans commerces ni bâtiments."],velo:["Vélo","Le léger + commerces, eau, toilettes, gares, mairies, stades. Sans bâtiments."],detaille:["Détaillé","Le vélo + les bâtiments. Environ 1,8 fois plus lourd, plus lent à charger."]};
+const CONTN={none:["Aucune","Pas de courbes de niveau."],main:["Principales","Une courbe tous les 100 m (500 m plus marquées). Environ 4 % de taille en plus."],full:["Complètes","Comme sur les cartes de Polar : une courbe tous les 25 m. Environ 15 % de taille en plus."]};
+async function edOpen(){if(!LIB.length)await listRoutes();
+ if(!ED.init){ED.init=true;ED.inc=new Set(LIB.filter(x=>x.on_device).map(x=>x.id));if(MAPM)ED.center=[MAPM.lat,MAPM.lon]}
+ if(!MAPST)MAPST=await api("/api/map/status");
+ edList();edRight();edTools();
+ if(!ED.ctl){ED.ctl=drawMap($("ed_map"),[],{layers:edLayers(),empty:true,pointer:ED.P});setTimeout(()=>ED.ctl&&ED.ctl.fit(),50)}else{edDraw()}
+ await edCoverage();edPlanSoon()}
+async function edCoverage(){if(!PROFILE||!PROFILE.map){ED.cov=null;return}const c=await api("/api/map/coverage",{method:"POST",body:JSON.stringify({map:PROFILE.map,sources:{items:[]}})}).catch(()=>null);ED.cov=c&&c.rings&&c.rings.length?c:null;edDraw()}
+function circlePts(lat,lon,km,n=40){const ky=111.2,kx=111.32*Math.cos(lat*Math.PI/180);return Array.from({length:n},(_,i)=>{const a=2*Math.PI*i/n;return[lat+km*Math.sin(a)/ky,lon+km*Math.cos(a)/kx]})}
+function sqRing(lat,lon,km){const ky=111.2,kx=111.32*Math.cos(lat*Math.PI/180),dy=km/ky,dx=km/kx;return[[lat-dy,lon-dx],[lat-dy,lon+dx],[lat+dy,lon+dx],[lat+dy,lon-dx]]}
+function edLayers(){const L=[];
+ if(ED.cov)L.push({rings:ED.cov.rings,fill:EDC.cur,fillOpacity:.05,color:EDC.cur,width:0,outline:EDC.cur,nofit:true});  /* carte actuelle du compteur: son contour seulement (pas les anneaux intérieurs) */
+ if(ED.plan&&ED.plan.rings&&ED.plan.rings.length)L.push({rings:ED.plan.rings,fill:EDC.zone,fillOpacity:.22,color:EDC.zone,width:0,outline:EDC.zone});
+ const shown=LIB.filter(x=>x.track&&x.track.length>1&&(ED.inc.has(x.id)||ED.showAll));
+ for(const x of shown)if(!ED.inc.has(x.id))L.push({pts:x.track,color:EDC.off,width:1.2,nofit:true});  /* non retenus: fins, seulement si la case est cochée */
+ for(const x of shown)if(ED.inc.has(x.id))L.push({pts:x.track,color:"rgba(0,0,0,.62)",width:6.6});  /* halo sombre sous tous les tracés retenus... */
+ for(const x of shown)if(ED.inc.has(x.id))L.push({pts:x.track,color:x.on_device?EDC.dev:EDC.inc,width:3.4});  /* ...puis les traits par-dessus */
+ for(const s of ED.shapes)L.push(s.type==="polygon"?{pts:s.pts.concat([s.pts[0]]),color:EDC.shape,width:2.4,dash:"6 4"}:{pts:s.pts,color:EDC.shape,width:3});
+ if(ED.draft.length)L.push({pts:ED.draft,color:"#fff",width:2.4,dash:"4 4"});
+ if(ED.anchor)L.push({pts:[ED.anchor,ED.anchor],color:"#000",width:15},{pts:[ED.anchor,ED.anchor],color:"#fff",width:10});
+ if(ED.center){L.push({pts:[ED.center,ED.center],color:"#fff",width:19},{pts:[ED.center,ED.center],color:EDC.cur,width:13});if(ED.sq>0)L.push({pts:sqRing(ED.center[0],ED.center[1],ED.sq).concat([sqRing(ED.center[0],ED.center[1],ED.sq)[0]]),color:EDC.cur,width:2.2})}
+ return L}
+function edDraw(){if(ED.ctl)ED.ctl.setLayers(edLayers())}
+function edList(){const row=x=>`<label class="edrow"><input type="checkbox" data-id="${esc(x.id)}" ${ED.inc.has(x.id)?"checked":""}><i style="background:${x.on_device?EDC.dev:EDC.inc}"></i><span class="nm">${esc(x.name)}</span><span class="km">${kmTxt(x.km)}</span>${!x.on_device?'<span class="bg w">à écrire</span>':""}</label>`;
+ const dev=LIB.filter(x=>x.on_device),oth=LIB.filter(x=>!x.on_device);
+ $("ed_list").innerHTML=`<div class="edgrp">Sur le compteur (${dev.length})</div>${dev.map(row).join("")}<div class="edgrp">Komoot et GPX (${oth.length})</div>${oth.map(row).join("")||'<div class="mut" style="padding:6px 12px;font-size:12.5px">Aucun autre parcours.</div>'}`;
+ $("ed_list").querySelectorAll("input").forEach(c=>c.onchange=()=>{c.checked?ED.inc.add(c.dataset.id):ED.inc.delete(c.dataset.id);edDraw();edPlanSoon();edFetch()})}
+/* un parcours Komoot n'a pas de trace tant que son GPX n'est pas téléchargé: on le télécharge dès qu'on le coche (60 au plus à la fois) */
+const edMissing=()=>LIB.filter(x=>ED.inc.has(x.id)&&x.komoot_id&&!x.file&&!x.on_device);
+async function edFetch(){if(ED.fetching)return;ED.fetching=true;const note=h=>{const n=$("ed_note");if(n)n.innerHTML=h};
+ try{for(let need=edMissing();need.length;need=edMissing()){const ids=need.map(x=>x.komoot_id).slice(0,60);note(`${SPIN}Lecture de ${ids.length} trace(s) sur Komoot…`);
+   const r=await api("/api/library/komoot-gpx",{method:"POST",body:JSON.stringify({ids})});
+   if(!r.started){note('<span class="warn">Une autre opération est en cours sur le compteur : réessayez dans un instant.</span>');break}
+   let err=null;for(;;){const j=await api("/api/job");note(`${SPIN}Lecture des traces sur Komoot… ${(j.progress||[0,0]).join(" / ")}`);if(!j.running){err=j.error;break}await new Promise(r=>setTimeout(r,900))}
+   await listRoutes();edList();edDraw();edPlanSoon();
+   if(err){note(`<span class="err">${esc(err)}</span>`);break}}
+  if(!edMissing().length&&$("ed_note")&&!/err|warn/.test($("ed_note").innerHTML))note("")}finally{ED.fetching=false}}
+function edSelect(ids){const miss=LIB.filter(x=>ids.has(x.id)&&x.komoot_id&&!x.file&&!x.on_device).length;
+ if(miss>10&&!confirm(`${miss} traces Komoot ne sont pas encore sur ce PC. Les télécharger maintenant (environ ${Math.ceil(miss*0.4)} secondes) ?\n\nSinon, seuls les parcours déjà disponibles sont cochés.`))ids=new Set(LIB.filter(x=>ids.has(x.id)&&(x.file||x.on_device)).map(x=>x.id));
+ ED.inc=ids;edList();edDraw();edPlanSoon();edFetch()}
+$("ed_all").onclick=()=>edSelect(new Set(LIB.map(x=>x.id)));$("ed_none").onclick=()=>edSelect(new Set());
+$("ed_dev").onclick=()=>edSelect(new Set(LIB.filter(x=>x.on_device).map(x=>x.id)));
+$("ed_showall").onchange=e=>{ED.showAll=e.target.checked;edDraw()};
+const EDT=[["pan","✋","Déplacer la carte"],["center","◎","Placer le centre d'un carré (clic)"],["rect","▭","Rectangle : glissez d'un coin à l'autre (ou deux clics)"],["circle","◯","Cercle : glissez du centre vers le bord (ou deux clics)"],["poly","⬠","Polygone : un clic par sommet, double-clic pour finir"],["pen","✎","Crayon : tracez à main levée, la zone suit le trait avec la marge"],["clear","🗑","Effacer les formes dessinées"]];
+const EDH={pan:"Glissez pour déplacer, molette pour zoomer.",center:"Cliquez sur la carte pour placer le centre.",rect:"Glissez d'un coin à l'autre, ou cliquez un coin puis le coin opposé. Échap annule.",circle:"Glissez du centre vers le bord, ou cliquez le centre puis le bord. Échap annule.",poly:"Cliquez chaque sommet ; double-clic pour terminer. Échap annule.",pen:"Maintenez le bouton et tracez : la zone suit le trait."};
+function edTools(){$("ed_tools").innerHTML=EDT.map(([k,i,t])=>`<button data-t="${k}" class="${ED.tool===k?"on":""}" title="${t}">${i}</button>`).join("");$("ed_hint").textContent=EDH[ED.tool]||"";
+ $("ed_leg").innerHTML=`<div><i style="background:${EDC.dev}"></i>Parcours du compteur</div><div><i style="background:${EDC.inc}"></i>Komoot / GPX inclus</div><div><i style="background:${EDC.shape}"></i>Formes dessinées</div><div><i class="dash" style="border-color:${EDC.cur}"></i>Carte actuelle du compteur</div><div><i style="background:${EDC.zone};opacity:.5"></i>Zone de la nouvelle carte</div>`;
+ $("ed_tools").querySelectorAll("button").forEach(b=>b.onclick=()=>edTool(b.dataset.t))}
+const rectPts=(p,q)=>[[p[0],p[1]],[p[0],q[1]],[q[0],q[1]],[q[0],p[1]]],circPts=(c,e)=>circlePts(c[0],c[1],Math.max(Math.hypot((e[0]-c[0])*111.2,(e[1]-c[1])*111.32*Math.cos(c[0]*Math.PI/180)),1));
+const edPrev=p=>{if(ED.ctl)ED.ctl.setPreview(p)};
+document.addEventListener("keydown",e=>{if(e.key==="Escape"&&ED.tool&&ED.tool!=="pan"){ED.anchor=null;ED.draft=[];edPrev(null);edDraw()}});
+function edTool(t){if(t==="fit"){if(ED.ctl)ED.ctl.fit();return}if(t==="clear"){ED.shapes=[];ED.draft=[];ED.anchor=null;edPrev(null);edDraw();edPlanSoon();edRight();return}ED.tool=t;ED.draft=[];ED.anchor=null;edPrev(null);const P=ED.P;P.mode=t==="pan"?"pan":t==="pen"?"pen":"click";P.onclick=null;P.ondbl=null;P.onpen=null;P.onpenmove=null;P.onmove=null;P.ondrag=null;
+ if(t==="center")P.onclick=(a,b)=>{ED.center=[a,b];if(!ED.sq)ED.sq=50;edDraw();edRight();edPlanSoon()};
+ /* rectangle et cercle: tracé par glisser-déposer, ou deux clics ; la forme grandit en direct sous la souris */
+ if(t==="rect"||t==="circle"){const mk=t==="rect"?rectPts:circPts,fin=(s,e)=>{ED.anchor=null;edPrev(null);edAddShape({type:"polygon",pts:mk(s,e)})};
+  P.onclick=(a,b)=>{if(!ED.anchor){ED.anchor=[a,b];edDraw()}else fin(ED.anchor,[a,b])};
+  P.onmove=(a,b,s)=>{const o=s||ED.anchor;if(o)edPrev(mk(o,[a,b]))};
+  P.ondrag=(s,e)=>fin(ED.anchor||s,e)}
+ if(t==="poly"){P.onclick=(a,b)=>{ED.draft.push([a,b]);edDraw()};P.onmove=(a,b)=>{if(ED.draft.length)edPrev(ED.draft.concat([[a,b]]))};P.ondbl=()=>{edPrev(null);if(ED.draft.length>=3)edAddShape({type:"polygon",pts:ED.draft.slice()});else{ED.draft=[];edDraw()}}}
+ if(t==="pen"){P.onpenmove=p=>{ED.draft=p.slice();edDraw()};P.onpen=p=>{if(p.length>=2){const st=Math.max(1,Math.floor(p.length/150)),q=p.filter((_,i)=>i%st===0);q.push(p[p.length-1]);edAddShape({type:"path",pts:q})}else{ED.draft=[];edDraw()}}}
+ edTools();edDraw()}
+function edAddShape(s){ED.shapes.push(s);ED.draft=[];edDraw();edRight();edPlanSoon()}
+function edBody(){const items=[...ED.inc],body={margin_km:ED.margin,profile:ED.profile,contours:ED.contours,sources:{items},shapes:ED.shapes};if(ED.center&&ED.sq>0)body.home={lat:ED.center[0],lon:ED.center[1],half_km:ED.sq};return body}
+/* pastille « Calcul de la zone… » en haut de la carte tant que le calcul est en cours (au premier calcul, il télécharge la liste des régions: parfois 30 s) */
+function edBusy(on,txt){const b=$("ed_busy");if(!b)return;b.hidden=!on;if(on)b.innerHTML=SPIN+(txt||"Calcul de la zone…")}
+function edPlanSoon(){clearTimeout(ED.t);edBusy(true);ED.t=setTimeout(edPlan,450)}
+async function edPlan(){const b=edBody();if(!b.sources.items.length&&!b.shapes.length&&!b.home){ED.plan=null;edBusy(false);edDraw();edRight();return}
+ const my=++ED.seq||(ED.seq=1);edBusy(true);let p;try{p=await api("/api/map/plan",{method:"POST",body:JSON.stringify(b)})}catch(e){if(my===ED.seq){edBusy(false);ED.plan=null;edRight("Le calcul de la zone a échoué : "+(e&&e.message||e))}return}
+ if(my!==ED.seq)return;edBusy(false);
+ if(p.error){ED.plan=null;edRight(p.error);edDraw();return}ED.plan=p;edDraw();edRight()}
+function edRight(err){const p=ED.plan,o=ED,nd=[...o.inc].filter(id=>LIB.find(x=>x.id===id&&!x.on_device)),cov=ED.cov;
+ const regs=p?p.regions.map(r=>`${esc(r.name)} (${r.cached?"déjà téléchargé":r.mb?fmtMo(r.mb):"?"})`).join(", "):"";
+ const tl=p&&!p.tools.installed?`<div class="kv"><span>Outils à installer</span><b>${fmtMo(p.tools.download_mb)}</b></div>`:"";
+ $("ed_right").innerHTML=`<h2>Carte à fabriquer</h2>
+  <div class="mut" style="font-size:12.5px;margin-bottom:8px">${cov?`Carte actuelle du compteur : ${esc(cov.name||"")}.`:"Carte actuelle du compteur : inconnue (compteur non lu)."}${instInfo()}</div>
+  <div class="kv"><span>Sources</span><b>${o.inc.size} parcours${o.shapes.length?` · ${o.shapes.length} forme${o.shapes.length>1?"s":""}`:""}${o.center&&o.sq?" · carré":""}</b></div>
+  ${o.center?`<div class="row" style="margin:6px 0"><label>Carré autour du centre <select id="ed_sq"><option value="0">aucun</option><option value="25">${kmTxt(50)} de côté</option><option value="50">${kmTxt(100)}</option><option value="75">${kmTxt(150)}</option><option value="100">${kmTxt(200)}</option></select></label></div>`:'<div class="mut" style="font-size:12px;margin:4px 0">Outil ◎ : posez un centre pour ajouter un carré.</div>'}
+  <h3 class="edh">Marge autour des tracés : <b id="ed_mv">${kmTxt(o.margin)}</b></h3><input type="range" id="ed_m" min="5" max="40" step="1" value="${o.margin}" style="width:100%">
+  <h3 class="edh">Niveau de détail</h3><div class="seg">${Object.entries(PROFN).map(([k,v])=>`<button data-p="${k}" class="${o.profile===k?"on":""}">${v[0]}</button>`).join("")}</div><div class="mut" style="font-size:12px;margin-bottom:8px">${PROFN[o.profile][1]}</div>
+  <h3 class="edh">Courbes de niveau</h3><div class="seg">${Object.entries(CONTN).map(([k,v])=>`<button data-c="${k}" class="${o.contours===k?"on":""}">${v[0]}</button>`).join("")}</div><div class="mut" style="font-size:12px;margin-bottom:8px">${CONTN[o.contours][1]}</div>
+  ${err?`<div class="err" style="margin:8px 0">${esc(err)}</div>`:p?`<div class="kv"><span>Surface</span><b>${A2(p.area_km2).toLocaleString(LOC)} ${UA2}</b></div><div class="kv"><span>Taille estimée</span><b>${fmtMo(p.estimate_mb[0])} ${TO} ${fmtMo(p.estimate_mb[1])}</b></div>
+   <div class="kv"><span>Données</span><b style="text-align:right;max-width:150px">${regs||"—"}</b></div>
+   ${p.dem?`<div class="kv"><span>Altitudes (SRTM)</span><b style="text-align:right;max-width:150px">${p.dem.tiles.filter(t=>!t.sea).length} tuile${p.dem.tiles.filter(t=>!t.sea).length>1?"s":""} (${p.dem.download_mb?fmtMo(p.dem.download_mb):"déjà téléchargées"})</b></div><div class="mut" style="font-size:11.5px;margin:-2px 0 6px">${esc(p.dem.credit)}</div>`:""}
+   ${p.warning?`<div class="warn" style="margin:8px 0;font-size:12.5px">⚠ ${esc(p.warning)}</div>`:""}
+   ${p.osm_date?`<div class="kv"><span>Date des données déjà téléchargées</span><b>${frd(p.osm_date)} <span class="mut" style="font-weight:400">(il y a ${ageDays(p.osm_date)} j)</span></b></div>
+    <label class="row" style="gap:8px;margin:2px 0 6px;font-size:12.5px"><input type="checkbox" id="ed_refresh" ${o.refresh?"checked":""}> Télécharger des données plus récentes (nouvelles routes…) : ${fmtMo(p.all_mb)}</label>`:""}
+   <div class="kv"><span>À télécharger</span><b>${(o.refresh&&p.osm_date)?fmtMo(p.all_mb):p.download_mb?fmtMo(p.download_mb):"rien"}</b></div>${tl}<div class="kv"><span>Durée estimée</span><b>≈ ${p.minutes} min</b></div>`:'<div class="mut" style="margin:10px 0;font-size:13px">Cochez des parcours ou dessinez une zone.</div>'}
+  <div class="row" style="margin-top:8px"><input id="ed_name" size="22" maxlength="60" placeholder="Nom de la carte" value="${esc(o.name||"")}"></div>
+  <button class="p" id="ed_build" style="width:100%;margin-top:8px" ${p?"":"disabled"}>Fabriquer la carte</button>
+  ${nd.length?`<button id="ed_wr" style="width:100%;margin-top:6px">Écrire les ${nd.length} parcours à écrire</button>`:""}
+  ${o.built?`<button class="p" id="ed_wmap" style="width:100%;margin-top:6px">Écrire « ${esc(o.built.name)} » sur le compteur (${fmtMo(o.built.size/1e6)})</button>`:""}
+  <div class="mut" style="font-size:11.5px;margin-top:8px">La carte actuelle du compteur est copiée sur ce PC avant d'être remplacée. Données © contributeurs OpenStreetMap.</div><div id="ed_job" style="margin-top:8px"></div>`;
+ if($("ed_sq"))$("ed_sq").value=o.sq;if($("ed_sq"))$("ed_sq").onchange=e=>{o.sq=+e.target.value;edDraw();edPlanSoon();edRight()};
+ if($("ed_refresh"))$("ed_refresh").onchange=e=>{o.refresh=e.target.checked;edRight()};
+ $("ed_m").oninput=e=>{o.margin=+e.target.value;$("ed_mv").textContent=kmTxt(o.margin);edPlanSoon()};$("ed_name").oninput=e=>o.name=e.target.value;
+ $("ed_right").querySelectorAll("[data-p]").forEach(b=>b.onclick=()=>{o.profile=b.dataset.p;edRight();edPlanSoon()});
+ $("ed_right").querySelectorAll("[data-c]").forEach(b=>b.onclick=()=>{o.contours=b.dataset.c;edRight();edPlanSoon()});
+ if($("ed_build"))$("ed_build").onclick=edBuild;if($("ed_wr"))$("ed_wr").onclick=()=>libWrite(LIB.filter(x=>!x.on_device&&ED.inc.has(x.id)));
+ if($("ed_wmap"))$("ed_wmap").onclick=async()=>{await mapRefresh();mapWrite(o.built.id,false,"ed_job")}}
+async function edBuild(){const p=ED.plan;if(!p)return;const need=(p.download_mb||0)+(p.tools.installed?0:p.tools.download_mb);
+ if(!confirm(`Fabriquer cette carte (${PROFN[ED.profile][0]}${ED.contours!=="none"?", courbes de niveau « "+CONTN[ED.contours][0].toLowerCase()+" »":""}) ?\n\n${need?"Téléchargement : "+fmtMo(need)+" (outils, données OpenStreetMap"+(p.dem?" et altitudes":"")+", une seule fois).\n":""}Durée estimée : environ ${p.minutes} minutes. Le compteur n'est pas modifié à cette étape.`))return;
+ const name=($("ed_name").value||"").trim()||"Ma carte";const r=await api("/api/map/build",{method:"POST",body:JSON.stringify({plan_id:p.plan_id,name,refresh:!!(ED.refresh&&p.osm_date)})});
+ if(!r.started){$("ed_job").innerHTML='<span class="warn">Une fabrication est déjà en cours : elle est suivie ci-dessous.</span>';jobsTick();return}
+ jobsTick()}
+async function boot(){const d=await api("/api/data-dir").catch(()=>({}));
+ if(d.first_run){$("fdir").value=d.path;$("first").classList.remove("hid");return}  // premier lancement: rien n'est écrit avant que vous ayez choisi le dossier
+ loadSessions();startSync()}
+$("fpick").onclick=async()=>{$("fpick").disabled=true;const r=await api("/api/pick-folder",{method:"POST",body:JSON.stringify({start:$("fdir").value})}).catch(()=>({}));$("fpick").disabled=false;if(r.path)$("fdir").value=r.path};
+$("fgo").onclick=async()=>{const r=await api("/api/data-dir",{method:"POST",body:JSON.stringify({path:$("fdir").value})});if(r.error)return alert(r.error);$("fdir").value=r.path;$("first").classList.add("hid");loadSessions();startSync()};
+$("ddir_pick").onclick=async()=>{const r=await api("/api/pick-folder",{method:"POST",body:JSON.stringify({start:$("ddir").value})}).catch(()=>({}));if(r.path)$("ddir").value=r.path};
+boot();
+</script><div id="jmodal" class="modal" hidden role="dialog" aria-modal="true"><div id="jmbox"></div></div></body></html>
