@@ -64,7 +64,7 @@ Same comparison, with the V650 Sync map built **with full contour lines** (one l
 
 ![Zoom 16 with contour lines](comparison/contours-zoom16.png)
 
-This rendering is the one from my map viewer. **The rendering on the device's screen has not been verified yet**, hence the option being off by default. Elevations: SRTM (NASA / USGS, public domain), via AWS "Terrain Tiles".
+This rendering is the one from my map viewer, not the device's. **The contour lines have been checked on the device itself and display correctly**; the option stays off by default to keep maps light. Elevations: SRTM (NASA / USGS, public domain), via AWS "Terrain Tiles".
 
 ## How these images were made
 

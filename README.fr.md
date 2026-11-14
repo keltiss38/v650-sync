@@ -116,7 +116,7 @@ L'exécutable ne contient pas les outils de fabrication de cartes (ils sont lour
 - Testé sur un seul V650 et sous Windows 11 ; Windows 10 non testé. Windows 7/8 non pris en charge.
 - L'accès à Komoot passe par une interface non officielle qui peut changer ou être restreinte sans préavis. N'utilisez que votre propre compte, avec modération.
 - Les cartes fabriquées utilisent des données OpenStreetMap (© contributeurs OpenStreetMap, ODbL). Le compteur n'affiche pas d'icônes pour les commerces, seulement leur nom. Il affiche un carré blanc autour de la carte (le rectangle englobant du fichier) ; la zone elle-même est exacte.
-- **Courbes de niveau** (option « Aucune / Principales / Complètes » dans l'éditeur de carte) : elles sont calculées à partir des altitudes SRTM, avec les mêmes marques que les cartes de Polar. **Leur affichage sur le compteur n'a pas encore été vérifié** : elles sont désactivées par défaut. La précision suit celle des données SRTM (environ 30 m) ; sur de grandes zones, le calcul utilise un point sur deux ou trois.
+- **Courbes de niveau** (option « Aucune / Principales / Complètes » dans l'éditeur de carte) : elles sont calculées à partir des altitudes SRTM, avec les mêmes marques que les cartes de Polar. **Leur affichage a été vérifié sur le compteur** ; elles sont désactivées par défaut pour garder des cartes légères. La précision suit celle des données SRTM (environ 30 m) ; sur de grandes zones, le calcul utilise un point sur deux ou trois.
 - Les détails techniques (protocole, formats, validations) sont dans [`docs/NOTES-TECHNIQUES.fr.md`](docs/NOTES-TECHNIQUES.fr.md).
 
 ## Contribuer

@@ -51,7 +51,7 @@ Legend: ✅ validated on the **real device** or the **real service** · 🧪 tes
 | Unified route library (device, Komoot, GPX) | ✅ | "synchronised" status decided on the track |
 | **Komoot** (sign-in, list, GPX, writing to the device) | ✅ | real account; "Komoot" origin recognised thanks to the id FlowSync notes in the route |
 | **Intervals.icu** (test, manual session upload) | ✅ | real service |
-| **Sending a session to Komoot** (FIT) | 🧪 | Komoot's internal API (like `kompy.upload_tour`); tested with a fake server only, **not yet on a real account** |
+| **Sending a session to Komoot** (FIT) | ✅ | Komoot's internal API (like `kompy.upload_tour`); tested with a fake server, then validated by the author on a real account |
 | Automatic upload of new sessions (Intervals, Komoot, GPX) | 🧪 | off by default |
 | Map building (Mapsforge v3, OpenStreetMap) | ✅ | maps displayed by the device; drawn area respected |
 | Writing a map to the device (multi-frame, read-back, checksum) | ✅ | ~2.2 MB/s |
@@ -59,7 +59,7 @@ Legend: ✅ validated on the **real device** or the **real service** · 🧪 tes
 | Modal progress window (steps, bars, duration, cancel) | ✅ | |
 | Detailed log, bug report | ✅ | |
 | `V650Sync.exe` executable (~14 MB, no console, unsigned) | ✅ | Windows 11; **Windows 10 untested** |
-| Contour lines on generated maps | 🧪 | none / main / full option (SRTM elevations, §6.4); **display on the device not verified**, off by default |
+| Contour lines on generated maps | ✅ | none / main / full option (SRTM elevations, §6.4); display on the device validated by the author; off by default |
 | English and French interface; units (km / miles) following the device's setting | 🧪 | runtime translation (§3.6); checked by an automated sweep of the page, not by a native English reader |
 | Update notice (GitHub, once a day, can be turned off) | 🧪 | tested with a fake server; **only works once a release is published** on the public repository (§7) |
 | Export of RR intervals, temperature, `device_info` in the FIT | ❌ | absent from the FIT |
@@ -197,7 +197,7 @@ The tools are pinned by SHA-256 checksum and downloaded **on demand**, from thei
 - **Computation** (`v650sync/contours.py`, standard Python, no numpy): mosaic of the tiles, cells of the area only (the cost follows the surface, not the bounding rectangle), contour lines by "marching squares", joining of segments, simplification (Douglas-Peucker, 6 m), at most 4 million cells (beyond that: one point out of two, then three…). Measured: 960 km² at 30 m in 2.4 s, ~1,500 lines, 117,000 points.
 - **Integration**: OSM XML file (very high ids, mandatory timestamp), read by `--read-xml` then merged (`--merge`) with the OpenStreetMap extract before writing. **No `--bounding-polygon` on this stream**: with the very high ids of the contours, this filter removed whole lines (4,982 ways kept out of 6,948, 18 empty tiles on the map); the computation already stops at the edges of the area (one cell of margin). The contour tags have `zoom-appear` 10 / 11 as at Polar and **`force-polygon-line`**: without it, a closed contour is taken for a surface and the device draws a grid at tile edges. Osmosis no longer exits after an XML read: the application stops it 20 s after "Finished writing file".
 - **Result**: a 28 × 28 km map around Annecy, 4.26 MB with all contour lines against 3.69 MB without (+15 %; about +4 % with main lines only), built in 43 s.
-- **To check**: the rendering on the device (fineness, legibility at 100 m and 200 m, smoothness), before turning contour lines on by default.
+- **Verified**: the contour lines display on the device (validated by the author). Not studied in detail: fineness, legibility at 100 m and 200 m, smoothness; they stay off by default.
 
 ## 7. External integrations
 
@@ -279,6 +279,6 @@ Command line (`python -m v650sync …`): `info`, `ls`, `backup`, `export`, `rout
 
 **Limitations**: a single device (no multi-device); time zone offset in whole hours; routes ≤ ~15 KB (one frame); white square around maps; border area without fill; Windows 10 untested; the English interface is a runtime translation (a few messages stay in French: native Windows dialogs, the first window to choose the folder, the log); unsigned exe (SmartScreen); Komoot's internal interface may change.
 
-**Ideas**: validate contour lines on the device (then turn them on by default), more city names in the editor, code signing and an installer, full FIT (RR, temperature), multi-device, a review of the English by a native speaker, other languages.
+**Ideas**: decide whether to turn contour lines on by default, more city names in the editor, code signing and an installer, full FIT (RR, temperature), multi-device, a review of the English by a native speaker, other languages.
 
 **Will not be done**: firmware modification; Strava API; training analysis; editing the profile (weight, height…): tried on the real device, no visible effect (§11).

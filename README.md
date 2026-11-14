@@ -116,7 +116,7 @@ The executable does not include the map-building tools (they are heavy). **When 
 - Tested on a single V650 and on Windows 11; Windows 10 is untested. Windows 7/8 are not supported.
 - Access to Komoot goes through an unofficial interface that may change or be restricted without notice. Use only your own account, in moderation.
 - The built maps use OpenStreetMap data (© OpenStreetMap contributors, ODbL). The device does not show icons for shops, only their name. It shows a white square around the map (the bounding rectangle of the file); the area itself is exact.
-- **Contour lines** ("None / Main / Full" option in the map editor): they are computed from SRTM elevations, with the same marks as Polar's maps. **Their display on the device has not been verified yet**: they are off by default. Accuracy follows that of the SRTM data (about 30 m); on large areas, the computation uses one point out of two or three.
+- **Contour lines** ("None / Main / Full" option in the map editor): they are computed from SRTM elevations, with the same marks as Polar's maps. **Their display has been checked on the device**; they are off by default to keep maps light. Accuracy follows that of the SRTM data (about 30 m); on large areas, the computation uses one point out of two or three.
 - The English interface is a runtime translation of the French source text: a few rare messages (the first-run folder dialog, native Windows dialogs, the log) stay in French.
 - Technical details (protocol, formats, validations) are in [`docs/TECHNICAL-NOTES.md`](docs/TECHNICAL-NOTES.md).
 

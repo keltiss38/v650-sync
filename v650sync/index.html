@@ -75,6 +75,7 @@ pre{background:#06090c;color:#9fb0c0;border-radius:8px;padding:10px;max-height:2
 @media(prefers-color-scheme:light){:root:not([data-theme=dark]) .edtools,:root:not([data-theme=dark]) .edleg,:root:not([data-theme=dark]) .edhint{background:rgba(248,246,239,.95)}}
 :root[data-theme=light] .edtools button,:root[data-theme=light] .edleg,:root[data-theme=light] .edhint{color:var(--ink)}
 @media(prefers-color-scheme:light){:root:not([data-theme=dark]) .edtools button,:root:not([data-theme=dark]) .edleg,:root:not([data-theme=dark]) .edhint{color:var(--ink)}}
+#ed_right h2{margin-bottom:6px}#ed_right .kv{padding:2px 0}#ed_right .edh{margin:6px 0 2px}#ed_right .seg{margin:2px 0 4px}#ed_right .seg button{padding:5px 2px}
 .updtag{background:transparent;color:var(--lime);border:1px solid var(--lime);border-radius:99px;padding:3px 12px;font-size:12px;white-space:nowrap}.updtag:hover{background:var(--lime);color:var(--on-lime)}</style></head><body>
 <div class="shell">
  <nav class="rail">
@@ -784,24 +785,23 @@ function edRight(err){const p=ED.plan,o=ED,nd=[...o.inc].filter(id=>LIB.find(x=>
  const regs=p?p.regions.map(r=>`${esc(r.name)} (${r.cached?"déjà téléchargé":r.mb?fmtMo(r.mb):"?"})`).join(", "):"";
  const tl=p&&!p.tools.installed?`<div class="kv"><span>Outils à installer</span><b>${fmtMo(p.tools.download_mb)}</b></div>`:"";
  $("ed_right").innerHTML=`<h2>Carte à fabriquer</h2>
-  <div class="mut" style="font-size:12.5px;margin-bottom:8px">${cov?`Carte actuelle du compteur : ${esc(cov.name||"")}.`:"Carte actuelle du compteur : inconnue (compteur non lu)."}${instInfo()}</div>
+  <div class="mut" style="font-size:12.5px;margin-bottom:4px" title="${esc(instInfo().trim())}">${cov?`Carte actuelle du compteur : ${esc(cov.name||"")}.`:"Carte actuelle du compteur : inconnue (compteur non lu)."}</div>
   <div class="kv"><span>Sources</span><b>${o.inc.size} parcours${o.shapes.length?` · ${o.shapes.length} forme${o.shapes.length>1?"s":""}`:""}${o.center&&o.sq?" · carré":""}</b></div>
-  ${o.center?`<div class="row" style="margin:6px 0"><label>Carré autour du centre <select id="ed_sq"><option value="0">aucun</option><option value="25">${kmTxt(50)} de côté</option><option value="50">${kmTxt(100)}</option><option value="75">${kmTxt(150)}</option><option value="100">${kmTxt(200)}</option></select></label></div>`:'<div class="mut" style="font-size:12px;margin:4px 0">Outil ◎ : posez un centre pour ajouter un carré.</div>'}
+  ${o.center?`<div class="kv"><span>Carré autour du centre</span><select id="ed_sq" style="padding:2px 6px"><option value="0">aucun</option><option value="25">${kmTxt(50)} de côté</option><option value="50">${kmTxt(100)}</option><option value="75">${kmTxt(150)}</option><option value="100">${kmTxt(200)}</option></select></div>`:'<div class="mut" style="font-size:12px;margin:4px 0">Outil ◎ : posez un centre pour ajouter un carré.</div>'}
   <h3 class="edh">Marge autour des tracés : <b id="ed_mv">${kmTxt(o.margin)}</b></h3><input type="range" id="ed_m" min="5" max="40" step="1" value="${o.margin}" style="width:100%">
-  <h3 class="edh">Niveau de détail</h3><div class="seg">${Object.entries(PROFN).map(([k,v])=>`<button data-p="${k}" class="${o.profile===k?"on":""}">${v[0]}</button>`).join("")}</div><div class="mut" style="font-size:12px;margin-bottom:8px">${PROFN[o.profile][1]}</div>
-  <h3 class="edh">Courbes de niveau</h3><div class="seg">${Object.entries(CONTN).map(([k,v])=>`<button data-c="${k}" class="${o.contours===k?"on":""}">${v[0]}</button>`).join("")}</div><div class="mut" style="font-size:12px;margin-bottom:8px">${CONTN[o.contours][1]}</div>
-  ${err?`<div class="err" style="margin:8px 0">${esc(err)}</div>`:p?`<div class="kv"><span>Surface</span><b>${A2(p.area_km2).toLocaleString(LOC)} ${UA2}</b></div><div class="kv"><span>Taille estimée</span><b>${fmtMo(p.estimate_mb[0])} ${TO} ${fmtMo(p.estimate_mb[1])}</b></div>
-   <div class="kv"><span>Données</span><b style="text-align:right;max-width:150px">${regs||"—"}</b></div>
-   ${p.dem?`<div class="kv"><span>Altitudes (SRTM)</span><b style="text-align:right;max-width:150px">${p.dem.tiles.filter(t=>!t.sea).length} tuile${p.dem.tiles.filter(t=>!t.sea).length>1?"s":""} (${p.dem.download_mb?fmtMo(p.dem.download_mb):"déjà téléchargées"})</b></div><div class="mut" style="font-size:11.5px;margin:-2px 0 6px">${esc(p.dem.credit)}</div>`:""}
-   ${p.warning?`<div class="warn" style="margin:8px 0;font-size:12.5px">⚠ ${esc(p.warning)}</div>`:""}
-   ${p.osm_date?`<div class="kv"><span>Date des données déjà téléchargées</span><b>${frd(p.osm_date)} <span class="mut" style="font-weight:400">(il y a ${ageDays(p.osm_date)} j)</span></b></div>
-    <label class="row" style="gap:8px;margin:2px 0 6px;font-size:12.5px"><input type="checkbox" id="ed_refresh" ${o.refresh?"checked":""}> Télécharger des données plus récentes (nouvelles routes…) : ${fmtMo(p.all_mb)}</label>`:""}
-   <div class="kv"><span>À télécharger</span><b>${(o.refresh&&p.osm_date)?fmtMo(p.all_mb):p.download_mb?fmtMo(p.download_mb):"rien"}</b></div>${tl}<div class="kv"><span>Durée estimée</span><b>≈ ${p.minutes} min</b></div>`:'<div class="mut" style="margin:10px 0;font-size:13px">Cochez des parcours ou dessinez une zone.</div>'}
-  <div class="row" style="margin-top:8px"><input id="ed_name" size="22" maxlength="60" placeholder="Nom de la carte" value="${esc(o.name||"")}"></div>
-  <button class="p" id="ed_build" style="width:100%;margin-top:8px" ${p?"":"disabled"}>Fabriquer la carte</button>
+  <h3 class="edh">Niveau de détail</h3><div class="seg" title="${esc(PROFN[o.profile][1])}">${Object.entries(PROFN).map(([k,v])=>`<button data-p="${k}" title="${esc(v[1])}" class="${o.profile===k?"on":""}">${v[0]}</button>`).join("")}</div>
+  <h3 class="edh">Courbes de niveau</h3><div class="seg" title="${esc(CONTN[o.contours][1])}">${Object.entries(CONTN).map(([k,v])=>`<button data-c="${k}" title="${esc(v[1])}" class="${o.contours===k?"on":""}">${v[0]}</button>`).join("")}</div>
+  ${err?`<div class="err" style="margin:8px 0">${esc(err)}</div>`:p?`<div class="kv"><span>Surface</span><b>${A2(p.area_km2).toLocaleString(LOC)} ${UA2}</b></div><div class="kv"><span>Taille estimée</span><b>${fmtMo(p.estimate_mb[0])} ${TO} ${fmtMo(p.estimate_mb[1])}</b></div><div class="kv"><span>Durée estimée</span><b>≈ ${p.minutes} min</b></div>
+   <div class="kv"><span>Données</span><b style="text-align:right;max-width:170px">${regs||"—"}</b></div>
+   ${p.dem?`<div class="kv" title="${esc(p.dem.credit)}"><span>Altitudes (SRTM)</span><b>${p.dem.tiles.filter(t=>!t.sea).length} tuile${p.dem.tiles.filter(t=>!t.sea).length>1?"s":""} (${p.dem.download_mb?fmtMo(p.dem.download_mb):"déjà téléchargées"})</b></div>`:""}
+   ${p.warning?`<div class="warn" style="margin:6px 0;font-size:12.5px">⚠ ${esc(p.warning)}</div>`:""}
+   ${p.osm_date?`<label class="row" style="gap:8px;margin:4px 0 2px;font-size:12.5px"><input type="checkbox" id="ed_refresh" ${o.refresh?"checked":""}> Données plus récentes (données du ${frd(p.osm_date)}) : ${fmtMo(p.all_mb)}</label>`:""}
+   <div class="kv"><span>À télécharger</span><b>${(o.refresh&&p.osm_date)?fmtMo(p.all_mb):p.download_mb?fmtMo(p.download_mb):"rien"}${tl?` · outils ${fmtMo(p.tools.download_mb)}`:""}</b></div>`:'<div class="mut" style="margin:8px 0;font-size:13px">Cochez des parcours ou dessinez une zone.</div>'}
+  <input id="ed_name" maxlength="60" placeholder="Nom de la carte" value="${esc(o.name||"")}" style="width:100%;margin-top:8px;box-sizing:border-box">
+  <button class="p" id="ed_build" style="width:100%;margin-top:6px" ${p?"":"disabled"}>Fabriquer la carte</button>
   ${nd.length?`<button id="ed_wr" style="width:100%;margin-top:6px">Écrire les ${nd.length} parcours à écrire</button>`:""}
   ${o.built?`<button class="p" id="ed_wmap" style="width:100%;margin-top:6px">Écrire « ${esc(o.built.name)} » sur le compteur (${fmtMo(o.built.size/1e6)})</button>`:""}
-  <div class="mut" style="font-size:11.5px;margin-top:8px">La carte actuelle du compteur est copiée sur ce PC avant d'être remplacée. Données © contributeurs OpenStreetMap.</div><div id="ed_job" style="margin-top:8px"></div>`;
+  <div class="mut" style="font-size:11.5px;margin-top:6px">La carte actuelle du compteur est copiée sur ce PC avant d'être remplacée. Données © contributeurs OpenStreetMap.</div><div id="ed_job" style="margin-top:6px"></div>`;
  if($("ed_sq"))$("ed_sq").value=o.sq;if($("ed_sq"))$("ed_sq").onchange=e=>{o.sq=+e.target.value;edDraw();edPlanSoon();edRight()};
  if($("ed_refresh"))$("ed_refresh").onchange=e=>{o.refresh=e.target.checked;edRight()};
  $("ed_m").oninput=e=>{o.margin=+e.target.value;$("ed_mv").textContent=kmTxt(o.margin);edPlanSoon()};$("ed_name").oninput=e=>o.name=e.target.value;

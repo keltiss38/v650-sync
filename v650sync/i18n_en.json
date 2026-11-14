@@ -1066,6 +1066,14 @@
 "Download the missing GPX files ({0})"
 ],
 [
+"Données plus récentes (données du {0}) : {1}",
+"Newer data (data from {0}): {1}"
+],
+[
+"{0} · outils {1}",
+"{0} · tools {1}"
+],
+[
 "Version {0} disponible.",
 "Version {0} available."
 ],

@@ -64,7 +64,7 @@ Même comparaison, avec la carte V650 Sync fabriquée **avec toutes les courbes*
 
 ![Zoom 16 avec courbes de niveau](comparaison/courbes-zoom16.png)
 
-Ce rendu est celui de mon lecteur de cartes. **Le rendu sur l'écran du compteur n'est pas encore vérifié**, d'où l'option désactivée par défaut. Altitudes : SRTM (NASA / USGS, domaine public), via les « Terrain Tiles » d'AWS.
+Ce rendu est celui de mon lecteur de cartes, pas celui du compteur. **Les courbes de niveau ont été vérifiées sur le compteur lui-même et s'affichent correctement** ; l'option reste désactivée par défaut pour garder des cartes légères. Altitudes : SRTM (NASA / USGS, domaine public), via les « Terrain Tiles » d'AWS.
 
 ## Comment ces images ont été faites
 

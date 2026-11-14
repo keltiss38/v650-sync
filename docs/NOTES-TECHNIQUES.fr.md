@@ -51,7 +51,7 @@ Légende : ✅ validé sur le **vrai compteur** ou le **vrai service** · 🧪 t
 | Bibliothèque de parcours unifiée (compteur, Komoot, GPX) | ✅ | statut « synchronisé » décidé sur la trace |
 | **Komoot** (connexion, liste, GPX, écriture sur le compteur) | ✅ | compte réel ; origine « Komoot » reconnue grâce à l'identifiant noté dans le parcours par FlowSync |
 | **Intervals.icu** (test, envoi manuel d'une séance) | ✅ | service réel |
-| **Envoi d'une séance à Komoot** (FIT) | 🧪 | API interne de Komoot (comme `kompy.upload_tour`) ; testé avec un faux serveur seulement, **pas encore sur un compte réel** |
+| **Envoi d'une séance à Komoot** (FIT) | ✅ | API interne de Komoot (comme `kompy.upload_tour`) ; testé avec un faux serveur, puis validé par l'auteur sur un compte réel |
 | Envoi automatique des nouvelles séances (Intervals, Komoot, GPX) | 🧪 | désactivé par défaut |
 | Fabrication de cartes (Mapsforge v3, OpenStreetMap) | ✅ | cartes affichées par le compteur ; zone dessinée respectée |
 | Écriture d'une carte sur le compteur (multi-trames, relecture, empreinte) | ✅ | ~2,2 Mo/s |
@@ -59,7 +59,7 @@ Légende : ✅ validé sur le **vrai compteur** ou le **vrai service** · 🧪 t
 | Fenêtre modale de suivi (étapes, barres, durée, annulation) | ✅ | |
 | Journal détaillé, rapport de bug | ✅ | |
 | Exécutable `V650Sync.exe` (~14 Mo, sans console, non signé) | ✅ | Windows 11 ; **Windows 10 non testé** |
-| Courbes de niveau sur les cartes générées | 🧪 | option aucune / principales / complètes (altitudes SRTM, §6.4) ; **affichage sur le compteur non vérifié**, désactivées par défaut |
+| Courbes de niveau sur les cartes générées | ✅ | option aucune / principales / complètes (altitudes SRTM, §6.4) ; affichage sur le compteur validé par l'auteur ; désactivées par défaut |
 | Interface en français et en anglais ; unités (km / miles) selon le réglage du compteur | 🧪 | traduction à l'exécution (§3.6) ; vérifiée par balayage automatique de la page, pas par un relecteur anglophone |
 | Avis de mise à jour (GitHub, une fois par jour, désactivable) | 🧪 | testé avec un faux serveur ; **ne fonctionne qu'une fois une version publiée** sur le dépôt public (§7) |
 | Export des intervalles RR, température, `device_info` dans le FIT | ❌ | absents du FIT |
@@ -197,7 +197,7 @@ Les outils sont épinglés par empreinte SHA-256 et téléchargés **à la deman
 - **Calcul** (`v650sync/contours.py`, Python standard, sans numpy) : mosaïque des tuiles, cellules de la zone seulement (le coût suit la surface, pas le rectangle englobant), lignes de niveau par « marching squares », raccordement des segments, simplification (Douglas-Peucker, 6 m), points au plus 4 millions de cellules (au-delà : un point sur deux, puis trois…). Mesuré : 960 km² à 30 m en 2,4 s, ~1 500 lignes, 117 000 points.
 - **Intégration** : fichier OSM XML (identifiants très élevés, horodatage obligatoire), lu par `--read-xml` puis fusionné (`--merge`) avec l'extrait OpenStreetMap avant l'écriture. **Sans `--bounding-polygon` sur ce flux** : avec les identifiants très élevés des courbes, ce filtre supprimait des lignes entières (4 982 voies gardées sur 6 948, 18 tuiles vides de la carte) ; le calcul s'arrête déjà aux bords de la zone (une cellule de marge). Les balises de courbes ont `zoom-appear` 10 / 11 comme chez Polar et **`force-polygon-line`** : sans cela, une courbe fermée est prise pour une surface et le compteur dessine un quadrillage aux bords des tuiles. Osmosis ne se ferme plus après une lecture XML : l'application l'arrête 20 s après « Finished writing file ».
 - **Résultat** : carte de 28 × 28 km autour d'Annecy, 4,26 Mo avec toutes les courbes contre 3,69 Mo sans (+15 % ; environ +4 % avec les seules principales), fabriquée en 43 s.
-- **À vérifier** : le rendu sur le compteur (finesse, lisibilité à 100 m et 200 m, fluidité), avant d'activer les courbes par défaut.
+- **Vérifié** : les courbes s'affichent sur le compteur (validé par l'auteur). Pas étudiés en détail : finesse, lisibilité à 100 m et 200 m, fluidité ; elles restent désactivées par défaut.
 
 ## 7. Intégrations externes
 
@@ -279,6 +279,6 @@ Ligne de commande (`python -m v650sync …`) : `info`, `ls`, `backup`, `export`,
 
 **Limites** : un seul compteur (pas de multi-appareils) ; décalage horaire en heures entières ; parcours ≤ ~15 Ko (une trame) ; carré blanc autour des cartes ; zone de bordure sans remplissage ; Windows 10 non testé ; interface anglaise = traduction à l'exécution (quelques messages restent en français : boîtes de dialogue natives de Windows, première fenêtre de choix du dossier, journal) ; exe non signé (SmartScreen) ; l'interface interne de Komoot peut changer.
 
-**Pistes** : valider les courbes de niveau sur le compteur (puis les activer par défaut), noms de villes plus nombreux sur l'éditeur, signature de code et installeur, FIT complet (RR, température), multi-appareils, relecture de l'anglais par un anglophone, autres langues.
+**Pistes** : décider d'activer les courbes de niveau par défaut, noms de villes plus nombreux sur l'éditeur, signature de code et installeur, FIT complet (RR, température), multi-appareils, relecture de l'anglais par un anglophone, autres langues.
 
 **Ne sera pas fait** : modification du firmware ; API Strava ; analyse d'entraînement ; modification du profil (poids, taille…) : essayée sur le vrai compteur, sans effet visible (§11).
